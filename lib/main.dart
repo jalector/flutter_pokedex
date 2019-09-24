@@ -36,7 +36,8 @@ class MyApp extends StatelessWidget {
             fontSize: 30,
           ),
           caption: TextStyle(
-            fontSize: 20,
+            fontSize: 15,
+            color: Color.fromRGBO(50, 50, 50, 1),
           ),
           overline: TextStyle(
             fontSize: 15,

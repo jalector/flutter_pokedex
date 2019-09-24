@@ -11,7 +11,7 @@ class PokedexPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder(
-          future: globalRequest.getPokedexGeneration(1),
+          future: globalRequest.getPokedexGeneration(4),
           builder:
               (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
             Widget builder;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/PokemonDetail_model.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
@@ -12,11 +11,11 @@ class PokemonDetailPage extends StatefulWidget {
 
 class _PokemonDetailPageState extends State<PokemonDetailPage> {
   VideoPlayerController _videoCtrl;
+  GlobalRequest globalRequest = GlobalRequest();
 
   @override
   Widget build(BuildContext context) {
     Pokemon pokemon = ModalRoute.of(context).settings.arguments;
-    GlobalRequest globalRequest = GlobalRequest();
     return Scaffold(
       backgroundColor: Colors.blue,
       body: SafeArea(
@@ -56,9 +55,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                 ),
                 child: SingleChildScrollView(
                   child: FutureBuilder(
-                    future: globalRequest.getPokemonDetail(pokemon.id),
+                    future: globalRequest.getPokemon(pokemon.id),
                     builder: (BuildContext context,
-                        AsyncSnapshot<PokemonDetail> snapshot) {
+                        AsyncSnapshot<Pokemon> snapshot) {
                       if (snapshot.hasData) {
                         return _pokemonDetail(context, snapshot.data);
                       }
@@ -82,7 +81,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     );
   }
 
-  Widget _pokemonDetail(BuildContext context, PokemonDetail pokemon) {
+  Widget _pokemonDetail(BuildContext context, Pokemon pokemon) {
     return Column(
       children: <Widget>[
         Row(
@@ -110,8 +109,65 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             ),
           ],
         ),
+        this._generationBanner(context, pokemon),
+        this._adjacentPokemon(context, pokemon),
         this._family(context, pokemon),
       ],
+    );
+  }
+
+  Widget _adjacentPokemon(BuildContext context, Pokemon pokemon) {
+    return Row(children: <Widget>[
+      (pokemon.id > 0)
+          ? _adjacent(pokemon.id - 1, true)
+          : Expanded(child: Container()),
+      (pokemon.id < 809)
+          ? _adjacent(pokemon.id + 1, false)
+          : Expanded(child: Container()),
+    ]);
+  }
+
+  Widget _adjacent(int number, bool borderLeft) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () async {
+          Pokemon poke = await this.globalRequest.getPokemonMinimalInfo(number);
+          Navigator.pushReplacementNamed(
+            context,
+            "pokemonDetail",
+            arguments: poke,
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.all(8),
+          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 1),
+          decoration: BoxDecoration(
+            color: Colors.blueGrey,
+            borderRadius: BorderRadius.horizontal(
+              left: Radius.circular((borderLeft) ? 15 : 0),
+              right: Radius.circular((borderLeft) ? 0 : 15),
+            ),
+          ),
+          child: Text("#$number", textAlign: TextAlign.center),
+        ),
+      ),
+    );
+  }
+
+  Widget _generationBanner(BuildContext context, Pokemon pokemon) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.all(5),
+      margin: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: Colors.lightGreen.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        "Generation #${pokemon.generation}",
+        style: Theme.of(context).textTheme.title,
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
@@ -121,7 +177,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     );
   }
 
-  Widget _family(BuildContext context, PokemonDetail pokemon) {
+  Widget _family(BuildContext context, Pokemon pokemon) {
     if (pokemon.family.length == 0) return Container();
 
     return Column(
@@ -132,7 +188,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           padding: EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: Colors.lightBlueAccent,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(10),
+            ),
           ),
           child: Text(
             "Familia",
@@ -140,11 +198,23 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           ),
         ),
         Container(
-          decoration: BoxDecoration(color: Colors.black26),
-          child: Row(
-            children: List.generate(
-              pokemon.family.length,
-              (int i) => this._pokemonEvolution(pokemon.family[i]),
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(10),
+            ),
+          ),
+          padding: EdgeInsets.all(10),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(
+                pokemon.family.length,
+                (int i) => this._pokemonEvolution(
+                  context,
+                  pokemon.family[i],
+                ),
+              ),
             ),
           ),
         )
@@ -152,21 +222,46 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     );
   }
 
-  Widget _pokemonEvolution(Family pokemon) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
+  Widget _pokemonEvolution(BuildContext context, Pokemon pokemon) {
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Column(
         children: <Widget>[
-          SizedBox(
-            width: 100,
-            child: PokemonImage(Pokemon.getURLImage(pokemon.id)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Material(
+              color: Colors.black54,
+              child: InkWell(
+                splashColor: Colors.white10,
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, "pokemonDetail",
+                      arguments: pokemon);
+                },
+                child: PokemonImage(
+                  Pokemon.getURLImage(pokemon.id),
+                ),
+              ),
+            ),
           ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(10),
+              ),
+            ),
+            child: Text(
+              "#${pokemon.id} ${pokemon.name}",
+              style: Theme.of(context).textTheme.caption,
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _video(PokemonDetail pokemon) {
+  Widget _video(Pokemon pokemon) {
     _videoCtrl =
         VideoPlayerController.network(Pokemon.getURLVideo(pokemon.name));
 
@@ -190,7 +285,6 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                       color: Colors.white,
                       child: AspectRatio(
                         aspectRatio: 1,
-                        // Use the VideoPlayer widget to display the video.
                         child: VideoPlayer(_videoCtrl),
                       ),
                     ),

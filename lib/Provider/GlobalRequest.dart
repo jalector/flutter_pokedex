@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter_pokedex/Model/PokemonDetail_model.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,12 +26,24 @@ class GlobalRequest {
     return answer;
   }
 
-  Future<PokemonDetail> getPokemonDetail(int number) async {
-    PokemonDetail answer;
+  Future<Pokemon> getPokemon(int number) async {
+    Pokemon answer;
     http.Response response = await http.get("${api}pokemon/$number");
 
     if (response.statusCode == 200) {
-      answer = PokemonDetail.fromJson(json.decode(response.body));
+      answer = Pokemon.fromJsonDetail(json.decode(response.body));
+    }
+
+    return answer;
+  }
+
+  Future<Pokemon> getPokemonMinimalInfo(int number) async {
+    Pokemon answer;
+    http.Response response =
+        await http.get("${api}pokemon/minimal-identifiers/$number");
+
+    if (response.statusCode == 200) {
+      answer = Pokemon.fromJson(json.decode(response.body));
     }
 
     return answer;
