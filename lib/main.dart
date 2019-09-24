@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/pages/Pokedex_page.dart';
 import 'package:flutter_pokedex/pages/PokemonDetail_page.dart';
+import 'package:flutter_pokedex/pages/PokemonVideo_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         "/": (BuildContext context) => PokedexPage(),
         "pokemonDetail": (BuildContext context) => PokemonDetailPage(),
+        "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
       },
       theme: ThemeData(
         textTheme: TextTheme(

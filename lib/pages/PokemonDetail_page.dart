@@ -14,6 +14,12 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   GlobalRequest globalRequest = GlobalRequest();
 
   @override
+  void dispose() {
+    this._videoCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Pokemon pokemon = ModalRoute.of(context).settings.arguments;
     return Scaffold(
@@ -99,9 +105,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                       textAlign: TextAlign.justify,
                     ),
                     SizedBox(height: 15),
-                    this.pokemonType(pokemon.type1),
+                    this._pokemonType(pokemon.type1),
                     (pokemon.type2 != null)
-                        ? this.pokemonType(pokemon.type2)
+                        ? this._pokemonType(pokemon.type2)
                         : Container(),
                   ],
                 ),
@@ -171,7 +177,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     );
   }
 
-  Widget pokemonType(String type) {
+  Widget _pokemonType(String type) {
     return Container(
       child: Text(type),
     );
@@ -237,8 +243,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                   Navigator.pushReplacementNamed(context, "pokemonDetail",
                       arguments: pokemon);
                 },
-                child: PokemonImage(
-                  Pokemon.getURLImage(pokemon.id),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.25,
+                  child: PokemonImage(Pokemon.getURLImage(pokemon.id)),
                 ),
               ),
             ),
@@ -262,46 +269,62 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _video(Pokemon pokemon) {
-    _videoCtrl =
-        VideoPlayerController.network(Pokemon.getURLVideo(pokemon.name));
+    if (this._videoCtrl == null) {
+      this._videoCtrl =
+          VideoPlayerController.network(Pokemon.getURLVideo(pokemon.name));
 
-    return FutureBuilder(
+      return FutureBuilder(
         future: _videoCtrl.initialize(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          Widget video;
           if (snapshot.connectionState == ConnectionState.done) {
             this._videoCtrl.play();
             this._videoCtrl.setLooping(true);
-            video = Flexible(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      color: Colors.white,
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: VideoPlayer(_videoCtrl),
-                      ),
-                    ),
-                  ),
+            return this._createVideoUI();
+          } else {
+            return Flexible(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 50),
+                  child: CircularProgressIndicator(),
                 ),
               ),
             );
-          } else {
-            video = Flexible(
-                child: Center(
-                    child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 50),
-              child: CircularProgressIndicator(),
-            )));
           }
+        },
+      );
+    } else {
+      return this._createVideoUI();
+    }
+  }
 
-          return video;
-        });
+  Widget _createVideoUI() {
+    return Flexible(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, "pokemonVideo", arguments: _videoCtrl);
+          },
+          child: Hero(
+            tag: "video",
+            child: Material(
+              elevation: 3,
+              borderRadius: BorderRadius.circular(10),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  color: Colors.white,
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: VideoPlayer(_videoCtrl),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
