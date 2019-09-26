@@ -60,12 +60,22 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                   ),
                 ),
                 child: SingleChildScrollView(
-                  child: FutureBuilder(
+                  child: FutureBuilder<HttpAnswer<Pokemon>>(
                     future: globalRequest.getPokemon(pokemon.id),
                     builder: (BuildContext context,
-                        AsyncSnapshot<Pokemon> snapshot) {
+                        AsyncSnapshot<HttpAnswer<Pokemon>> snapshot) {
                       if (snapshot.hasData) {
-                        return _pokemonDetail(context, snapshot.data);
+                        return _pokemonDetail(context, snapshot.data.object);
+                      } else if (snapshot.hasError) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(snapshot.error.toString()),
+                            )
+                          ],
+                        );
                       }
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -137,11 +147,12 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     return Expanded(
       child: GestureDetector(
         onTap: () async {
-          Pokemon poke = await this.globalRequest.getPokemonMinimalInfo(number);
+          HttpAnswer<Pokemon> poke =
+              await this.globalRequest.getPokemonMinimalInfo(number);
           Navigator.pushReplacementNamed(
             context,
             "pokemonDetail",
-            arguments: poke,
+            arguments: poke.object,
           );
         },
         child: Container(
@@ -244,7 +255,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                       arguments: pokemon);
                 },
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.25,
+                  width: MediaQuery.of(context).size.width * 0.35,
                   child: PokemonImage(Pokemon.getURLImage(pokemon.id)),
                 ),
               ),

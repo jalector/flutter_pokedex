@@ -1,24 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Model/HttpAnswer.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 
-class PokedexPage extends StatelessWidget {
+class PokedexPage extends StatefulWidget {
+  @override
+  _PokedexPageState createState() => _PokedexPageState();
+}
+
+class _PokedexPageState extends State<PokedexPage> {
   final GlobalRequest globalRequest = GlobalRequest();
+
+  final GlobalRequest globalRequest2 = GlobalRequest();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: FutureBuilder(
+        child: FutureBuilder<HttpAnswer<List<Pokemon>>>(
           future: globalRequest.getPokedexGeneration(4),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+          builder: (BuildContext context,
+              AsyncSnapshot<HttpAnswer<List<Pokemon>>> snapshot) {
             Widget builder;
             if (snapshot.hasData) {
-              builder = this._pokedex(context, snapshot.data);
+              builder = this._pokedex(context, snapshot.data.object);
             } else if (snapshot.hasError) {
-              builder = Text("Error conexion");
+              builder = Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(15),
+                      margin: EdgeInsets.all(35),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).errorColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        snapshot.error.toString(),
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                    ),
+                  )
+                ],
+              );
             } else {
               builder = CircularProgressIndicator();
             }
