@@ -14,7 +14,7 @@ class _PokemonVideoPageState extends State<PokemonVideoPage> {
     _controller = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Theme.of(context).accentColor,
       body: Center(
         child: Padding(
             padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
+import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 import 'package:video_player/video_player.dart';
 
@@ -23,7 +24,6 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   Widget build(BuildContext context) {
     Pokemon pokemon = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      backgroundColor: Colors.blue,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -45,48 +45,53 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                 ),
               ),
               SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.only(
-                  top: 20,
-                  bottom: 40,
-                  left: 10,
-                  right: 10,
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.85,
                 ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(5),
-                    bottom: Radius.circular(20),
+                child: Container(
+                  padding: EdgeInsets.only(
+                    top: 20,
+                    bottom: 40,
+                    left: 10,
+                    right: 10,
                   ),
-                ),
-                child: SingleChildScrollView(
-                  child: FutureBuilder<HttpAnswer<Pokemon>>(
-                    future: globalRequest.getPokemon(pokemon.id),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<HttpAnswer<Pokemon>> snapshot) {
-                      if (snapshot.hasData) {
-                        return _pokemonDetail(context, snapshot.data.object);
-                      } else if (snapshot.hasError) {
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).accentColor,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(5),
+                      bottom: Radius.circular(20),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: FutureBuilder<HttpAnswer<Pokemon>>(
+                      future: globalRequest.getPokemon(pokemon.id),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<HttpAnswer<Pokemon>> snapshot) {
+                        if (snapshot.hasData) {
+                          return _pokemonDetail(context, snapshot.data.object);
+                        } else if (snapshot.hasError) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(snapshot.error.toString()),
+                              )
+                            ],
+                          );
+                        }
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(snapshot.error.toString()),
+                              child: CustomLoader(),
                             )
                           ],
                         );
-                      }
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(),
-                          )
-                        ],
-                      );
-                    },
+                      },
+                    ),
                   ),
                 ),
               )
@@ -127,6 +132,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         ),
         this._generationBanner(context, pokemon),
         this._adjacentPokemon(context, pokemon),
+        this._roar(context, pokemon),
         this._family(context, pokemon),
       ],
     );
@@ -177,7 +183,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       padding: EdgeInsets.all(5),
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: Colors.lightGreen.withOpacity(0.6),
+        color: Theme.of(context).primaryColorDark,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -204,13 +210,13 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         Container(
           padding: EdgeInsets.all(5),
           decoration: BoxDecoration(
-            color: Colors.lightBlueAccent,
+            color: Theme.of(context).primaryColorDark,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(10),
             ),
           ),
           child: Text(
-            "Familia",
+            "Family",
             style: Theme.of(context).textTheme.title,
           ),
         ),
@@ -296,7 +302,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 50),
-                  child: CircularProgressIndicator(),
+                  child: CustomLoader(),
                 ),
               ),
             );
@@ -337,5 +343,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         ),
       ),
     );
+  }
+
+  _roar(BuildContext context, Pokemon pokemon) {
+    return Container();
   }
 }

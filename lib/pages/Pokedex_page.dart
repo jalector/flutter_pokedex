@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/HttpAnswer.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
+import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 
 class PokedexPage extends StatefulWidget {
@@ -46,7 +47,7 @@ class _PokedexPageState extends State<PokedexPage> {
                 ],
               );
             } else {
-              builder = CircularProgressIndicator();
+              builder = CustomLoader();
             }
 
             return builder;
@@ -59,6 +60,14 @@ class _PokedexPageState extends State<PokedexPage> {
   Widget _pokedex(BuildContext context, List<Pokemon> pokedex) {
     return CustomScrollView(
       slivers: <Widget>[
+        SliverAppBar(
+          floating: true,
+          pinned: false,
+          title: Text(
+            "Pokedex",
+            style: Theme.of(context).textTheme.display4,
+          ),
+        ),
         SliverGrid.extent(
           maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.35,
           children: List.generate(pokedex.length, (int index) {
@@ -72,7 +81,7 @@ class _PokedexPageState extends State<PokedexPage> {
               child: Container(
                 margin: EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.5),
+                  color: Theme.of(context).accentColor,
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: PokemonImage(Pokemon.getURLImage(pokemon.id)),
