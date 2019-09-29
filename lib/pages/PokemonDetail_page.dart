@@ -24,26 +24,25 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   Widget build(BuildContext context) {
     Pokemon pokemon = ModalRoute.of(context).settings.arguments;
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              "${pokemon.name}",
+              style: Theme.of(context).textTheme.display3,
+            ),
+            Spacer(),
+            Text("#${pokemon.id}", style: Theme.of(context).textTheme.title),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.symmetric(horizontal: 8),
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      "${pokemon.name}",
-                      style: Theme.of(context).textTheme.display3,
-                    ),
-                    Spacer(),
-                    Text("#${pokemon.id}",
-                        style: Theme.of(context).textTheme.display3),
-                  ],
-                ),
-              ),
               SizedBox(height: 10),
               ConstrainedBox(
                 constraints: BoxConstraints(

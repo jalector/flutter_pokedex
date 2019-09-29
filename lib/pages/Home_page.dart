@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Widget/PageViewGeneration.dart';
+import 'package:flutter_pokedex/Widget/PokemonFusion.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key key}) : super(key: key);
@@ -7,36 +9,34 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(10),
+        child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               Text(
                 "Pokedex",
                 style: Theme.of(context).textTheme.display3,
               ),
-              this._generationPokemon(),
+              SizedBox(height: 20),
+              Text(
+                "Generations",
+                style: Theme.of(context).textTheme.title,
+                textAlign: TextAlign.left,
+              ),
+              PageViewGeneration(),
+              SizedBox(height: 20),
+              Text(
+                "Fusions",
+                style: Theme.of(context).textTheme.title,
+                textAlign: TextAlign.left,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: PokemonFusion(),
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _generationPokemon() {
-    return Column(
-      children: [
-        this._generation(1),
-        this._generation(2),
-        this._generation(3),
-        this._generation(4),
-      ],
-    );
-  }
-
-  Widget _generation(int number) {
-    return Container(
-      child: Text("Generaion #$number"),
     );
   }
 }

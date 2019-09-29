@@ -53,6 +53,7 @@ class MyApp extends StatelessWidget {
           title: TextStyle(
             fontSize: 30,
             color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
           caption: TextStyle(
             fontSize: 15,

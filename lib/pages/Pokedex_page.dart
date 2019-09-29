@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Model/Generation_model.dart';
 import 'package:flutter_pokedex/Model/HttpAnswer.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
@@ -13,14 +14,15 @@ class PokedexPage extends StatefulWidget {
 class _PokedexPageState extends State<PokedexPage> {
   final GlobalRequest globalRequest = GlobalRequest();
 
-  final GlobalRequest globalRequest2 = GlobalRequest();
-
   @override
   Widget build(BuildContext context) {
+    Generation generation = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<HttpAnswer<List<Pokemon>>>(
-          future: globalRequest.getPokedexGeneration(4),
+          future: globalRequest.getPokedexGeneration(
+            generation.number,
+          ),
           builder: (BuildContext context,
               AsyncSnapshot<HttpAnswer<List<Pokemon>>> snapshot) {
             Widget builder;
@@ -58,38 +60,65 @@ class _PokedexPageState extends State<PokedexPage> {
   }
 
   Widget _pokedex(BuildContext context, List<Pokemon> pokedex) {
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverAppBar(
-          floating: true,
-          pinned: false,
-          title: Text(
-            "Pokedex",
-            style: Theme.of(context).textTheme.display4,
+    Generation generation = ModalRoute.of(context).settings.arguments;
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            floating: true,
+            pinned: false,
+            title: Text(
+              "${generation.title}",
+              style: Theme.of(context).textTheme.display4,
+            ),
           ),
-        ),
-        SliverGrid.extent(
-          maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.35,
-          children: List.generate(pokedex.length, (int index) {
-            Pokemon pokemon = pokedex[index];
-            return InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, "pokemonDetail",
-                    arguments: pokemon);
-              },
-              splashColor: Colors.blueAccent,
-              child: Container(
-                margin: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).accentColor,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: PokemonImage(Pokemon.getURLImage(pokemon.id)),
-              ),
-            );
-          }),
-        ),
-      ],
+          SliverGrid.extent(
+            maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.35,
+            children: List.generate(pokedex.length, (int index) {
+              Pokemon pokemon = pokedex[index];
+              return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, "pokemonDetail",
+                        arguments: pokemon);
+                  },
+                  splashColor: Colors.blueAccent,
+                  child: Container(
+                    margin: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).accentColor,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 2),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColorLight,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text("#${pokemon.id}"),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 20,
+                          child: Opacity(
+                            opacity: 0.1,
+                            child: Text(
+                              pokemon.name,
+                              style: Theme.of(context).textTheme.title,
+                            ),
+                          ),
+                        ),
+                        PokemonImage(Pokemon.getURLImage(pokemon.id)),
+                      ],
+                    ),
+                  ));
+            }),
+          ),
+        ],
+      ),
     );
   }
 }
