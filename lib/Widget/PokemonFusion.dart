@@ -37,6 +37,17 @@ class _PokemonFusionState extends State<PokemonFusion> {
             callback: () {
               this._pokemonOne = this._randomPokmeon();
             },
+            addCallback: () {
+              this._pokemonOne = (++this._pokemonOne) % 151;
+              if (this._pokemonOne == 0) this._pokemonOne++;
+            },
+            minCallback: () {
+              if (this._pokemonOne == 1) {
+                this._pokemonOne = 151;
+              } else {
+                this._pokemonOne--;
+              }
+            },
           ),
           this._pokemonChild(),
           this._randomPokemonImage(
@@ -44,6 +55,17 @@ class _PokemonFusionState extends State<PokemonFusion> {
             randomPokemon: this._pokemonTwo,
             callback: () {
               this._pokemonTwo = this._randomPokmeon();
+            },
+            addCallback: () {
+              this._pokemonTwo = (++this._pokemonTwo) % 151;
+              if (this._pokemonTwo == 0) this._pokemonTwo++;
+            },
+            minCallback: () {
+              if (this._pokemonTwo == 1) {
+                this._pokemonTwo = 151;
+              } else {
+                this._pokemonTwo--;
+              }
             },
           ),
         ],
@@ -55,14 +77,23 @@ class _PokemonFusionState extends State<PokemonFusion> {
     return math.Random().nextInt(150) + 1;
   }
 
-  Widget _randomPokemonImage(
-    BuildContext context, {
-    int randomPokemon,
-    Function callback,
-  }) {
+  Widget _randomPokemonImage(BuildContext context,
+      {int randomPokemon,
+      Function callback,
+      Function addCallback,
+      Function minCallback}) {
     return Flexible(
-      child: InkWell(
-        onTap: () => setState(() => callback()),
+      child: GestureDetector(
+        onTap: () {
+          setState(() => callback());
+        },
+        onVerticalDragEnd: (DragEndDetails dragEndDetails) {
+          if (dragEndDetails.primaryVelocity > 0) {
+            setState(() => minCallback());
+          } else if (dragEndDetails.primaryVelocity < 0) {
+            setState(() => addCallback());
+          }
+        },
         child: Container(
           padding: EdgeInsets.all(5),
           margin: EdgeInsets.all(15),

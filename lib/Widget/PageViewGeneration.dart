@@ -14,6 +14,8 @@ class _PageViewGenerationState extends State<PageViewGeneration> {
     Generation(2, "Johto"),
     Generation(3, "Hoenn"),
     Generation(4, "Sinnoh"),
+    Generation(5, "Unova"),
+    Generation(6, "Kalos"),
   ];
 
   @override

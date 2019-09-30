@@ -16,7 +16,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   @override
   void dispose() {
-    this._videoCtrl.dispose();
+    this._videoCtrl?.dispose();
     super.dispose();
   }
 
@@ -107,7 +107,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _video(pokemon),
+            (pokemon.generation >= 5)
+                ? this._image(pokemon)
+                : this._video(pokemon),
             Flexible(
               child: Padding(
                 padding: const EdgeInsets.only(top: 5, left: 5),
@@ -280,6 +282,26 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget _image(Pokemon pokemon) {
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            "pokemonImage",
+            arguments: Pokemon.getURLImage(pokemon.id),
+          );
+        },
+        child: Hero(
+          tag: "image",
+          child: PokemonImage(
+            Pokemon.getURLImage(pokemon.id),
+          ),
+        ),
       ),
     );
   }

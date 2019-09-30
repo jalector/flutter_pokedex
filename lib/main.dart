@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/pages/Pokedex_page.dart';
 import 'package:flutter_pokedex/pages/PokemonDetail_page.dart';
+import 'package:flutter_pokedex/pages/PokemonImage_page.dart';
 import 'package:flutter_pokedex/pages/PokemonVideo_page.dart';
 
 import 'Pages/Home_page.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         "pokedex": (BuildContext context) => PokedexPage(),
         "pokemonDetail": (BuildContext context) => PokemonDetailPage(),
         "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
+        "pokemonImage": (BuildContext context) => PokemonImagePage(),
       },
       theme: ThemeData(
         primaryColor: Color.fromRGBO(155, 89, 182, 1),

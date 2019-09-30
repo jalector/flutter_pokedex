@@ -96,51 +96,57 @@ class Pokemon {
         maxcp: json["maxcp"],
       );
 
-  factory Pokemon.fromJsonDetail(Map<String, dynamic> json) => Pokemon(
-        id: json["id"],
-        name: json["name"],
-        form: json["form"],
-        type1: json["type1"],
-        type2: json["type2"],
-        atk: json["atk"],
-        sta: json["sta"],
-        def: json["def"],
-        isMythical: json["isMythical"],
-        isLegendary: json["isLegendary"],
-        generation: json["generation"],
-        candyToEvolve: json["candyToEvolve"],
-        kmBuddyDistance: json["kmBuddyDistance"],
-        baseCaptureRate: json["baseCaptureRate"].toDouble(),
-        description: json["description"],
-        weight: json["weight"].toDouble(),
-        height: json["height"].toDouble(),
-        buddySize: json["buddySize"],
-        baseFleeRate: json["baseFleeRate"].toDouble(),
-        kmDistanceToHatch: json["kmDistanceToHatch"],
-        thirdMoveStardust: json["thirdMoveStardust"],
-        thirdMoveCandy: json["thirdMoveCandy"],
-        family:
-            List<Pokemon>.from(json["family"].map((x) => Pokemon.fromJson(x))),
-        isDeployable: json["is_deployable"],
-        isTransferable: json["is_transferable"],
-        bonusStardustCaptureReward: json["bonus_stardust_capture_reward"],
-        bonusCandyCaptureReward: json["bonus_candy_capture_reward"],
-        templateId: json["template_id"],
-        evolutionItemRequirement: json["evolutionItemRequirement"],
-        male: json["male"].toDouble(),
-        female: json["female"].toDouble(),
-        genderless: json["genderless"],
-        forms: List<Form>.from(json["forms"].map((x) => Form.fromJson(x))),
-        descriptions: List<Description>.from(
-            json["descriptions"].map((x) => Description.fromJson(x))),
-        typeChart: List<TypeChart>.from(
-            json["typeChart"].map((x) => TypeChart.fromJson(x))),
-        weatherInfluences:
-            List<String>.from(json["weatherInfluences"].map((x) => x)),
-        cPs: Map.from(json["CPs"]).map((k, v) => MapEntry<String, int>(k, v)),
-        maxcp: json["maxcp"],
-      );
+  factory Pokemon.fromJsonDetail(Map<String, dynamic> json) {
+    List<Pokemon> family = List<Pokemon>();
+    if (json["family"] != null) {
+      family =
+          List<Pokemon>.from(json["family"].map((x) => Pokemon.fromJson(x)));
+    }
 
+    return Pokemon(
+      id: json["id"],
+      name: json["name"],
+      form: json["form"],
+      type1: json["type1"],
+      type2: json["type2"],
+      atk: json["atk"],
+      sta: json["sta"],
+      def: json["def"],
+      isMythical: json["isMythical"],
+      isLegendary: json["isLegendary"],
+      generation: json["generation"],
+      candyToEvolve: json["candyToEvolve"],
+      kmBuddyDistance: json["kmBuddyDistance"],
+      baseCaptureRate: json["baseCaptureRate"].toDouble(),
+      description: json["description"],
+      weight: json["weight"].toDouble(),
+      height: json["height"].toDouble(),
+      buddySize: json["buddySize"],
+      baseFleeRate: json["baseFleeRate"].toDouble(),
+      kmDistanceToHatch: json["kmDistanceToHatch"],
+      thirdMoveStardust: json["thirdMoveStardust"],
+      thirdMoveCandy: json["thirdMoveCandy"],
+      family: family,
+      isDeployable: json["is_deployable"],
+      isTransferable: json["is_transferable"],
+      bonusStardustCaptureReward: json["bonus_stardust_capture_reward"],
+      bonusCandyCaptureReward: json["bonus_candy_capture_reward"],
+      templateId: json["template_id"],
+      evolutionItemRequirement: json["evolutionItemRequirement"],
+      male: json["male"].toDouble(),
+      female: json["female"].toDouble(),
+      genderless: json["genderless"],
+      forms: List<Form>.from(json["forms"].map((x) => Form.fromJson(x))),
+      descriptions: List<Description>.from(
+          json["descriptions"].map((x) => Description.fromJson(x))),
+      typeChart: List<TypeChart>.from(
+          json["typeChart"].map((x) => TypeChart.fromJson(x))),
+      weatherInfluences:
+          List<String>.from(json["weatherInfluences"].map((x) => x)),
+      cPs: Map.from(json["CPs"]).map((k, v) => MapEntry<String, int>(k, v)),
+      maxcp: json["maxcp"],
+    );
+  }
   static String getURLImage(int number) {
     String n = number.toString();
     if (n.length == 1) {
