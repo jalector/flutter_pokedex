@@ -1,4 +1,7 @@
-import '../Provider/GlobalRequest.dart';
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
+import 'package:flutter_pokedex/Util.dart';
 
 class Pokemon {
   int id;
@@ -161,6 +164,10 @@ class Pokemon {
     return "${GlobalRequest.video}$name-small.mp4";
   }
 
+  static String getUrlBadgetype(String type) {
+    return "https://db.pokemongohub.net/images/badges/thumb/Badge_Type_${Util.capitalize(type)}_01.png";
+  }
+
   static List<Pokemon> fromJsonCollection(List json) {
     List<Pokemon> list = [];
 
@@ -173,6 +180,67 @@ class Pokemon {
       }
     }
     return list;
+  }
+
+  static Color chooseByPokemonType(String type) {
+    Color color = Colors.blue;
+    switch (type) {
+      case "grass":
+        color = Colors.green;
+        break;
+      case "bug":
+        color = Colors.greenAccent;
+        break;
+      case "dark":
+        color = Colors.brown[800];
+        break;
+      case "dragon":
+        color = Colors.purple;
+        break;
+      case "electric":
+        color = Colors.yellow;
+        break;
+      case "fairy":
+        color = Colors.pink[200];
+        break;
+      case "fighting":
+        color = Colors.brown[700];
+        break;
+      case "fire":
+        color = Colors.red[600];
+        break;
+      case "flying":
+        color = Colors.blue;
+        break;
+      case "ghost":
+        color = Colors.purple;
+        break;
+      case "ground":
+        color = Colors.brown[200];
+        break;
+      case "ice":
+        color = Colors.cyan[300];
+        break;
+      case "normal":
+        color = Colors.black38;
+        break;
+      case "poison":
+        color = Colors.purple;
+        break;
+      case "psychic":
+        color = Colors.pink;
+        break;
+      case "rock":
+        color = Colors.brown[300];
+        break;
+      case "steel":
+        color = Color.fromRGBO(160, 160, 160, 1.0);
+        break;
+      case "water":
+        color = Colors.blue[600];
+        break;
+    }
+    return color;
   }
 }
 

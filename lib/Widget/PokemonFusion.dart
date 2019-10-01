@@ -49,7 +49,7 @@ class _PokemonFusionState extends State<PokemonFusion> {
               }
             },
           ),
-          this._pokemonChild(),
+          this._pokemonChild(context),
           this._randomPokemonImage(
             context,
             randomPokemon: this._pokemonTwo,
@@ -121,16 +121,24 @@ class _PokemonFusionState extends State<PokemonFusion> {
     );
   }
 
-  Widget _pokemonChild() {
+  Widget _pokemonChild(BuildContext context) {
+    String image =
+        "https://images.alexonsager.net/pokemon/fused/${this._pokemonOne}/${this._pokemonOne}.${this._pokemonTwo}.png";
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.all(1),
-        decoration: BoxDecoration(
-          color: Theme.of(context).accentColor.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: PokemonImage(
-          "https://images.alexonsager.net/pokemon/fused/${this._pokemonOne}/${this._pokemonOne}.${this._pokemonTwo}.png",
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context).pushNamed("pokemonImage", arguments: image);
+        },
+        child: Container(
+          margin: EdgeInsets.all(1),
+          decoration: BoxDecoration(
+            color: Theme.of(context).accentColor.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Hero(
+            tag: "image",
+            child: PokemonImage(image),
+          ),
         ),
       ),
     );

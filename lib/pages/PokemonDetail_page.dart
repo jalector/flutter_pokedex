@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
+import 'package:flutter_pokedex/Util.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 import 'package:video_player/video_player.dart';
@@ -44,54 +45,47 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           child: Column(
             children: <Widget>[
               SizedBox(height: 10),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.85,
+              Container(
+                padding: EdgeInsets.only(
+                  top: 20,
+                  bottom: 40,
+                  left: 10,
+                  right: 10,
                 ),
-                child: Container(
-                  padding: EdgeInsets.only(
-                    top: 20,
-                    bottom: 40,
-                    left: 10,
-                    right: 10,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).accentColor,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(5),
+                    bottom: Radius.circular(20),
                   ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).accentColor,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(5),
-                      bottom: Radius.circular(20),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
-                    child: FutureBuilder<HttpAnswer<Pokemon>>(
-                      future: globalRequest.getPokemon(pokemon.id),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<HttpAnswer<Pokemon>> snapshot) {
-                        if (snapshot.hasData) {
-                          return _pokemonDetail(context, snapshot.data.object);
-                        } else if (snapshot.hasError) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(snapshot.error.toString()),
-                              )
-                            ],
-                          );
-                        }
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CustomLoader(),
-                            )
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                ),
+                child: FutureBuilder<HttpAnswer<Pokemon>>(
+                  future: globalRequest.getPokemon(pokemon.id),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<HttpAnswer<Pokemon>> snapshot) {
+                    if (snapshot.hasData) {
+                      return _pokemonDetail(context, snapshot.data.object);
+                    } else if (snapshot.hasError) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(snapshot.error.toString()),
+                          )
+                        ],
+                      );
+                    }
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CustomLoader(),
+                        )
+                      ],
+                    );
+                  },
                 ),
               )
             ],
@@ -104,34 +98,14 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   Widget _pokemonDetail(BuildContext context, Pokemon pokemon) {
     return Column(
       children: <Widget>[
+        this._generationBanner(context, pokemon),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            (pokemon.generation >= 5)
-                ? this._image(pokemon)
-                : this._video(pokemon),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5, left: 5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      pokemon.description,
-                      textAlign: TextAlign.justify,
-                    ),
-                    SizedBox(height: 15),
-                    this._pokemonType(pokemon.type1),
-                    (pokemon.type2 != null)
-                        ? this._pokemonType(pokemon.type2)
-                        : Container(),
-                  ],
-                ),
-              ),
-            ),
+            this._pokemonPreview(pokemon),
+            this._description(pokemon),
           ],
         ),
-        this._generationBanner(context, pokemon),
         this._adjacentPokemon(context, pokemon),
         this._roar(context, pokemon),
         this._family(context, pokemon),
@@ -139,12 +113,40 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     );
   }
 
+  Widget _pokemonPreview(Pokemon pokemon) {
+    return (pokemon.generation >= 5)
+        ? this._image(pokemon)
+        : this._video(pokemon);
+  }
+
+  Widget _description(Pokemon pokemon) {
+    return Flexible(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 5, left: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              pokemon.description,
+              textAlign: TextAlign.justify,
+            ),
+            SizedBox(height: 15),
+            this._pokemonType(pokemon.type1),
+            (pokemon.type2 != null)
+                ? this._pokemonType(pokemon.type2)
+                : Container(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _adjacentPokemon(BuildContext context, Pokemon pokemon) {
     return Row(children: <Widget>[
-      (pokemon.id > 0)
+      (pokemon.id - 1 > 0)
           ? _adjacent(pokemon.id - 1, true)
           : Expanded(child: Container()),
-      (pokemon.id < 809)
+      (pokemon.id < 808)
           ? _adjacent(pokemon.id + 1, false)
           : Expanded(child: Container()),
     ]);
@@ -156,11 +158,8 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         onTap: () async {
           HttpAnswer<Pokemon> poke =
               await this.globalRequest.getPokemonMinimalInfo(number);
-          Navigator.pushReplacementNamed(
-            context,
-            "pokemonDetail",
-            arguments: poke.object,
-          );
+          Navigator.pushReplacementNamed(context, "pokemonDetail",
+              arguments: poke.object);
         },
         child: Container(
           padding: EdgeInsets.all(8),
@@ -197,7 +196,30 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   Widget _pokemonType(String type) {
     return Container(
-      child: Text(type),
+      padding: EdgeInsets.only(left: 5, right: 15, top: 3, bottom: 3),
+      margin: EdgeInsets.symmetric(vertical: 2),
+      decoration: BoxDecoration(
+        color: Pokemon.chooseByPokemonType(type),
+        borderRadius: BorderRadius.horizontal(
+          right: Radius.circular(10),
+          left: Radius.circular(2),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: Image.network(Pokemon.getUrlBadgetype(type)),
+            ),
+            radius: 10,
+          ),
+          SizedBox(width: 10),
+          Text(Util.capitalize(type)),
+        ],
+      ),
     );
   }
 
