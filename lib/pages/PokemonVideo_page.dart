@@ -12,6 +12,7 @@ class _PokemonVideoPageState extends State<PokemonVideoPage> {
   @override
   Widget build(BuildContext context) {
     _controller = ModalRoute.of(context).settings.arguments;
+    _controller?.play();
 
     return Scaffold(
       appBar: AppBar(
@@ -21,7 +22,10 @@ class _PokemonVideoPageState extends State<PokemonVideoPage> {
       backgroundColor: Theme.of(context).accentColor,
       body: Center(
         child: Padding(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.025,
+              vertical: 10,
+            ),
             child: Hero(
               tag: "video",
               child: Material(

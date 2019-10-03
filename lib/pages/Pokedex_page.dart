@@ -61,6 +61,15 @@ class _PokedexPageState extends State<PokedexPage> {
 
   Widget _pokedex(BuildContext context, List<Pokemon> pokedex) {
     Generation generation = ModalRoute.of(context).settings.arguments;
+    Size size = MediaQuery.of(context).size;
+    double cardWidth;
+    if (size.width > 1200) {
+      cardWidth = size.width * 0.15;
+    } else if (size.width >= 750) {
+      cardWidth = size.width * 0.2;
+    } else {
+      cardWidth = size.width * 0.35;
+    }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -75,7 +84,7 @@ class _PokedexPageState extends State<PokedexPage> {
             ),
           ),
           SliverGrid.extent(
-            maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.35,
+            maxCrossAxisExtent: cardWidth,
             children: List.generate(pokedex.length, (int index) {
               Pokemon pokemon = pokedex[index];
               return InkWell(
