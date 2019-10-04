@@ -62,7 +62,9 @@ class _PokedexPageState extends State<PokedexPage> {
   Widget _pokedex(BuildContext context, List<Pokemon> pokedex) {
     Generation generation = ModalRoute.of(context).settings.arguments;
     Size size = MediaQuery.of(context).size;
+
     double cardWidth;
+
     if (size.width > 1200) {
       cardWidth = size.width * 0.15;
     } else if (size.width >= 750) {

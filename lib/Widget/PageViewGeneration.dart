@@ -16,6 +16,7 @@ class _PageViewGenerationState extends State<PageViewGeneration> {
     Generation(4, "Sinnoh"),
     Generation(5, "Unova"),
     Generation(6, "Kalos"),
+    Generation(7, "Alola"),
   ];
 
   @override
@@ -28,7 +29,6 @@ class _PageViewGenerationState extends State<PageViewGeneration> {
         maxWidth: size.width,
       ),
       child: PageView.builder(
-          reverse: true,
           itemCount: regions.length,
           controller: PageController(
             initialPage: 0,
