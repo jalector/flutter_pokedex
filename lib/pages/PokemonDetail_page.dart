@@ -4,6 +4,7 @@ import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Util.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+import 'package:flutter_pokedex/Widget/PokemonVideo.dart';
 import 'package:video_player/video_player.dart';
 
 class PokemonDetailPage extends StatefulWidget {
@@ -60,16 +61,17 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                     )
                   ],
                 );
+              } else {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomLoader(),
+                    )
+                  ],
+                );
               }
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CustomLoader(),
-                  )
-                ],
-              );
             },
           ),
         ),
@@ -78,82 +80,93 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _pokemonDetail(BuildContext context, Pokemon pokemon) {
-    return OrientationBuilder(builder: (
-      BuildContext context,
-      Orientation orientation,
-    ) {
-      //Size size = MediaQuery.of(context).size;
-      if (orientation == Orientation.landscape) {
-        return Row(
+    return OrientationBuilder(
+      builder: (BuildContext context, Orientation orientation) {
+        if (orientation == Orientation.landscape) {
+          return this._pokemonDetailLandscape(context, pokemon);
+        } else {
+          return this._pokemonDetailPortrait(context, pokemon);
+        }
+      },
+    );
+  }
+
+  Widget _pokemonDetailPortrait(BuildContext context, Pokemon pokemon) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).accentColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(5),
+          bottom: Radius.circular(20),
+        ),
+      ),
+      child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
           children: <Widget>[
-            Column(
+            this._generationBanner(context, pokemon),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Expanded(child: this._pokemonPreview(pokemon)),
-                this._generationBanner(context, pokemon),
+                Flexible(child: this._pokemonPreview(pokemon)),
+                Flexible(child: this._description(pokemon)),
               ],
             ),
-            Flexible(
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).accentColor,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    children: <Widget>[
-                      this._description(pokemon),
-                      this._adjacentPokemon(context, pokemon),
-                      this._statistics(context, pokemon),
-                      this._family(context, pokemon),
-                    ],
-                  ),
-                ),
+            this._pokemonTypeBanners(pokemon),
+            this._adjacentPokemon(context, pokemon),
+            this._roar(context, pokemon),
+            this._statistics(context, pokemon),
+            this._family(context, pokemon),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _pokemonDetailLandscape(BuildContext context, Pokemon pokemon) {
+    return Row(
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            Expanded(child: this._pokemonPreview(pokemon)),
+            this._generationBanner(context, pokemon),
+          ],
+        ),
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).accentColor,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                children: <Widget>[
+                  this._pokemonTypeBanners(pokemon),
+                  this._description(pokemon),
+                  this._adjacentPokemon(context, pokemon),
+                  this._statistics(context, pokemon),
+                  this._family(context, pokemon),
+                ],
               ),
             ),
-          ],
-        );
-      } else {
-        return Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).accentColor,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(5),
-              bottom: Radius.circular(20),
-            ),
           ),
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: <Widget>[
-                this._generationBanner(context, pokemon),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Flexible(child: this._pokemonPreview(pokemon)),
-                    Flexible(child: this._description(pokemon)),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    this._pokemonType(pokemon.type1),
-                    (pokemon.type2 != null)
-                        ? this._pokemonType(pokemon.type2)
-                        : Container(),
-                  ],
-                ),
-                this._adjacentPokemon(context, pokemon),
-                this._roar(context, pokemon),
-                this._statistics(context, pokemon),
-                this._family(context, pokemon),
-              ],
-            ),
-          ),
-        );
-      }
-    });
+        ),
+      ],
+    );
+  }
+
+  Widget _pokemonTypeBanners(Pokemon pokemon) {
+    return Row(
+      children: <Widget>[
+        this._pokemonType(pokemon.type1),
+        (pokemon.type2 != null)
+            ? this._pokemonType(pokemon.type2)
+            : Container(),
+      ],
+    );
   }
 
   Widget _statistics(BuildContext context, Pokemon pokemon) {
@@ -472,9 +485,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         future: _videoCtrl.initialize(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            this._videoCtrl.play();
-            this._videoCtrl.setLooping(true);
-            return this._createVideoUI();
+            return this._createVideoUI(context);
           } else {
             return Center(
               child: Padding(
@@ -486,35 +497,18 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         },
       );
     } else {
-      return this._createVideoUI();
+      return this._createVideoUI(context);
     }
   }
 
-  Widget _createVideoUI() {
+  Widget _createVideoUI(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: GestureDetector(
         onTap: () {
           Navigator.pushNamed(context, "pokemonVideo", arguments: _videoCtrl);
         },
-        child: Hero(
-          tag: "video",
-          child: Material(
-            elevation: 3,
-            borderRadius: BorderRadius.circular(10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                padding: EdgeInsets.all(5),
-                color: Colors.white,
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: VideoPlayer(_videoCtrl),
-                ),
-              ),
-            ),
-          ),
-        ),
+        child: PokemonVideo(this._videoCtrl),
       ),
     );
   }

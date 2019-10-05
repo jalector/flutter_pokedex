@@ -7,7 +7,12 @@ class PageViewGeneration extends StatefulWidget {
   _PageViewGenerationState createState() => _PageViewGenerationState();
 }
 
-class _PageViewGenerationState extends State<PageViewGeneration> {
+class _PageViewGenerationState extends State<PageViewGeneration>
+    with SingleTickerProviderStateMixin {
+  AnimationController _animCtrl;
+  Animation _countGeneration;
+  PageController _pageCtrl;
+
   int selectedIndex = 0;
   List<Generation> regions = [
     Generation(1, "Kanto"),
@@ -20,33 +25,100 @@ class _PageViewGenerationState extends State<PageViewGeneration> {
   ];
 
   @override
+  void initState() {
+    this._animCtrl = new AnimationController(
+      vsync: this,
+      duration: Duration(seconds: regions.length * 5),
+    );
+
+    this._pageCtrl = PageController(
+      initialPage: 0,
+      viewportFraction: 0.85,
+    );
+
+    this._countGeneration = Tween<double>(
+      begin: 0,
+      end: (this.regions.length - 1).toDouble(),
+    ).animate(this._animCtrl);
+
+    this._animCtrl.addListener(() {
+      int page = (this._countGeneration.value as double).toInt();
+
+      if (this.selectedIndex != page) {
+        this.selectedIndex = page;
+        this._pageCtrl.animateToPage(
+              page,
+              duration: Duration(
+                milliseconds: (page == this.regions.length - 1) ? 300 : 500,
+              ),
+              curve: Curves.easeInOut,
+            );
+      }
+    });
+    this._animCtrl.forward();
+    this._animCtrl.repeat();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    return Stack(
+      children: <Widget>[
+        this._pageViewer(size),
+        Positioned(
+          right: 0,
+          child: Column(
+            children: <Widget>[
+              RaisedButton(
+                color: Theme.of(context).accentColor,
+                child: Icon(Icons.keyboard_arrow_left),
+                onPressed: () {
+                  this.selectedIndex++;
+                  this._pageCtrl.animateToPage(
+                        selectedIndex,
+                        duration: Duration(
+                          milliseconds:
+                              (selectedIndex == this.regions.length - 1)
+                                  ? 300
+                                  : 500,
+                        ),
+                        curve: Curves.easeInOut,
+                      );
+                },
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _pageViewer(Size size) {
     return Container(
       constraints: BoxConstraints(
         maxHeight: size.height * 0.25,
         maxWidth: size.width,
       ),
       child: PageView.builder(
-          itemCount: regions.length,
-          controller: PageController(
-            initialPage: 0,
-            viewportFraction: 0.85,
-          ),
-          physics: BouncingScrollPhysics(),
-          onPageChanged: (int index) {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
-          itemBuilder: (BuildContext context, int index) {
-            return this._generation(
-              context,
-              regions[index],
-              index == this.selectedIndex,
-            );
-          }),
+        controller: this._pageCtrl,
+        itemCount: this.regions.length,
+        physics: NeverScrollableScrollPhysics(),
+        onPageChanged: (int index) {
+          setState(() => selectedIndex = index);
+        },
+        itemBuilder: (BuildContext context, int index) => this._generation(
+          context,
+          regions[index % regions.length],
+          index == this.selectedIndex,
+        ),
+      ),
     );
   }
 

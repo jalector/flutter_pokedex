@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Widget/PokemonVideo.dart';
 import 'package:video_player/video_player.dart';
 
 class PokemonVideoPage extends StatefulWidget {
@@ -12,7 +13,6 @@ class _PokemonVideoPageState extends State<PokemonVideoPage> {
   @override
   Widget build(BuildContext context) {
     _controller = ModalRoute.of(context).settings.arguments;
-    _controller?.play();
 
     return Scaffold(
       appBar: AppBar(
@@ -22,28 +22,12 @@ class _PokemonVideoPageState extends State<PokemonVideoPage> {
       backgroundColor: Theme.of(context).accentColor,
       body: Center(
         child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.025,
-              vertical: 10,
-            ),
-            child: Hero(
-              tag: "video",
-              child: Material(
-                elevation: 4,
-                borderRadius: BorderRadius.circular(10),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    padding: EdgeInsets.all(25),
-                    color: Colors.white,
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: VideoPlayer(_controller),
-                    ),
-                  ),
-                ),
-              ),
-            )),
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.025,
+            vertical: 10,
+          ),
+          child: PokemonVideo(_controller),
+        ),
       ),
     );
   }
