@@ -68,7 +68,7 @@ class _PokedexPageState extends State<PokedexPage> {
     if (size.width > 1200) {
       cardWidth = size.width * 0.15;
     } else if (size.width >= 750) {
-      cardWidth = size.width * 0.2;
+      cardWidth = size.width * 0.175;
     } else {
       cardWidth = size.width * 0.35;
     }
@@ -122,7 +122,8 @@ class _PokedexPageState extends State<PokedexPage> {
                             ),
                           ),
                         ),
-                        PokemonImage(Pokemon.getURLImage(pokemon.id)),
+                        PokemonImage(
+                            Pokemon.getURLImage(pokemon.id, pokemon.form)),
                       ],
                     ),
                   ));

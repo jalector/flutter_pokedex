@@ -51,8 +51,9 @@ class GlobalRequest {
     return response;
   }
 
-  Future<HttpAnswer<Pokemon>> getPokemon(int number) async {
-    var response = await this.get<Pokemon>("api/pokemon/$number");
+  Future<HttpAnswer<Pokemon>> getPokemon(Pokemon pokemon) async {
+    var response = await this.get<Pokemon>("api/pokemon/${pokemon.id}",
+        params: {"form": "${pokemon.form}"});
 
     if (response.ok) {
       response.object = Pokemon.fromJsonDetail(

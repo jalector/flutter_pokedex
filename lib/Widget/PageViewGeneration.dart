@@ -28,7 +28,7 @@ class _PageViewGenerationState extends State<PageViewGeneration>
   void initState() {
     this._animCtrl = new AnimationController(
       vsync: this,
-      duration: Duration(seconds: regions.length * 5),
+      duration: Duration(seconds: regions.length * 10),
     );
 
     this._pageCtrl = PageController(
@@ -36,16 +36,17 @@ class _PageViewGenerationState extends State<PageViewGeneration>
       viewportFraction: 0.85,
     );
 
-    this._countGeneration = Tween<double>(
+    this._countGeneration = StepTween(
       begin: 0,
-      end: (this.regions.length - 1).toDouble(),
+      end: this.regions.length - 1,
     ).animate(this._animCtrl);
 
     this._animCtrl.addListener(() {
-      int page = (this._countGeneration.value as double).toInt();
+      int page = (this._countGeneration.value as int);
 
       if (this.selectedIndex != page) {
         this.selectedIndex = page;
+
         this._pageCtrl.animateToPage(
               page,
               duration: Duration(
@@ -53,6 +54,7 @@ class _PageViewGenerationState extends State<PageViewGeneration>
               ),
               curve: Curves.easeInOut,
             );
+        setState(() {});
       }
     });
     this._animCtrl.forward();
@@ -62,6 +64,8 @@ class _PageViewGenerationState extends State<PageViewGeneration>
 
   @override
   void dispose() {
+    this._animCtrl.dispose();
+
     super.dispose();
   }
 
@@ -78,19 +82,19 @@ class _PageViewGenerationState extends State<PageViewGeneration>
             children: <Widget>[
               RaisedButton(
                 color: Theme.of(context).accentColor,
-                child: Icon(Icons.keyboard_arrow_left),
+                child: Icon(Icons.home),
                 onPressed: () {
-                  this.selectedIndex++;
                   this._pageCtrl.animateToPage(
-                        selectedIndex,
+                        this.selectedIndex,
                         duration: Duration(
                           milliseconds:
-                              (selectedIndex == this.regions.length - 1)
+                              (this.selectedIndex == this.regions.length - 1)
                                   ? 300
                                   : 500,
                         ),
                         curve: Curves.easeInOut,
                       );
+                  setState(() {});
                 },
               )
             ],
@@ -109,10 +113,7 @@ class _PageViewGenerationState extends State<PageViewGeneration>
       child: PageView.builder(
         controller: this._pageCtrl,
         itemCount: this.regions.length,
-        physics: NeverScrollableScrollPhysics(),
-        onPageChanged: (int index) {
-          setState(() => selectedIndex = index);
-        },
+        //physics: NeverScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int index) => this._generation(
           context,
           regions[index % regions.length],

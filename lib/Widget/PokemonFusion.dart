@@ -17,105 +17,78 @@ class _PokemonFusionState extends State<PokemonFusion> {
   @override
   void initState() {
     super.initState();
-    this._pokemonOne = this._randomPokmeon();
-    this._pokemonTwo = this._randomPokmeon();
+    this._pokemonOne = this._randomPokemon();
+    this._pokemonTwo = this._randomPokemon();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColorDark,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         children: <Widget>[
-          this._randomPokemonImage(
-            context,
-            randomPokemon: this._pokemonOne,
-            callback: () {
-              this._pokemonOne = this._randomPokmeon();
-            },
-            addCallback: () {
-              this._pokemonOne = (++this._pokemonOne) % 151;
-              if (this._pokemonOne == 0) this._pokemonOne++;
-            },
-            minCallback: () {
-              if (this._pokemonOne == 1) {
-                this._pokemonOne = 151;
-              } else {
-                this._pokemonOne--;
-              }
-            },
-          ),
+          this._randomPokemonImage(context, this._pokemonOne, (int index) {
+            setState(() => this._pokemonOne = index + 1);
+          }),
           this._pokemonChild(context),
-          this._randomPokemonImage(
-            context,
-            randomPokemon: this._pokemonTwo,
-            callback: () {
-              this._pokemonTwo = this._randomPokmeon();
-            },
-            addCallback: () {
-              this._pokemonTwo = (++this._pokemonTwo) % 151;
-              if (this._pokemonTwo == 0) this._pokemonTwo++;
-            },
-            minCallback: () {
-              if (this._pokemonTwo == 1) {
-                this._pokemonTwo = 151;
-              } else {
-                this._pokemonTwo--;
-              }
-            },
-          ),
+          this._randomPokemonImage(context, this._pokemonTwo, (int index) {
+            setState(() => this._pokemonTwo = index + 1);
+          }),
         ],
       ),
     );
   }
 
-  int _randomPokmeon() {
+  int _randomPokemon() {
     return math.Random().nextInt(150) + 1;
   }
 
-  Widget _randomPokemonImage(BuildContext context,
-      {int randomPokemon,
-      Function callback,
-      Function addCallback,
-      Function minCallback}) {
-    return Flexible(
-      child: GestureDetector(
-        onTap: () {
-          setState(() => callback());
-        },
-        onVerticalDragEnd: (DragEndDetails dragEndDetails) {
-          if (dragEndDetails.primaryVelocity > 0) {
-            setState(() => minCallback());
-          } else if (dragEndDetails.primaryVelocity < 0) {
-            setState(() => addCallback());
-          }
-        },
-        child: Container(
-          padding: EdgeInsets.all(5),
-          margin: EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: Theme.of(context).accentColor,
-            borderRadius: BorderRadius.circular(15),
+  Widget _randomPokemonImage(
+      BuildContext context, int initialPage, Function pageChanged) {
+    Size size = MediaQuery.of(context).size;
+    return Expanded(
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: size.width * 0.4,
+          maxHeight: size.width * 0.4,
+        ),
+        child: PageView.builder(
+          itemCount: 151,
+          controller: PageController(
+            viewportFraction: 0.7,
+            initialPage: initialPage - 1,
           ),
-          child: Stack(
-            children: <Widget>[
-              PokemonImage(
-                "https://images.alexonsager.net/pokemon/$randomPokemon.png",
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 2),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(5),
+          pageSnapping: true,
+          onPageChanged: pageChanged,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (BuildContext context, int index) {
+            return Stack(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).accentColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: PokemonImage(
+                    "https://images.alexonsager.net/pokemon/${index + 1}.png",
+                  ),
                 ),
-                child: Text(randomPokemon.toString()),
-              ),
-            ],
-          ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Text("#${index + 1}"),
+                )
+              ],
+            );
+          },
         ),
       ),
     );

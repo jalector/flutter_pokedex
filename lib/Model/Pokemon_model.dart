@@ -150,14 +150,17 @@ class Pokemon {
       maxcp: json["maxcp"],
     );
   }
-  static String getURLImage(int number) {
+
+  static String getURLImage(int number, String form) {
     String n = number.toString();
     if (n.length == 1) {
       n = "00$n";
     } else if (n.length == 2) {
       n = "0$n";
     }
-    return GlobalRequest.image + n + ".png";
+    var a = GlobalRequest.image + n + "${(form != null) ? "_f2" : ""}.png";
+
+    return a;
   }
 
   static String getURLVideo(String name) {

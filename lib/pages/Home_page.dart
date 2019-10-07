@@ -10,6 +10,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: 100),
           child: Column(
             children: <Widget>[
               Text(
