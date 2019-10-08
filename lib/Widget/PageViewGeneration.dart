@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Generation_model.dart';
+import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 
 class PageViewGeneration extends StatefulWidget {
   PageViewGeneration({Key key}) : super(key: key);
@@ -136,6 +137,7 @@ class _PageViewGenerationState extends State<PageViewGeneration>
         child: InkWell(
           splashColor: Colors.red,
           onTap: () {
+            PokedexProvider.of(context).getPokedexGeneration(generation.number);
             Navigator.pushNamed(context, "pokedex", arguments: generation);
           },
           child: Stack(

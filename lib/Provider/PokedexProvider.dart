@@ -36,8 +36,6 @@ class PokedexProvider extends InheritedWidget {
     HttpAnswer<List<Pokemon>> answer =
         await this._globalRequest.getPokedexGeneration(generation);
 
-    print("Estoy trayendo información");
-
     if (answer.ok) {
       this.bloc.addPokedex(answer.object);
     } else {

@@ -27,13 +27,19 @@ class PokedexBloc {
               if (searchedPokemon == null || searchedPokemon.isEmpty) {
                 sink.add(pokedex);
               } else {
-                sink.add(pokedex
+                var list = pokedex
                     .where(
                       (Pokemon poke) => (poke.name.toLowerCase().contains(
                             searchedPokemon.toLowerCase(),
                           )),
                     )
-                    .toList());
+                    .toList();
+                if (list.length > 0) {
+                  sink.add(list);
+                } else {
+                  sink.addError("Pokemon no found");
+                  onChangeSearchedPokemonErro("Pokemon no found");
+                }
               }
             }
           },
@@ -47,6 +53,8 @@ class PokedexBloc {
 
   Function(String) get onChangeSearchedPokemon =>
       _searchedPokemonController.sink.add;
+  Function(String) get onChangeSearchedPokemonErro =>
+      _searchedPokemonController.sink.addError;
 
   List<Pokemon> get pokedex => _pokedexController.value;
   String get searchedPokemon => _searchedPokemonController.value;

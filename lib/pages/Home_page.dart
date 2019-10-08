@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Widget/HomeDrawer.dart';
 import 'package:flutter_pokedex/Widget/PageViewGeneration.dart';
 import 'package:flutter_pokedex/Widget/PokemonFusion.dart';
 
@@ -7,27 +8,32 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData style = Theme.of(context);
+
     return Scaffold(
+      drawer: HomeDrawer(),
+      appBar: AppBar(
+        title: Text(
+          "Pokedex",
+          style: style.textTheme.display3,
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.only(bottom: 100),
           child: Column(
             children: <Widget>[
-              Text(
-                "Pokedex",
-                style: Theme.of(context).textTheme.display3,
-              ),
               SizedBox(height: 20),
               Text(
                 "Generations",
-                style: Theme.of(context).textTheme.title,
+                style: style.textTheme.title,
                 textAlign: TextAlign.left,
               ),
               PageViewGeneration(),
               SizedBox(height: 20),
               Text(
                 "Fusions",
-                style: Theme.of(context).textTheme.title,
+                style: style.textTheme.title,
                 textAlign: TextAlign.left,
               ),
               Padding(

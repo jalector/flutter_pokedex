@@ -16,61 +16,25 @@ class _PokedexPageState extends State<PokedexPage> {
 
   @override
   Widget build(BuildContext context) {
-    Generation generation = ModalRoute.of(context).settings.arguments;
     PokedexProvider provider = PokedexProvider.of(context);
-
-    provider.getPokedexGeneration(generation.number);
 
     return WillPopScope(
       onWillPop: () async {
-        provider.bloc.onChangeSearchedPokemon(null);
-        provider.bloc.addPokedex(null);
+        provider.bloc.onChangeSearchedPokemon("");
+        provider.bloc.addPokedex([]);
 
         return true;
       },
       child: Scaffold(
         body: SafeArea(
-          child: StreamBuilder<List<Pokemon>>(
-            stream: provider.bloc.pokedexStream,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
-              Widget builder;
-              if (snapshot.hasData) {
-                builder = this._pokedex(context, provider, snapshot.data);
-              } else if (snapshot.hasError) {
-                builder = Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(15),
-                        margin: EdgeInsets.all(35),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).errorColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          snapshot.error.toString(),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.title,
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              } else {
-                builder = CustomLoader();
-              }
-
-              return builder;
-            },
-          ),
+          child: this._pokedex(context, provider),
         ),
       ),
     );
   }
 
-  Widget _pokedex(
-      BuildContext context, PokedexProvider provider, List<Pokemon> pokedex) {
+  ////////////////////////////////////////////////////////////////////////////////////
+  Widget _pokedex(BuildContext context, PokedexProvider provider) {
     Generation generation = ModalRoute.of(context).settings.arguments;
     Size size = MediaQuery.of(context).size;
     double cardWidth;
@@ -98,50 +62,90 @@ class _PokedexPageState extends State<PokedexPage> {
               style: Theme.of(context).textTheme.display4,
             ),
           ),
-          SliverGrid.extent(
-            maxCrossAxisExtent: cardWidth,
-            children: List.generate(pokedex.length, (int index) {
-              Pokemon pokemon = pokedex[index];
-              return InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, "pokemonDetail",
-                      arguments: pokemon);
-                },
-                splashColor: Colors.blueAccent,
-                child: Container(
-                  margin: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).accentColor,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 2),
+          StreamBuilder<List<Pokemon>>(
+            stream: provider.bloc.pokedexStream,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+              Widget builder;
+              List<Pokemon> pokedex = snapshot.data;
+              if (snapshot.hasData) {
+                builder = SliverGrid.extent(
+                  maxCrossAxisExtent: cardWidth,
+                  children: List.generate(pokedex.length, (int index) {
+                    Pokemon pokemon = pokedex[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, "pokemonDetail",
+                            arguments: pokemon);
+                      },
+                      splashColor: Colors.blueAccent,
+                      child: Container(
+                        margin: EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColorLight,
+                          color: Theme.of(context).accentColor,
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Text("#${pokemon.id}"),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 20,
-                        child: Opacity(
-                          opacity: 0.1,
-                          child: Text(
-                            pokemon.name,
-                            style: Theme.of(context).textTheme.title,
-                          ),
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 2),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColorLight,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text("#${pokemon.id}"),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 20,
+                              child: Opacity(
+                                opacity: 0.1,
+                                child: Text(
+                                  pokemon.name,
+                                  style: Theme.of(context).textTheme.title,
+                                ),
+                              ),
+                            ),
+                            PokemonImage(
+                                Pokemon.getURLImage(pokemon.id, pokemon.form)),
+                          ],
                         ),
                       ),
-                      PokemonImage(
-                          Pokemon.getURLImage(pokemon.id, pokemon.form)),
-                    ],
-                  ),
-                ),
-              );
-            }),
+                    );
+                  }),
+                );
+              } else if (snapshot.hasError) {
+                builder = SliverList(
+                  delegate: SliverChildListDelegate([
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(15),
+                            margin: EdgeInsets.all(35),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).errorColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              snapshot.error.toString(),
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.title,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ]),
+                );
+              } else {
+                builder = SliverList(
+                  delegate: SliverChildListDelegate([CustomLoader()]),
+                );
+              }
+
+              return builder;
+            },
           ),
         ],
       ),
@@ -149,22 +153,28 @@ class _PokedexPageState extends State<PokedexPage> {
   }
 
   Widget searchField(PokedexProvider provider) {
-    return TextFormField(
-      decoration: InputDecoration(
-        hintText: "Search your pokemon",
-        hintStyle: TextStyle(
-          color: Colors.white.withOpacity(0.5),
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 15,
-        fontWeight: FontWeight.bold,
-      ),
-      onChanged: provider.bloc.onChangeSearchedPokemon,
-      
+    return StreamBuilder<String>(
+      stream: provider.bloc.searchedPokemonStream,
+      builder: (context, snapshot) {
+        return TextFormField(
+          decoration: InputDecoration(
+            hintText: "Search your pokemon",
+            errorText: snapshot.error,
+            hintStyle: TextStyle(
+              color: Colors.white.withOpacity(0.5),
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+          initialValue: provider.bloc.searchedPokemon,
+          onChanged: provider.bloc.onChangeSearchedPokemon,
+        );
+      },
     );
   }
 }

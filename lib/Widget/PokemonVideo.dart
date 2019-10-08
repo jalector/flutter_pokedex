@@ -58,7 +58,6 @@ class _PokemonVideoState extends State<PokemonVideo> {
           widget.controller.play();
         }
         setState(() => _isPlay = !_isPlay);
-        print(_isPlay);
       },
       child: Container(
         padding: EdgeInsets.all(0),
