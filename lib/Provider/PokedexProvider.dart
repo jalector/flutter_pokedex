@@ -31,10 +31,12 @@ class PokedexProvider extends InheritedWidget {
   }
 
   void getPokedexGeneration(int generation) async {
-    this.bloc.addPokedex(null);
+    if (this.bloc.pokedex != null && this.bloc.pokedex.length > 0) return;
 
     HttpAnswer<List<Pokemon>> answer =
         await this._globalRequest.getPokedexGeneration(generation);
+
+    print("Estoy trayendo información");
 
     if (answer.ok) {
       this.bloc.addPokedex(answer.object);

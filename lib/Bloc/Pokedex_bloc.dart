@@ -22,21 +22,24 @@ class PokedexBloc {
   Stream<List<Pokemon>> get pokedexStream =>
       _pokedexController.stream.transform(
         StreamTransformer<List<Pokemon>, List<Pokemon>>.fromHandlers(
-            handleData: (List<Pokemon> pokedex, sink) {
-          if (pokedex != null) {
-            if (searchedPokemon == null || searchedPokemon.isEmpty) {
-              sink.add(pokedex);
-            } else {
-              sink.add(pokedex
-                  .where(
-                    (Pokemon poke) => (poke.name.contains(searchedPokemon)),
-                  )
-                  .toList());
+          handleData: (List<Pokemon> pokedex, sink) {
+            if (pokedex != null) {
+              if (searchedPokemon == null || searchedPokemon.isEmpty) {
+                sink.add(pokedex);
+              } else {
+                sink.add(pokedex
+                    .where(
+                      (Pokemon poke) => (poke.name.toLowerCase().contains(
+                            searchedPokemon.toLowerCase(),
+                          )),
+                    )
+                    .toList());
+              }
             }
-          }
-        }),
+          },
+        ),
       );
-      
+
   Stream<String> get searchedPokemonStream => _searchedPokemonController.stream;
 
   Function(List<Pokemon>) get addPokedex => _pokedexController.sink.add;
