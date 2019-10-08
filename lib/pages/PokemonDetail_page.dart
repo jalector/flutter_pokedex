@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
+
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Util.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 import 'package:flutter_pokedex/Widget/PokemonVideo.dart';
-import 'package:video_player/video_player.dart';
 
 class PokemonDetailPage extends StatefulWidget {
   @override
@@ -25,6 +26,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   @override
   Widget build(BuildContext context) {
     Pokemon pokemon = ModalRoute.of(context).settings.arguments;
+
     return Scaffold(
       backgroundColor: Pokemon.chooseByPokemonType(pokemon.type1),
       appBar: AppBar(
@@ -257,8 +259,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _generationBanner(BuildContext context, Pokemon pokemon) {
+    Size size = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 70),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: size.width * 0.05),
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColorDark,
@@ -496,37 +499,36 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          this._stat(context, "Max CP", pokemon.maxcp.toString()),
-          this._stat(context, "Attack", pokemon.atk.toString()),
-          this._stat(context, "Defence", pokemon.def.toString()),
-          this._stat(context, "Stamina", pokemon.sta.toString()),
+          this._stat("Max CP", pokemon.maxcp.toString()),
+          this._stat("Attack", pokemon.atk.toString()),
+          this._stat("Defence", pokemon.def.toString()),
+          this._stat("Stamina", pokemon.sta.toString()),
         ],
       ),
     );
   }
 
-  Widget _stat(BuildContext context, String concept, String info) {
-    Size size = MediaQuery.of(context).size;
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 5,
-        horizontal: size.width * 0.03,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white12,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Column(
-        children: <Widget>[
-          Text(
-            concept,
-            style: Theme.of(context).textTheme.title.copyWith(fontSize: 20),
-          ),
-          Text(info),
-        ],
+  Widget _stat(String concept, String info) {
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 2),
+        padding: EdgeInsets.symmetric(
+          vertical: 2,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white12,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              concept,
+              style: Theme.of(context).textTheme.title.copyWith(fontSize: 20),
+            ),
+            Text(info),
+          ],
+        ),
       ),
     );
   }

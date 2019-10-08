@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Generation_model.dart';
-import 'package:flutter_pokedex/Model/HttpAnswer.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
+import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 
@@ -17,17 +17,19 @@ class _PokedexPageState extends State<PokedexPage> {
   @override
   Widget build(BuildContext context) {
     Generation generation = ModalRoute.of(context).settings.arguments;
+    PokedexProvider provider = PokedexProvider.of(context);
+
+    provider.getPokedexGeneration(generation.number);
+
     return Scaffold(
       body: SafeArea(
-        child: FutureBuilder<HttpAnswer<List<Pokemon>>>(
-          future: globalRequest.getPokedexGeneration(
-            generation.number,
-          ),
-          builder: (BuildContext context,
-              AsyncSnapshot<HttpAnswer<List<Pokemon>>> snapshot) {
+        child: StreamBuilder<List<Pokemon>>(
+          stream: provider.bloc.pokedexStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
             Widget builder;
             if (snapshot.hasData) {
-              builder = this._pokedex(context, snapshot.data.object);
+              builder = this._pokedex(context, provider, snapshot.data);
             } else if (snapshot.hasError) {
               builder = Row(
                 children: <Widget>[
@@ -59,10 +61,10 @@ class _PokedexPageState extends State<PokedexPage> {
     );
   }
 
-  Widget _pokedex(BuildContext context, List<Pokemon> pokedex) {
+  Widget _pokedex(
+      BuildContext context, PokedexProvider provider, List<Pokemon> pokedex) {
     Generation generation = ModalRoute.of(context).settings.arguments;
     Size size = MediaQuery.of(context).size;
-
     double cardWidth;
 
     if (size.width > 1200) {
@@ -74,14 +76,18 @@ class _PokedexPageState extends State<PokedexPage> {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(8.0),
       child: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
             floating: true,
             pinned: false,
-            title: Text(
+            title: TextFormField(
+              onChanged: provider.bloc.onChangeSearchedPokemon,
+            ),
+            flexibleSpace: Text(
               "${generation.title}",
+              textAlign: TextAlign.right,
               style: Theme.of(context).textTheme.display4,
             ),
           ),

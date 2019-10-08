@@ -245,6 +245,11 @@ class Pokemon {
     }
     return color;
   }
+
+  @override
+  String toString() {
+    return "#$id $name";
+  }
 }
 
 class Description {
