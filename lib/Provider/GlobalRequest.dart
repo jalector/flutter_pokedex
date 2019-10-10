@@ -92,4 +92,19 @@ class GlobalRequest {
 
     return response;
   }
+
+  Future<HttpAnswer<List<Pokemon>>> searchedPokemon(String searched) async {
+    var response = await this.get<List<Pokemon>>("api/search/$searched");
+    if (response.ok) {
+      List<Pokemon> found = [];
+      List items = json.decode(response.answer.body);
+      for (Map rawPoke in items) {
+        found.add(Pokemon.fromJson(rawPoke));
+      }
+    } else {
+      throw response.reasonPhrase;
+    }
+
+    return response;
+  }
 }

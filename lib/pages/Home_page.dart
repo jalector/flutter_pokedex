@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/CustomSearchDelegate.dart';
 import 'package:flutter_pokedex/Widget/HomeDrawer.dart';
 import 'package:flutter_pokedex/Widget/PageViewGeneration.dart';
 import 'package:flutter_pokedex/Widget/PokemonFusion.dart';
@@ -18,6 +19,17 @@ class HomePage extends StatelessWidget {
           "Pokedex",
           style: style.textTheme.display3,
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: CustomSearchDelegate(),
+              );
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
