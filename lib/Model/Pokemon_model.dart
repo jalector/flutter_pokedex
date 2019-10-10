@@ -176,18 +176,14 @@ class Pokemon {
 
     for (var i = 0; i < json.length; i++) {
       var pokemon = Pokemon.fromJson(json[i]);
-      if (pokemon.form != null) {
-        list.last.pokeForms.add(pokemon);
-      } else {
-        list.add(pokemon);
-      }
+      list.add(pokemon);
     }
     return list;
   }
 
   static Color chooseByPokemonType(String type) {
     Color color = Colors.blue;
-    switch (type) {
+    switch (type.toLowerCase()) {
       case "grass":
         color = Colors.green;
         break;

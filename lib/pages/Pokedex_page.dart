@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/Generation_model.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
@@ -33,9 +32,8 @@ class _PokedexPageState extends State<PokedexPage> {
     );
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////
   Widget _pokedex(BuildContext context, PokedexProvider provider) {
-    Generation generation = ModalRoute.of(context).settings.arguments;
+    String title = ModalRoute.of(context).settings.arguments;
     Size size = MediaQuery.of(context).size;
     double cardWidth;
 
@@ -57,7 +55,7 @@ class _PokedexPageState extends State<PokedexPage> {
             pinned: false,
             title: this.searchField(provider),
             flexibleSpace: Text(
-              "${generation.title}",
+              title,
               textAlign: TextAlign.right,
               style: Theme.of(context).textTheme.display4,
             ),

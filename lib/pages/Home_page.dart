@@ -13,6 +13,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       drawer: HomeDrawer(),
       appBar: AppBar(
+        elevation: 0,
         title: Text(
           "Pokedex",
           style: style.textTheme.display3,

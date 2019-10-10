@@ -42,4 +42,17 @@ class PokedexProvider extends InheritedWidget {
       this.bloc.addPokedexError(answer.reasonPhrase);
     }
   }
+
+  void getPokedexByType(String type) async {
+    if (this.bloc.pokedex != null && this.bloc.pokedex.length > 0) return;
+
+    HttpAnswer<List<Pokemon>> answer =
+        await this._globalRequest.getPokedexByType(type);
+
+    if (answer.ok) {
+      this.bloc.addPokedex(answer.object);
+    } else {
+      this.bloc.addPokedexError(answer.reasonPhrase);
+    }
+  }
 }

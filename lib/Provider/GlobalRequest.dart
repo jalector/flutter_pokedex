@@ -51,6 +51,19 @@ class GlobalRequest {
     return response;
   }
 
+  Future<HttpAnswer<List<Pokemon>>> getPokedexByType(String type) async {
+    var response = await this
+        .get<List<Pokemon>>("/api/pokemon/with-type/${type.toLowerCase()}");
+
+    if (response.ok) {
+      List<dynamic> content = json.decode(response.answer.body);
+      response.object = Pokemon.fromJsonCollection(content);
+    } else {
+      throw response.reasonPhrase;
+    }
+    return response;
+  }
+
   Future<HttpAnswer<Pokemon>> getPokemon(Pokemon pokemon) async {
     var response = await this.get<Pokemon>("api/pokemon/${pokemon.id}",
         params: {"form": "${pokemon.form}"});

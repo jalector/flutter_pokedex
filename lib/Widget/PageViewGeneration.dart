@@ -138,7 +138,8 @@ class _PageViewGenerationState extends State<PageViewGeneration>
           splashColor: Colors.red,
           onTap: () {
             PokedexProvider.of(context).getPokedexGeneration(generation.number);
-            Navigator.pushNamed(context, "pokedex", arguments: generation);
+            Navigator.pushNamed(context, "pokedex",
+                arguments: generation.title);
           },
           child: Stack(
             children: <Widget>[
