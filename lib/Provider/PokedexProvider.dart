@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Bloc/Pokedex_bloc.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
+import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 
 class PokedexProvider extends InheritedWidget {
   static PokedexProvider _instance;
@@ -51,6 +52,22 @@ class PokedexProvider extends InheritedWidget {
 
     if (answer.ok) {
       this.bloc.addPokedex(answer.object);
+    } else {
+      this.bloc.addPokedexError(answer.reasonPhrase);
+    }
+  }
+
+  void searchPokemon(String searched) async {
+    this.bloc.addPokedex([]);
+
+    HttpAnswer<List<Pokemon>> answer =
+        await this._globalRequest.searchedPokemon(searched);
+    if (answer.ok) {
+      if (answer.object.length > 0) {
+        this.bloc.addPokedex(answer.object);
+      } else {
+        this.bloc.addPokedexError("No data found");
+      }
     } else {
       this.bloc.addPokedexError(answer.reasonPhrase);
     }

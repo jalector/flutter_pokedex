@@ -99,8 +99,11 @@ class GlobalRequest {
       List<Pokemon> found = [];
       List items = json.decode(response.answer.body);
       for (Map rawPoke in items) {
-        found.add(Pokemon.fromJson(rawPoke));
+        if (rawPoke["entity"] == "Pokemon") {
+          found.add(Pokemon.fromJson(rawPoke));
+        }
       }
+      response.object = found;
     } else {
       throw response.reasonPhrase;
     }

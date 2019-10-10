@@ -23,52 +23,114 @@ class MyApp extends StatelessWidget {
           "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
           "pokemonImage": (BuildContext context) => PokemonImagePage(),
         },
-        theme: ThemeData(
-          primaryColor: Color.fromRGBO(155, 89, 182, 1),
-          accentColor: Color.fromRGBO(52, 73, 92, 1),
-          backgroundColor: Color.fromRGBO(155, 89, 182, 1),
-          scaffoldBackgroundColor: Color.fromRGBO(155, 89, 182, 1),
-          primaryColorDark: Color.fromRGBO(26, 188, 156, 1),
-          primaryColorLight: Colors.green,
-          brightness: Brightness.dark,
-          accentColorBrightness: Brightness.dark,
-          primaryColorBrightness: Brightness.dark,
-          textTheme: TextTheme(
-            display1: TextStyle(
-              fontSize: 72,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            display2: TextStyle(
-              fontSize: 60,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            display3: TextStyle(
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            display4: TextStyle(
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            title: TextStyle(
-              fontSize: 30,
-              color: Colors.black12,
-              fontWeight: FontWeight.bold,
-            ),
-            caption: TextStyle(
-              fontSize: 15,
-            ),
-            overline: TextStyle(
-              fontSize: 15,
-            ),
-            body1: TextStyle(
-              fontSize: 15,
-            ),
+        theme: this._theme(),
+      ),
+    );
+  }
+
+  ThemeData _theme() {
+    Color _primary = Color.fromRGBO(155, 89, 182, 1);
+    Color _primaryVariant = Color.fromRGBO(155, 89, 182, 1);
+    Color _secondary = Color.fromRGBO(52, 73, 92, 1);
+    Color _secondaryVariant = Colors.red;
+    return ThemeData(
+      primaryColor: Color.fromRGBO(155, 89, 182, 1),
+      accentColor: Color.fromRGBO(52, 73, 92, 1),
+      backgroundColor: Color.fromRGBO(155, 89, 182, 1),
+      scaffoldBackgroundColor: Color.fromRGBO(155, 89, 182, 1),
+      primaryColorDark: Color.fromRGBO(26, 188, 156, 1),
+      primaryColorLight: Colors.green,
+      brightness: Brightness.dark,
+      accentColorBrightness: Brightness.dark,
+      primaryColorBrightness: Brightness.dark,
+      appBarTheme: AppBarTheme(
+        color: _primary,
+        textTheme: TextTheme(
+          display1: TextStyle(
+            fontSize: 72,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
+          display2: TextStyle(
+            fontSize: 60,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+          display3: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+          display4: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+          title: TextStyle(
+            fontSize: 30,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+          caption: TextStyle(
+            fontSize: 15,
+          ),
+          overline: TextStyle(
+            fontSize: 15,
+          ),
+          body1: TextStyle(
+            fontSize: 15,
+          ),
+        ),
+      ),
+      colorScheme: ColorScheme(
+        primary: _primary,
+        primaryVariant: _primaryVariant,
+        secondary: _secondary,
+        secondaryVariant: _secondaryVariant,
+        surface: Colors.transparent,
+        background: Colors.transparent,
+        error: Colors.red,
+        onPrimary: _primary,
+        onSecondary: _primaryVariant,
+        onSurface: _primary,
+        onBackground: Colors.purple,
+        onError: Colors.red,
+        brightness: Brightness.light,
+      ),
+      textTheme: TextTheme(
+        display1: TextStyle(
+          fontSize: 72,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        display2: TextStyle(
+          fontSize: 60,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        display3: TextStyle(
+          fontSize: 50,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        display4: TextStyle(
+          fontSize: 50,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        title: TextStyle(
+          fontSize: 30,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+        caption: TextStyle(
+          fontSize: 15,
+        ),
+        overline: TextStyle(
+          fontSize: 15,
+        ),
+        body1: TextStyle(
+          fontSize: 15,
         ),
       ),
     );

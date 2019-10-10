@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:rxdart/subjects.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-export 'package:flutter_pokedex/Model/Pokemon_model.dart';
 
 class PokedexBloc {
   static PokedexBloc _instance;
