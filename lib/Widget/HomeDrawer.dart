@@ -15,9 +15,13 @@ class HomeDrawer extends StatelessWidget {
 
     return Container(
       width: size.width * 0.8,
+      constraints: BoxConstraints(
+        maxWidth: 650,
+      ),
       color: style.accentColor,
       padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
       child: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Column(
@@ -56,32 +60,7 @@ class HomeDrawer extends StatelessWidget {
               this._generation(context, Generation(6, "Kalos")),
               this._generation(context, Generation(7, "Alola")),
               this._bannerDivider(context, "Types"),
-              Container(
-                width: size.width,
-                padding: EdgeInsets.symmetric(horizontal: 5),
-                child: Wrap(
-                  children: <Widget>[
-                    this._type(context, "Bug"),
-                    this._type(context, "Dragon"),
-                    this._type(context, "Fairy"),
-                    this._type(context, "Fire"),
-                    this._type(context, "Ghost"),
-                    this._type(context, "Ground"),
-                    this._type(context, "Normal"),
-                    this._type(context, "Psychic"),
-                    this._type(context, "Steel"),
-                    this._type(context, "Dark"),
-                    this._type(context, "Electric"),
-                    this._type(context, "Fighting"),
-                    this._type(context, "Flying"),
-                    this._type(context, "Grass"),
-                    this._type(context, "Ice"),
-                    this._type(context, "Poison"),
-                    this._type(context, "Rock"),
-                    this._type(context, "Water"),
-                  ],
-                ),
-              )
+              this._types(context, size),
             ],
           ),
         ),
@@ -137,23 +116,57 @@ class HomeDrawer extends StatelessWidget {
     );
   }
 
-  Widget _type(BuildContext context, String type) {
-    Size size = MediaQuery.of(context).size;
+  Widget _types(BuildContext context, Size size) {
+    return Table(
+      children: [
+        TableRow(children: [
+          this._type(context, "Bug"),
+          this._type(context, "Dragon"),
+          this._type(context, "Fairy"),
+          this._type(context, "Poison"),
+        ]),
+        TableRow(children: [
+          this._type(context, "Fire"),
+          this._type(context, "Ghost"),
+          this._type(context, "Ground"),
+          this._type(context, "Rock"),
+        ]),
+        TableRow(children: [
+          this._type(context, "Normal"),
+          this._type(context, "Psychic"),
+          this._type(context, "Steel"),
+          this._type(context, "Water"),
+        ]),
+        TableRow(children: [
+          this._type(context, "Dark"),
+          this._type(context, "Electric"),
+          this._type(context, "Fighting"),
+          this._type(context, "Flying"),
+        ]),
+        TableRow(children: [
+          this._type(context, "Grass"),
+          this._type(context, "Ice"),
+          Container(),
+          Container(),
+        ]),
+      ],
+    );
+  }
 
+  Widget _type(BuildContext context, String type) {
     return InkWell(
       onTap: () {
         PokedexProvider.of(context).getPokedexByType(type);
         Navigator.pushNamed(context, "pokedex", arguments: type);
       },
       child: Container(
-        width: size.width * 0.35,
-        padding: EdgeInsets.all(5),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 2),
+        padding: EdgeInsets.symmetric(vertical: 10),
+        margin: EdgeInsets.symmetric(vertical: 3, horizontal: 3),
         decoration: BoxDecoration(
           color: Colors.black54,
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(5),
         ),
-        child: Row(
+        child: Column(
           children: <Widget>[
             CircleAvatar(
               backgroundColor: Colors.white24,
@@ -164,7 +177,7 @@ class HomeDrawer extends StatelessWidget {
               ),
               radius: 18,
             ),
-            SizedBox(width: 10),
+            SizedBox(height: 10),
             Text(type),
           ],
         ),
