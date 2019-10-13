@@ -3,6 +3,7 @@ import 'package:flutter_pokedex/CustomSearchDelegate.dart';
 import 'package:flutter_pokedex/Widget/HomeDrawer.dart';
 import 'package:flutter_pokedex/Widget/PageViewGeneration.dart';
 import 'package:flutter_pokedex/Widget/PokemonFusion.dart';
+import 'package:flutter_pokedex/Widget/RandomPokemonViewer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key key}) : super(key: key);
@@ -40,14 +41,18 @@ class HomePage extends StatelessWidget {
               Text(
                 "Generations",
                 style: style.textTheme.title,
-                textAlign: TextAlign.left,
               ),
               PageViewGeneration(),
               SizedBox(height: 20),
               Text(
+                "Find new pokemons",
+                style: style.textTheme.title,
+              ),
+              RandomPokemonViewer(),
+              SizedBox(height: 20),
+              Text(
                 "Fusions",
                 style: style.textTheme.title,
-                textAlign: TextAlign.left,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),

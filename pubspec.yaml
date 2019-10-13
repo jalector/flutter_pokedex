@@ -22,8 +22,8 @@ dependencies:
   http: ^0.12.0+2
   video_player: ^0.10.2+1
   flutter_launcher_icons: ^0.7.3
-  flare_flutter: ^1.5.12
   rxdart: ^0.22.3
+  flutter_swiper: ^1.1.6
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

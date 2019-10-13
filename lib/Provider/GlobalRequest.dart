@@ -79,6 +79,20 @@ class GlobalRequest {
     return response;
   }
 
+  Future<HttpAnswer<Pokemon>> getPokemonByNumber(int number) async {
+    var response = await this.get<Pokemon>("api/pokemon/$number");
+
+    if (response.ok) {
+      response.object = Pokemon.fromJsonDetail(
+        json.decode(response.answer.body),
+      );
+    } else {
+      throw response.reasonPhrase;
+    }
+
+    return response;
+  }
+
   Future<HttpAnswer<Pokemon>> getPokemonMinimalInfo(int number) async {
     var response = await this.get<Pokemon>("api/pokemon/$number");
 
