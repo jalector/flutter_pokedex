@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/CustomSearchDelegate.dart';
+import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:flutter_pokedex/Widget/HomeDrawer.dart';
 import 'package:flutter_pokedex/Widget/PageViewGeneration.dart';
 import 'package:flutter_pokedex/Widget/PokemonFusion.dart';
@@ -11,6 +12,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData style = Theme.of(context);
+    PokedexProvider provider = PokedexProvider.of(context);
 
     return Scaffold(
       drawer: HomeDrawer(),
@@ -48,7 +50,7 @@ class HomePage extends StatelessWidget {
                 "Find new pokemons",
                 style: style.textTheme.title,
               ),
-              RandomPokemonViewer(),
+              RandomPokemonViewer(provider),
               SizedBox(height: 20),
               Text(
                 "Fusions",

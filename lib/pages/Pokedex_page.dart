@@ -20,8 +20,7 @@ class _PokedexPageState extends State<PokedexPage> {
     return WillPopScope(
       onWillPop: () async {
         provider.bloc.onChangeSearchedPokemon("");
-        provider.bloc.addPokedex([]);
-
+        provider.loadRandomPokemons(3);
         return true;
       },
       child: Scaffold(

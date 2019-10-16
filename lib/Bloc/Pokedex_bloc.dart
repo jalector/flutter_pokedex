@@ -17,6 +17,7 @@ class PokedexBloc {
 
   final _pokedexController = BehaviorSubject<List<Pokemon>>();
   final _searchedPokemonController = BehaviorSubject<String>();
+  final _loadingPokemonsController = BehaviorSubject<bool>();
 
   Stream<List<Pokemon>> get pokedexStream =>
       _pokedexController.stream.transform(
@@ -46,9 +47,12 @@ class PokedexBloc {
       );
 
   Stream<String> get searchedPokemonStream => _searchedPokemonController.stream;
+  Stream<bool> get loadingPokemonsStream => _loadingPokemonsController.stream;
 
   Function(List<Pokemon>) get addPokedex => _pokedexController.sink.add;
   Function(String) get addPokedexError => _pokedexController.sink.addError;
+
+  Function(bool) get isLoading => _loadingPokemonsController.sink.add;
 
   Function(String) get onChangeSearchedPokemon =>
       _searchedPokemonController.sink.add;
@@ -57,9 +61,11 @@ class PokedexBloc {
 
   List<Pokemon> get pokedex => _pokedexController.value;
   String get searchedPokemon => _searchedPokemonController.value;
+  bool get loading => _loadingPokemonsController.value;
 
   void dispose() {
     _pokedexController.close();
     _searchedPokemonController.close();
+    _loadingPokemonsController.close();
   }
 }

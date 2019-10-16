@@ -137,7 +137,10 @@ class _PageViewGenerationState extends State<PageViewGeneration>
         child: InkWell(
           splashColor: Colors.red,
           onTap: () {
-            PokedexProvider.of(context).getPokedexGeneration(generation.number);
+            var provider = PokedexProvider.of(context);
+            provider.bloc.addPokedex(null);
+            provider.getPokedexGeneration(generation.number);
+
             Navigator.pushNamed(context, "pokedex",
                 arguments: generation.title);
           },

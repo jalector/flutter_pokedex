@@ -1,48 +1,56 @@
-class Sprite {
-  String form;
-  List<SpriteElement> sprites;
+import 'dart:convert';
 
-  Sprite({
+class PokemonSprite {
+  String form;
+  List<Sprite> sprites;
+
+  PokemonSprite({
     this.form,
     this.sprites,
   });
 
-  factory Sprite.fromJson(Map<String, dynamic> json) => Sprite(
-        form: json["form"],
-        sprites: List<SpriteElement>.from(
-            json["sprites"].map((x) => SpriteElement.fromJson(x))),
-      );
+  static List<PokemonSprite> fromJsonCollection(String str) {
+    List<PokemonSprite> list = [];
+    List<dynamic> rawJson = json.decode(str);
 
-  Map<String, dynamic> toJson() => {
-        "form": form,
-        "sprites": List<dynamic>.from(sprites.map((x) => x.toJson())),
-      };
+    rawJson.forEach((x) {
+      PokemonSprite sprite = PokemonSprite.fromMap(x);
+      list.add(sprite);
+    });
+
+    return list;
+  }
+
+  factory PokemonSprite.fromJson(String str) =>
+      PokemonSprite.fromMap(json.decode(str));
+
+  factory PokemonSprite.fromMap(Map<String, dynamic> json) {
+    return PokemonSprite(
+      form: json["form"],
+      sprites: List<Sprite>.from(json["sprites"].map((x) => Sprite.fromMap(x))),
+    );
+  }
 }
 
-class SpriteElement {
+class Sprite {
   String sprite;
   String gender;
   String form;
   bool shiny;
 
-  SpriteElement({
+  Sprite({
     this.sprite,
     this.gender,
     this.form,
     this.shiny,
   });
 
-  factory SpriteElement.fromJson(Map<String, dynamic> json) => SpriteElement(
+  factory Sprite.fromJson(String str) => Sprite.fromMap(json.decode(str));
+
+  factory Sprite.fromMap(Map<String, dynamic> json) => Sprite(
         sprite: json["sprite"],
         gender: json["gender"],
         form: json["form"],
         shiny: json["shiny"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "sprite": sprite,
-        "gender": gender,
-        "form": form,
-        "shiny": shiny,
-      };
 }

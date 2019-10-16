@@ -65,22 +65,20 @@ class CustomSearchDelegate extends SearchDelegate {
         ThemeData theme = Theme.of(context);
         if (snapshot.hasData) {
           return ListView.builder(
-            itemCount: snapshot.data.length,
+            itemCount: snapshot.data.length + 1,
             physics: BouncingScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
-              Pokemon pokemon = snapshot.data[index];
               if (index == 0) {
-                return Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 45, bottom: 5),
-                      child: Text("Result: ${snapshot.data.length} pokemons"),
-                    ),
-                    pokemonCard(theme, pokemon),
-                  ],
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 25),
+                    child: Text("Result: ${snapshot.data.length} pokemons"),
+                  ),
                 );
+              } else {
+                Pokemon pokemon = snapshot.data[index - 1];
+                return pokemonCard(context, theme, pokemon);
               }
-              return pokemonCard(theme, pokemon);
             },
           );
         } else if (snapshot.hasError) {
@@ -103,63 +101,80 @@ class CustomSearchDelegate extends SearchDelegate {
     //PokedexProvider.of(context).se
   }
 
-  Widget pokemonCard(ThemeData theme, Pokemon pokemon) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Container(
-          child: Material(
-            color: theme.accentColor,
-            child: InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      width: 80,
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(right: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: PokemonImage(
-                        Pokemon.getURLImage(pokemon.id, pokemon.form),
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget pokemonCard(BuildContext context, ThemeData theme, Pokemon pokemon) {
+    Size size = MediaQuery.of(context).size;
+    double cardSize = size.width * 0.4;
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          bottom: 0,
+          right: 10,
+          left: 10,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Container(
+              child: Material(
+                color: theme.accentColor,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed("pokemonDetail", arguments: pokemon);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 5, bottom: 10),
+                    child: Row(
                       children: <Widget>[
-                        Text(
-                          pokemon.name,
-                          style: theme.textTheme.title,
-                        ),
-                        Row(
+                        SizedBox(width: cardSize - 30),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            CircleAvatar(
-                              backgroundColor: Colors.white24,
-                              child: Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Image.asset(
-                                    "assets/badges_type/${pokemon.type1}.png"),
-                              ),
-                              radius: 12,
+                            Text(
+                              pokemon.name,
+                              style: theme.textTheme.title,
                             ),
-                            SizedBox(width: 10),
-                            Text(pokemon.type1),
+                            Row(
+                              children: <Widget>[
+                                _pokemonType(pokemon.type1),
+                                SizedBox(width: 15),
+                                _pokemonType(pokemon.type2),
+                              ],
+                            ),
                           ],
-                        ),
+                        )
                       ],
-                    )
-                  ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
         ),
-      ),
+        SizedBox(
+          width: cardSize,
+          child: PokemonImage(
+            Pokemon.getURLImage(pokemon.id, pokemon.form),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _pokemonType(String type) {
+    if (type == null) return Container();
+
+    return Row(
+      children: <Widget>[
+        CircleAvatar(
+          backgroundColor: Colors.white24,
+          child: Padding(
+            padding: EdgeInsets.all(3),
+            child: Image.asset("assets/badges_type/$type.png"),
+          ),
+          radius: 12,
+        ),
+        SizedBox(width: 5),
+        Text(type),
+      ],
     );
   }
 

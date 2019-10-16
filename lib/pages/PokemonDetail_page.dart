@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Model/Sprite.dart';
+import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
@@ -15,7 +17,6 @@ class PokemonDetailPage extends StatefulWidget {
 
 class _PokemonDetailPageState extends State<PokemonDetailPage> {
   VideoPlayerController _videoCtrl;
-  GlobalRequest globalRequest = GlobalRequest();
 
   @override
   void dispose() {
@@ -26,6 +27,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   @override
   Widget build(BuildContext context) {
     Pokemon pokemon = ModalRoute.of(context).settings.arguments;
+    PokedexProvider provider = PokedexProvider.of(context);
 
     return Scaffold(
       backgroundColor: Pokemon.chooseByPokemonType(pokemon.type1),
@@ -48,7 +50,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8),
           child: FutureBuilder<HttpAnswer<Pokemon>>(
-            future: globalRequest.getPokemon(pokemon),
+            future: provider.getPokemon(pokemon),
             builder: (BuildContext context,
                 AsyncSnapshot<HttpAnswer<Pokemon>> snapshot) {
               if (snapshot.hasData) {
@@ -162,6 +164,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             this._stats(context, pokemon),
             this._statisticsChart(context, pokemon),
             this._family(context, pokemon),
+            this._sprites(context, pokemon),
           ],
         ),
       ),
@@ -194,6 +197,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                   this._stats(context, pokemon),
                   this._statisticsChart(context, pokemon),
                   this._family(context, pokemon),
+                  this._sprites(context, pokemon),
                 ],
               ),
             ),
@@ -328,24 +332,26 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _adjacentPokemon(BuildContext context, Pokemon pokemon) {
+    PokedexProvider provider = PokedexProvider.of(context);
+
     return Row(
       children: <Widget>[
         (pokemon.id - 1 > 0)
-            ? _adjacent(pokemon.id - 1, true)
+            ? _adjacent(provider, pokemon.id - 1, true)
             : Expanded(child: Container()),
         (pokemon.id < 808)
-            ? _adjacent(pokemon.id + 1, false)
+            ? _adjacent(provider, pokemon.id + 1, false)
             : Expanded(child: Container()),
       ],
     );
   }
 
-  Widget _adjacent(int number, bool borderLeft) {
+  Widget _adjacent(PokedexProvider provider, int number, bool borderLeft) {
     return Expanded(
       child: GestureDetector(
         onTap: () async {
           HttpAnswer<Pokemon> poke =
-              await this.globalRequest.getPokemonMinimalInfo(number);
+              await provider.getPokemonMinimalInfo(number);
           Navigator.pushReplacementNamed(context, "pokemonDetail",
               arguments: poke.object);
         },
@@ -445,7 +451,12 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _family(BuildContext context, Pokemon pokemon) {
-    if (pokemon.family.length == 0) return Container();
+    if (pokemon.family.length == 0) {
+      return _noInfoMessage(
+        Text("No family tree available"),
+      );
+    }
+
     return this._container(
       context: context,
       title: "Family",
@@ -529,6 +540,97 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             Text(info),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _sprites(BuildContext context, Pokemon pokemon) {
+    PokedexProvider provider = PokedexProvider.of(context);
+    provider.getPokemonSprites(pokemon.id);
+
+    return FutureBuilder<HttpAnswer<List<PokemonSprite>>>(
+      future: provider.getPokemonSprites(pokemon.id),
+      builder: (BuildContext context,
+          AsyncSnapshot<HttpAnswer<List<PokemonSprite>>> snapshot) {
+        Widget content;
+
+        if (snapshot.hasData) {
+          content = this._spritesView(context, snapshot.data.object);
+        } else if (snapshot.hasError) {
+          content = this._noInfoMessage(Text(snapshot.error));
+        } else {
+          content = Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CustomLoader(),
+          );
+        }
+
+        return content;
+      },
+    );
+  }
+
+  Widget _spritesView(BuildContext context, List<PokemonSprite> sprites) {
+    PokemonSprite normalSprites = sprites[0];
+
+    if (sprites.length == 0) {
+      return _noInfoMessage(
+        Text("No sprites available"),
+      );
+    }
+
+    return this._container(
+      context: context,
+      title: "Sprites",
+      children: List.generate(
+        normalSprites.sprites.length,
+        (int i) {
+          Sprite sprite = normalSprites.sprites[i];
+
+          return Container(
+            margin: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.black54,
+            ),
+            width: MediaQuery.of(context).size.width * 0.25,
+            child: Stack(
+              children: <Widget>[
+                (sprite.shiny)
+                    ? Image.asset(
+                        'assets/sparkles.gif',
+                        fit: BoxFit.cover,
+                      )
+                    : Container(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    sprite.gender,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white38,
+                    ),
+                  ),
+                ),
+                PokemonImage(GlobalRequest.sprites + sprite.sprite),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _noInfoMessage(Text text) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.symmetric(vertical: 15),
+      decoration: BoxDecoration(
+        color: Colors.white12,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: text,
       ),
     );
   }

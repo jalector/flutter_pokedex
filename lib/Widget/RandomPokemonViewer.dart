@@ -1,79 +1,104 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
+import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
+import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 
 class RandomPokemonViewer extends StatefulWidget {
+  final PokedexProvider provider;
+  RandomPokemonViewer(this.provider);
+
   @override
   _RandomPokemonViewerState createState() => _RandomPokemonViewerState();
 }
 
 class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
-  final List<int> pokemons =
-      List.generate(40, (int i) => Random().nextInt(300) + 1);
+  int selected = 0;
+  PageController pageCtrl = PageController(
+    initialPage: 0,
+    keepPage: false,
+    viewportFraction: 0.4,
+  );
 
-  final GlobalRequest _globalRequest = GlobalRequest();
-  bool _loading = false;
+  @override
+  void initState() {
+    this.widget.provider.loadRandomPokemons(3);
+
+    pageCtrl.addListener(() {
+      double maxPosition = pageCtrl.position.maxScrollExtent - 100;
+      double position = pageCtrl.position.pixels;
+
+      if (position > maxPosition && !this.widget.provider.bloc.loading) {
+        this.widget.provider.loadRandomPokemons(5);
+      }
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    PokedexProvider provider = PokedexProvider.of(context);
     Size size = MediaQuery.of(context).size;
-    return Container(
-      height: size.height * 0.2,
-      width: size.width,
-      child: Swiper(
-        itemBuilder: (BuildContext context, int index) {
-          return this._pokemonCard(context, index);
-        },
-        itemCount: pokemons.length,
-        viewportFraction: 0.5,
-        scale: 0.8,
-      ),
+
+    return StreamBuilder<List<Pokemon>>(
+      stream: provider.bloc.pokedexStream,
+      builder: (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+        if (snapshot.hasData) {
+          List<Pokemon> pokemons = snapshot.data;
+
+          return Container(
+            height: size.height * 0.2,
+            width: size.width,
+            child: PageView.builder(
+              pageSnapping: false,
+              itemCount: pokemons.length,
+              physics: BouncingScrollPhysics(),
+              onPageChanged: (int index) {
+                setState(() => this.selected = index);
+              },
+              controller: this.pageCtrl,
+              itemBuilder: (BuildContext context, int index) {
+                return this._pokemonCard(context, pokemons[index], index);
+              },
+            ),
+          );
+        } else {
+          return CustomLoader();
+        }
+      },
     );
   }
 
-  Widget _pokemonCard(BuildContext context, int index) {
+  Widget _pokemonCard(BuildContext context, Pokemon pokemon, int index) {
+    ThemeData theme = Theme.of(context);
     return GestureDetector(
-      onTap: (this._loading)
-          ? null
-          : () async {
-              _loading = true;
-
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Obteniendo información"),
-                  backgroundColor: Colors.white,
-                  duration: Duration(seconds: 1),
-                ),
-              );
-              HttpAnswer<Pokemon> answer = await this
-                  ._globalRequest
-                  .getPokemonByNumber(this.pokemons[index]);
-
-              if (answer.ok) {
-                Navigator.pushNamed(context, "pokemonDetail",
-                    arguments: answer.object);
-              } else {
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Error while try to get pokemon info"),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              }
-              _loading = false;
-            },
-      child: Container(
+      onTap: () {
+        Navigator.of(context).pushNamed("pokemonDetail", arguments: pokemon);
+      },
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        margin: EdgeInsets.all((selected == index) ? 0 : 20),
         decoration: BoxDecoration(
           color: Theme.of(context).accentColor,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Stack(
           children: <Widget>[
+            Positioned(
+              bottom: 5,
+              left: 10,
+              child: AnimatedOpacity(
+                duration: Duration(milliseconds: 300),
+                opacity: ((selected == index) ? 0.7 : 0.1),
+                child: Text(
+                  "${pokemon.name}",
+                  style: theme.textTheme.title,
+                ),
+              ),
+            ),
             PokemonImage(
-              Pokemon.getURLImage(this.pokemons[index], null),
+              Pokemon.getURLImage(pokemon.id, null),
             ),
             Container(
               margin: EdgeInsets.all(15),
@@ -82,7 +107,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
                 color: Colors.red,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text("#${pokemons[index]}"),
+              child: Text("#${pokemon.id}"),
             ),
           ],
         ),
