@@ -28,7 +28,9 @@ class GlobalRequest {
 
     try {
       Uri uri = Uri.http(api, path, params);
-      response.answer = await http.get(uri, headers: this._headers);
+      response.answer = await http
+          .get(uri, headers: this._headers)
+          .timeout(Duration(seconds: 30));
       response.ok = response.answer.statusCode == 200;
     } catch (e) {
       response.reasonPhrase = e?.message;

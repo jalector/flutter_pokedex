@@ -93,7 +93,8 @@ class HomeDrawer extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        PokedexProvider.of(context).getPokedexGeneration(generation.number);
+        PokedexProvider.of(context)
+            .getPokedexGeneration(generation.number, cleanPokedex: true);
         Navigator.pushNamed(context, "pokedex", arguments: generation.title);
       },
       child: Container(
@@ -156,7 +157,7 @@ class HomeDrawer extends StatelessWidget {
   Widget _type(BuildContext context, String type) {
     return InkWell(
       onTap: () {
-        PokedexProvider.of(context).getPokedexByType(type);
+        PokedexProvider.of(context).getPokedexByType(type, cleanPokedex: true);
         Navigator.pushNamed(context, "pokedex", arguments: type);
       },
       child: Container(

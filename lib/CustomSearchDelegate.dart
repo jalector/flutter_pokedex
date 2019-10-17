@@ -35,7 +35,7 @@ class CustomSearchDelegate extends SearchDelegate {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
-        PokedexProvider.of(context).bloc.addPokedex([]);
+        PokedexProvider.of(context).bloc.addPokedex(null);
         close(context, null);
       },
     );

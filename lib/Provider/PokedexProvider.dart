@@ -35,7 +35,9 @@ class PokedexProvider extends InheritedWidget {
         as PokedexProvider);
   }
 
-  void getPokedexGeneration(int generation) async {
+  void getPokedexGeneration(int generation, {bool cleanPokedex = false}) async {
+    if (cleanPokedex) this.bloc.addPokedex(null);
+
     if (this.bloc.pokedex != null && this.bloc.pokedex.length > 0) return;
 
     HttpAnswer<List<Pokemon>> answer = await this
@@ -52,7 +54,9 @@ class PokedexProvider extends InheritedWidget {
     }
   }
 
-  void getPokedexByType(String type) async {
+  void getPokedexByType(String type, {bool cleanPokedex = false}) async {
+    if (cleanPokedex) this.bloc.addPokedex(null);
+
     if (this.bloc.pokedex != null && this.bloc.pokedex.length > 0) return;
 
     HttpAnswer<List<Pokemon>> answer =
@@ -100,21 +104,26 @@ class PokedexProvider extends InheritedWidget {
     }
   }
 
-  void loadRandomPokemons(int amount) async {
+  void loadRandomPokemons(int amount, {bool cleanPokedex = false}) async {
     Random random = Random();
-    print("Estoy cargando datos: ${this.bloc.pokedex?.length}");
+
+    if (cleanPokedex) this.bloc.addPokedex(null);
+
     this.bloc.isLoading(true);
     if (this.bloc.pokedex == null) {
       this.bloc.addPokedex([]);
     }
+
+    print("Yuda: Estoy cargando datos: ${this.bloc.pokedex?.length}");
 
     for (var i = 0; i < amount; i++) {
       HttpAnswer<Pokemon> answer =
           await this.getPokemonMinimalInfo(random.nextInt(400) + 1);
 
       if (answer.ok) {
-        this.bloc.pokedex.add(answer.object);
-        this.bloc.addPokedex(this.bloc.pokedex);
+        List<Pokemon> list = this.bloc.pokedex ?? <Pokemon>[];
+        list.add(answer.object);
+        this.bloc.addPokedex(list);
       }
     }
     this.bloc.isLoading(false);
@@ -175,8 +184,6 @@ class PokedexProvider extends InheritedWidget {
 
     if (response.ok) {
       response.object = PokemonSprite.fromJsonCollection(response.answer.body);
-    } else {
-      throw response.reasonPhrase;
     }
 
     return response;

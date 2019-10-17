@@ -29,7 +29,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
       double position = pageCtrl.position.pixels;
 
       if (position > maxPosition && !this.widget.provider.bloc.loading) {
-        this.widget.provider.loadRandomPokemons(5);
+        this.widget.provider.loadRandomPokemons(10);
       }
     });
 
