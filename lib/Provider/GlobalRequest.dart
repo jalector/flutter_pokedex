@@ -8,8 +8,7 @@ class GlobalRequest {
   static final String pokemonHub = "db.pokemongohub.net";
   static final String image =
       "https://db.pokemongohub.net/images/official/detail/";
-  static final String sprites =
-      "https://db.pokemongohub.net/images/ingame/normal/";
+  static final String sprites = "https://db.pokemongohub.net/images/ingame/";
   static final String video = "https://db.pokemongohub.net/videos/";
 
   Map<String, String> _headers;

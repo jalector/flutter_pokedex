@@ -545,78 +545,69 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _sprites(BuildContext context, Pokemon pokemon) {
-    PokedexProvider provider = PokedexProvider.of(context);
-    provider.getPokemonSprites(pokemon.id);
-
-    return FutureBuilder<HttpAnswer<List<PokemonSprite>>>(
-      future: provider.getPokemonSprites(pokemon.id),
-      builder: (BuildContext context,
-          AsyncSnapshot<HttpAnswer<List<PokemonSprite>>> snapshot) {
-        Widget content;
-
-        if (snapshot.hasData) {
-          content = this._spritesView(context, snapshot.data.object);
-        } else if (snapshot.hasError) {
-          content = this._noInfoMessage(Text(snapshot.error));
-        } else {
-          content = Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomLoader(),
-          );
-        }
-
-        return content;
-      },
-    );
-  }
-
-  Widget _spritesView(BuildContext context, List<PokemonSprite> sprites) {
-    PokemonSprite normalSprites = sprites[0];
-
-    if (sprites.length == 0) {
+    if (pokemon.sprites.length == 0) {
       return _noInfoMessage(
         Text("No sprites available"),
       );
     }
 
+    List<Widget> imageSprite = [];
+
+    pokemon.sprites.forEach((PokemonSprite pokemonSprite) {
+      imageSprite.add(
+        RotatedBox(
+          quarterTurns: -1,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 15),
+            child: Text(
+              pokemonSprite.form,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      );
+
+      pokemonSprite.sprites.forEach((Sprite sprite) {
+        imageSprite.add(this._spriteUI(sprite));
+      });
+    });
+
     return this._container(
       context: context,
       title: "Sprites",
-      children: List.generate(
-        normalSprites.sprites.length,
-        (int i) {
-          Sprite sprite = normalSprites.sprites[i];
+      children: imageSprite,
+    );
+  }
 
-          return Container(
-            margin: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.black54,
+  Widget _spriteUI(Sprite sprite) {
+    return Container(
+      margin: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.black54,
+      ),
+      width: MediaQuery.of(context).size.width * 0.25,
+      child: Stack(
+        children: <Widget>[
+          (sprite.shiny)
+              ? Image.asset(
+                  'assets/sparkles.gif',
+                  fit: BoxFit.cover,
+                )
+              : Container(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              sprite.gender,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white38,
+              ),
             ),
-            width: MediaQuery.of(context).size.width * 0.25,
-            child: Stack(
-              children: <Widget>[
-                (sprite.shiny)
-                    ? Image.asset(
-                        'assets/sparkles.gif',
-                        fit: BoxFit.cover,
-                      )
-                    : Container(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    sprite.gender,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white38,
-                    ),
-                  ),
-                ),
-                PokemonImage(GlobalRequest.sprites + sprite.sprite),
-              ],
-            ),
-          );
-        },
+          ),
+          PokemonImage(
+              "${GlobalRequest.sprites}${(sprite.form != "Pixel" ? "normal" : "pixels")}/${sprite.sprite}"),
+        ],
       ),
     );
   }

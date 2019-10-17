@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Model/Sprite.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Util.dart';
 
@@ -40,6 +41,7 @@ class Pokemon {
   List<Description> descriptions;
   List<TypeChart> typeChart;
   List<String> weatherInfluences;
+  List<PokemonSprite> sprites;
   Map<String, int> cPs;
   int maxcp;
 
@@ -140,7 +142,7 @@ class Pokemon {
       candyToEvolve: json["candyToEvolve"],
       kmBuddyDistance: json["kmBuddyDistance"],
       baseCaptureRate: json["baseCaptureRate"].toDouble(),
-      description: json["description"],
+      description: json["description"] ?? "No description available",
       weight: json["weight"]?.toDouble(),
       height: json["height"]?.toDouble(),
       buddySize: json["buddySize"],

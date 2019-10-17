@@ -132,14 +132,24 @@ class PokedexProvider extends InheritedWidget {
   ///Futures, jus a snapshot for information
 
   Future<HttpAnswer<Pokemon>> getPokemon(Pokemon pokemon) async {
+    print("YUDA:  getPokemon");
+
     var response = await this._globalRequest.get<Pokemon>(
         GlobalRequest.pokemonHub, "api/pokemon/${pokemon.id}",
         params: {"form": "${pokemon.form}"});
+
+    var spriteResponse = await this._globalRequest.get<List<PokemonSprite>>(
+        GlobalRequest.pokemonHub, "api/pokemon/${pokemon.id}/sprites");
 
     if (response.ok) {
       response.object = Pokemon.fromJsonDetail(
         json.decode(response.answer.body),
       );
+
+      if (spriteResponse.ok) {
+        response.object.sprites =
+            PokemonSprite.fromJsonCollection(spriteResponse.answer.body);
+      }
     } else {
       throw response.reasonPhrase;
     }
@@ -173,17 +183,6 @@ class PokedexProvider extends InheritedWidget {
       );
     } else {
       throw response.reasonPhrase;
-    }
-
-    return response;
-  }
-
-  Future<HttpAnswer<List<PokemonSprite>>> getPokemonSprites(int number) async {
-    var response = await this._globalRequest.get<List<PokemonSprite>>(
-        GlobalRequest.pokemonHub, "api/pokemon/$number/sprites");
-
-    if (response.ok) {
-      response.object = PokemonSprite.fromJsonCollection(response.answer.body);
     }
 
     return response;
