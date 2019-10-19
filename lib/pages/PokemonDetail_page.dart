@@ -30,16 +30,16 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     PokedexProvider provider = PokedexProvider.of(context);
 
     return Scaffold(
-      backgroundColor: Pokemon.chooseByPokemonType(pokemon.type1),
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Pokemon.chooseByPokemonType(pokemon.type1),
+        elevation: 5,
+        backgroundColor: Theme.of(context).primaryColor,
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Text(
               "${pokemon.name}",
-              style: Theme.of(context).textTheme.display3,
+              style: Theme.of(context).textTheme.display2,
             ),
             Spacer(),
             Text("#${pokemon.id}", style: Theme.of(context).textTheme.title),
@@ -107,7 +107,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: Colors.black54,
+            color: Colors.black38,
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(10),
             ),
@@ -138,35 +138,25 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _pokemonDetailPortrait(BuildContext context, Pokemon pokemon) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).accentColor,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(5),
-          bottom: Radius.circular(20),
-        ),
-      ),
-      child: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          children: <Widget>[
-            this._generationBanner(context, pokemon),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Flexible(child: this._pokemonPreview(pokemon)),
-                Flexible(child: this._description(pokemon)),
-              ],
-            ),
-            this._pokemonTypeBanners(pokemon),
-            this._adjacentPokemon(context, pokemon),
-            this._stats(context, pokemon),
-            this._statisticsChart(context, pokemon),
-            this._family(context, pokemon),
-            this._sprites(context, pokemon),
-          ],
-        ),
+    return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
+      child: Column(
+        children: <Widget>[
+          this._generationBanner(context, pokemon),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Flexible(child: this._pokemonPreview(pokemon)),
+              Flexible(child: this._description(pokemon)),
+            ],
+          ),
+          this._pokemonTypeBanners(pokemon),
+          this._adjacentPokemon(context, pokemon),
+          this._stats(context, pokemon),
+          this._statisticsChart(context, pokemon),
+          this._family(context, pokemon),
+          this._sprites(context, pokemon),
+        ],
       ),
     );
   }
@@ -184,7 +174,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           child: Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).primaryColor,
               borderRadius: BorderRadius.circular(5),
             ),
             child: SingleChildScrollView(
@@ -427,13 +417,15 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       padding: EdgeInsets.all(10),
       margin: EdgeInsets.symmetric(horizontal: 3),
       decoration: BoxDecoration(
-        color: Pokemon.chooseByPokemonType(type.type).withOpacity(0.3),
+        color: Pokemon.chooseByPokemonType(type.type).withOpacity(0.5),
         borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
         children: <Widget>[
           Image(
-            image: NetworkImage(Pokemon.getUrlBadgetype(type.type)),
+            image: NetworkImage(
+              Pokemon.getUrlBadgetype(type.type),
+            ),
             fit: BoxFit.contain,
           ),
           SizedBox(height: 5),
@@ -482,7 +474,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
               style: Theme.of(context).textTheme.title,
             ),
             Material(
-              color: Colors.black54,
+              color: Colors.white10,
               child: InkWell(
                 splashColor: Colors.white12,
                 onTap: () {
@@ -584,7 +576,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.black54,
+        color: Colors.white24,
       ),
       width: MediaQuery.of(context).size.width * 0.25,
       child: Stack(

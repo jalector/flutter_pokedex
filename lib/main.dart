@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return PokedexProvider(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Pokedex',
         initialRoute: "/",
         routes: <String, WidgetBuilder>{
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
           "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
           "pokemonImage": (BuildContext context) => PokemonImagePage(),
         },
-        theme: this._theme(),
+        theme: ThemeData.dark(),
       ),
     );
   }
@@ -47,38 +48,24 @@ class MyApp extends StatelessWidget {
         color: _primary,
         textTheme: TextTheme(
           display1: TextStyle(
-            fontSize: 72,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display2: TextStyle(
-            fontSize: 60,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display3: TextStyle(
-            fontSize: 50,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display4: TextStyle(
-            fontSize: 50,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           title: TextStyle(
-            fontSize: 30,
             color: Colors.black,
             fontWeight: FontWeight.bold,
-          ),
-          caption: TextStyle(
-            fontSize: 15,
-          ),
-          overline: TextStyle(
-            fontSize: 15,
-          ),
-          body1: TextStyle(
-            fontSize: 15,
           ),
         ),
       ),

@@ -212,7 +212,7 @@ class Pokemon {
         color = Colors.greenAccent;
         break;
       case "dark":
-        color = Colors.brown[800];
+        color = Colors.black38;
         break;
       case "dragon":
         color = Colors.purple;
@@ -242,7 +242,7 @@ class Pokemon {
         color = Colors.cyan[300];
         break;
       case "normal":
-        color = Colors.black38;
+        color = Colors.brown[800];
         break;
       case "poison":
         color = Colors.purple;

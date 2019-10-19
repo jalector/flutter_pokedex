@@ -10,12 +10,7 @@ class CustomSearchDelegate extends SearchDelegate {
   ThemeData appBarTheme(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    return theme.copyWith(
-      primaryColor: theme.accentColor,
-      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
-      primaryColorBrightness: Brightness.dark,
-      primaryTextTheme: ThemeData.light().textTheme,
-    );
+    return theme;
   }
 
   @override
@@ -110,40 +105,37 @@ class CustomSearchDelegate extends SearchDelegate {
           bottom: 0,
           right: 10,
           left: 10,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Container(
-              child: Material(
-                color: theme.accentColor,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed("pokemonDetail", arguments: pokemon);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 5, bottom: 10),
-                    child: Row(
+          child: Material(
+            borderRadius: BorderRadius.circular(10),
+            elevation: 5,
+            color: theme.primaryColorDark,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed("pokemonDetail", arguments: pokemon);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(top: 5, bottom: 10),
+                child: Row(
+                  children: <Widget>[
+                    SizedBox(width: cardSize - 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        SizedBox(width: cardSize - 30),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Text(
+                          pokemon.name,
+                          style: theme.textTheme.title,
+                        ),
+                        Row(
                           children: <Widget>[
-                            Text(
-                              pokemon.name,
-                              style: theme.textTheme.title,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                _pokemonType(pokemon.type1),
-                                SizedBox(width: 15),
-                                _pokemonType(pokemon.type2),
-                              ],
-                            ),
+                            _pokemonType(pokemon.type1),
+                            SizedBox(width: 15),
+                            _pokemonType(pokemon.type2),
                           ],
-                        )
+                        ),
                       ],
-                    ),
-                  ),
+                    )
+                  ],
                 ),
               ),
             ),

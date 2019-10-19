@@ -82,7 +82,9 @@ class _PageViewGenerationState extends State<PageViewGeneration>
           child: Column(
             children: <Widget>[
               RaisedButton(
-                color: Theme.of(context).accentColor,
+                elevation: 5,
+                shape: CircleBorder(),
+                color: Theme.of(context).primaryColorDark,
                 child: Icon(Icons.home),
                 onPressed: () {
                   this._pageCtrl.animateToPage(
@@ -114,7 +116,7 @@ class _PageViewGenerationState extends State<PageViewGeneration>
       child: PageView.builder(
         controller: this._pageCtrl,
         itemCount: this.regions.length,
-        //physics: NeverScrollableScrollPhysics(),
+        physics: BouncingScrollPhysics(),
         itemBuilder: (BuildContext context, int index) => this._generation(
           context,
           regions[index % regions.length],
@@ -131,53 +133,52 @@ class _PageViewGenerationState extends State<PageViewGeneration>
   ) {
     Duration animationDuration = Duration(milliseconds: 600);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 5),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: InkWell(
-          splashColor: Colors.red,
-          onTap: () {
-            var provider = PokedexProvider.of(context);
-            provider.getPokedexGeneration(generation.number,
-                cleanPokedex: true);
-
-            Navigator.pushNamed(context, "pokedex",
-                arguments: generation.title);
-          },
-          child: Stack(
-            children: <Widget>[
-              AnimatedContainer(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image:
-                        AssetImage("assets/gen/gen_${generation.number}.jpg"),
-                  ),
-                ),
-                duration: Duration(milliseconds: 400),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+      padding: EdgeInsets.all(10),
+      child: GestureDetector(
+        onTap: () {
+          PokedexProvider.of(context)
+              .getPokedexGeneration(generation.number, cleanPokedex: true);
+          Navigator.pushNamed(context, "pokedex", arguments: generation.title);
+        },
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(10),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Stack(
+              children: <Widget>[
+                Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).accentColor,
-                    borderRadius:
-                        BorderRadius.horizontal(right: Radius.circular(10)),
-                  ),
-                  child: Text(
-                    generation.title,
-                    style: Theme.of(context).textTheme.title,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage(
+                        "assets/gen/gen_${generation.number}.jpg",
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              AnimatedContainer(
-                duration: animationDuration,
-                color: (selected) ? Colors.transparent : Colors.black38,
-              ),
-            ],
+                Positioned(
+                  bottom: 0,
+                  left: 10,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColorDark,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      generation.title,
+                      style: Theme.of(context).textTheme.title,
+                    ),
+                  ),
+                ),
+                AnimatedContainer(
+                  duration: animationDuration,
+                  color: (selected) ? Colors.transparent : Colors.black12,
+                ),
+              ],
+            ),
           ),
         ),
       ),

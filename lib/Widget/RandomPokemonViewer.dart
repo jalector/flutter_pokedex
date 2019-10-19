@@ -17,7 +17,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
   PageController pageCtrl = PageController(
     initialPage: 0,
     keepPage: false,
-    viewportFraction: 0.4,
+    viewportFraction: 0.5,
   );
 
   @override
@@ -48,7 +48,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
           List<Pokemon> pokemons = snapshot.data;
 
           return Container(
-            height: size.height * 0.2,
+            height: size.height * 0.25,
             width: size.width,
             child: PageView.builder(
               pageSnapping: false,
@@ -79,37 +79,54 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
       child: AnimatedContainer(
         duration: Duration(milliseconds: 300),
         margin: EdgeInsets.all((selected == index) ? 0 : 20),
-        decoration: BoxDecoration(
-          color: Theme.of(context).accentColor,
+        padding: EdgeInsets.all(10),
+        child: Material(
+          color: theme.primaryColorDark,
           borderRadius: BorderRadius.circular(10),
-        ),
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              bottom: 5,
-              left: 10,
-              child: AnimatedOpacity(
-                duration: Duration(milliseconds: 300),
-                opacity: ((selected == index) ? 0.7 : 0.1),
-                child: Text(
-                  "${pokemon.name}",
-                  style: theme.textTheme.title,
+          elevation: 3.5,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Image.asset(
+                    "assets/effect.gif",
+                    fit: BoxFit.fill,
+                  ),
                 ),
-              ),
+                Positioned(
+                  bottom: 5,
+                  left: 10,
+                  child: AnimatedOpacity(
+                    duration: Duration(milliseconds: 300),
+                    opacity: ((selected == index) ? 1 : 0.3),
+                    child: Text(
+                      "${pokemon.name}",
+                      style: theme.textTheme.title.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                PokemonImage(
+                  Pokemon.getURLImage(pokemon.id, null),
+                ),
+                Container(
+                  margin: EdgeInsets.all(15),
+                  padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text("#${pokemon.id}"),
+                ),
+              ],
             ),
-            PokemonImage(
-              Pokemon.getURLImage(pokemon.id, null),
-            ),
-            Container(
-              margin: EdgeInsets.all(15),
-              padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text("#${pokemon.id}"),
-            ),
-          ],
+          ),
         ),
       ),
     );

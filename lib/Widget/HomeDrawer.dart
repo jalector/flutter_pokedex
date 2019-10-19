@@ -11,14 +11,14 @@ class HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    ThemeData style = Theme.of(context);
+    ThemeData theme = Theme.of(context);
 
     return Container(
       width: size.width * 0.8,
       constraints: BoxConstraints(
         maxWidth: 650,
       ),
-      color: style.accentColor,
+      color: theme.primaryColorDark,
       padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
       child: SafeArea(
         bottom: false,
@@ -32,7 +32,7 @@ class HomeDrawer extends StatelessWidget {
                 height: size.height * 0.25,
                 margin: EdgeInsets.symmetric(vertical: 5),
                 decoration: BoxDecoration(
-                  color: Colors.black45,
+                  color: Colors.white38,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Stack(
@@ -41,12 +41,15 @@ class HomeDrawer extends StatelessWidget {
                       right: 0,
                       child: Image.network(
                         Pokemon.getURLImage(Random().nextInt(800) + 1, null),
-                        color: style.primaryColor,
+                        color: theme.primaryColor,
                       ),
                     ),
                     Center(
                       widthFactor: 1.2,
-                      child: Text("Pokedex", style: style.textTheme.display4),
+                      child: Text(
+                        "Pokedex",
+                        style: theme.textTheme.display3,
+                      ),
                     ),
                   ],
                 ),
@@ -89,7 +92,7 @@ class HomeDrawer extends StatelessWidget {
 
   Widget _generation(BuildContext context, Generation generation) {
     Size size = MediaQuery.of(context).size;
-    ThemeData style = Theme.of(context);
+    ThemeData theme = Theme.of(context);
 
     return InkWell(
       onTap: () {
@@ -98,20 +101,23 @@ class HomeDrawer extends StatelessWidget {
         Navigator.pushNamed(context, "pokedex", arguments: generation.title);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
         margin: EdgeInsets.symmetric(vertical: 3),
         width: size.width,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/gen/gen_${generation.number}.jpg"),
             fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Colors.red, BlendMode.darken),
+            colorFilter: ColorFilter.mode(
+              Colors.red,
+              BlendMode.darken,
+            ),
           ),
           borderRadius: BorderRadius.circular(5),
         ),
         child: Text(
           generation.title,
-          style: style.textTheme.title,
+          style: theme.textTheme.title.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -164,7 +170,7 @@ class HomeDrawer extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10),
         margin: EdgeInsets.symmetric(vertical: 3, horizontal: 3),
         decoration: BoxDecoration(
-          color: Colors.black54,
+          color: Colors.white24,
           borderRadius: BorderRadius.circular(5),
         ),
         child: Column(
