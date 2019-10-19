@@ -4,10 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Generation_model.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
+import 'package:flutter_pokedex/Provider/ThemeChanger.dart';
+import 'package:provider/provider.dart';
 
-class HomeDrawer extends StatelessWidget {
+class HomeDrawer extends StatefulWidget {
   const HomeDrawer({Key key}) : super(key: key);
 
+  @override
+  _HomeDrawerState createState() => _HomeDrawerState();
+}
+
+class _HomeDrawerState extends State<HomeDrawer> {
+  bool isDarkMode = false;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -64,10 +72,31 @@ class HomeDrawer extends StatelessWidget {
               this._generation(context, Generation(7, "Alola")),
               this._bannerDivider(context, "Types"),
               this._types(context, size),
+              this.changeTheme(context),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget changeTheme(BuildContext context) {
+    return SwitchListTile(
+      title: Text("Dark mode"),
+      value: this.isDarkMode,
+      onChanged: (bool darkMode) {
+        var provider = Provider.of<ThemeChanger>(context);
+
+        if (darkMode) {
+          provider.setTheme(ThemeData.dark());
+        } else {
+          provider.setTheme(ThemeData.light());
+        }
+
+        setState(() {
+          this.isDarkMode = darkMode;
+        });
+      },
     );
   }
 

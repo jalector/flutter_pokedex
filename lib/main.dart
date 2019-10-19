@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Provider/ThemeChanger.dart';
 import 'package:flutter_pokedex/pages/Pokedex_page.dart';
 import 'package:flutter_pokedex/pages/PokemonDetail_page.dart';
 import 'package:flutter_pokedex/pages/PokemonImage_page.dart';
 import 'package:flutter_pokedex/pages/PokemonVideo_page.dart';
+import 'package:provider/provider.dart';
 
 import 'Pages/Home_page.dart';
 import 'Provider/PokedexProvider.dart';
@@ -13,19 +15,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PokedexProvider(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Pokedex',
-        initialRoute: "/",
-        routes: <String, WidgetBuilder>{
-          "/": (BuildContext context) => HomePage(),
-          "pokedex": (BuildContext context) => PokedexPage(),
-          "pokemonDetail": (BuildContext context) => PokemonDetailPage(),
-          "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
-          "pokemonImage": (BuildContext context) => PokemonImagePage(),
-        },
-        theme: ThemeData.dark(),
-      ),
+      child: ChangeNotifierProvider(
+          builder: (BuildContext context) => ThemeChanger(ThemeData.light()),
+          child: Pokedex()),
     );
   }
 
@@ -120,6 +112,28 @@ class MyApp extends StatelessWidget {
           fontSize: 15,
         ),
       ),
+    );
+  }
+}
+
+class Pokedex extends StatelessWidget {
+  const Pokedex({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Pokedex',
+      initialRoute: "/",
+      routes: <String, WidgetBuilder>{
+        "/": (BuildContext context) => HomePage(),
+        "pokedex": (BuildContext context) => PokedexPage(),
+        "pokemonDetail": (BuildContext context) => PokemonDetailPage(),
+        "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
+        "pokemonImage": (BuildContext context) => PokemonImagePage(),
+      },
+      theme: theme.getTheme(),
     );
   }
 }
