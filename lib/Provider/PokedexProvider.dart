@@ -114,8 +114,6 @@ class PokedexProvider extends InheritedWidget {
       this.bloc.addPokedex([]);
     }
 
-    print("Yuda: Estoy cargando datos: ${this.bloc.pokedex?.length}");
-
     for (var i = 0; i < amount; i++) {
       HttpAnswer<Pokemon> answer =
           await this.getPokemonMinimalInfo(random.nextInt(400) + 1);
@@ -132,8 +130,6 @@ class PokedexProvider extends InheritedWidget {
   ///Futures, jus a snapshot for information
 
   Future<HttpAnswer<Pokemon>> getPokemon(Pokemon pokemon) async {
-    print("YUDA:  getPokemon");
-
     var response = await this._globalRequest.get<Pokemon>(
         GlobalRequest.pokemonHub, "api/pokemon/${pokemon.id}",
         params: {"form": "${pokemon.form}"});

@@ -126,7 +126,7 @@ class _PokedexPageState extends State<PokedexPage> {
         child: Stack(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 2),
+              padding: EdgeInsets.symmetric(horizontal: 5),
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColorLight,
                 borderRadius: BorderRadius.circular(5),
@@ -137,7 +137,7 @@ class _PokedexPageState extends State<PokedexPage> {
               bottom: 0,
               left: 20,
               child: Opacity(
-                opacity: 0.1,
+                opacity: 0.2,
                 child: Text(
                   pokemon.name,
                   style: Theme.of(context).textTheme.title,

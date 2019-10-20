@@ -179,13 +179,12 @@ class Pokemon {
     } else if (n.length == 2) {
       n = "0$n";
     }
-    var a = GlobalRequest.image + n + "${(form != null) ? "_f2" : ""}.png";
 
-    return a;
+    return GlobalRequest.image + n + "${(form == "Alola") ? "_f2" : ""}.png";
   }
 
-  static String getURLVideo(String name) {
-    return "${GlobalRequest.video}$name-small.mp4";
+  static String getURLVideo(String name, String form) {
+    return "${GlobalRequest.video}$name${(form != null ? "_$form" : "")}-small.mp4";
   }
 
   static String getUrlBadgetype(String type) {

@@ -217,8 +217,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   Widget _video(Pokemon pokemon) {
     if (this._videoCtrl == null) {
-      this._videoCtrl =
-          VideoPlayerController.network(Pokemon.getURLVideo(pokemon.name));
+      this._videoCtrl = VideoPlayerController.network(
+        Pokemon.getURLVideo(pokemon.name, pokemon.form),
+      );
 
       return FutureBuilder(
         future: _videoCtrl.initialize(),
@@ -469,6 +470,17 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         borderRadius: BorderRadius.circular(10),
         child: Stack(
           children: <Widget>[
+            Positioned(
+              bottom: 0,
+              right: 0,
+              width: 50,
+              child: Opacity(
+                opacity: 0.5,
+                child: Image.network(
+                  Pokemon.getUrlBadgetype(pokemon.type1),
+                ),
+              ),
+            ),
             Text(
               "#${pokemon.id}",
               style: Theme.of(context).textTheme.title,

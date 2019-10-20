@@ -8,6 +8,9 @@ class GlobalRequest {
   static final String pokemonHub = "db.pokemongohub.net";
   static final String image =
       "https://db.pokemongohub.net/images/official/detail/";
+  static final String imageFull =
+      "https://db.pokemongohub.net/images/official/full/";
+
   static final String sprites = "https://db.pokemongohub.net/images/ingame/";
   static final String video = "https://db.pokemongohub.net/videos/";
 

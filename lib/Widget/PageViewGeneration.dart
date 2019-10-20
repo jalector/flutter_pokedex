@@ -84,7 +84,7 @@ class _PageViewGenerationState extends State<PageViewGeneration>
               RaisedButton(
                 elevation: 5,
                 shape: CircleBorder(),
-                color: Theme.of(context).primaryColorDark,
+                color: Theme.of(context).accentColor,
                 child: Icon(Icons.home),
                 onPressed: () {
                   this._pageCtrl.animateToPage(

@@ -6,6 +6,7 @@ import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:flutter_pokedex/Provider/ThemeChanger.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({Key key}) : super(key: key);
@@ -16,6 +17,12 @@ class HomeDrawer extends StatefulWidget {
 
 class _HomeDrawerState extends State<HomeDrawer> {
   bool isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -81,23 +88,29 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   Widget changeTheme(BuildContext context) {
-    return SwitchListTile(
-      title: Text("Dark mode"),
-      value: this.isDarkMode,
-      onChanged: (bool darkMode) {
-        var provider = Provider.of<ThemeChanger>(context);
+    return FutureBuilder<SharedPreferences>(
+        future: SharedPreferences.getInstance(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            SharedPreferences preferences = snapshot.data;
+            isDarkMode = preferences.getBool(ThemeChanger.darkModeKey);
 
-        if (darkMode) {
-          provider.setTheme(ThemeData.dark());
-        } else {
-          provider.setTheme(ThemeData.light());
-        }
+            return SwitchListTile(
+              title: Text("Dark mode"),
+              value: this.isDarkMode,
+              onChanged: (bool darkMode) {
+                var provider = Provider.of<ThemeChanger>(context);
+                provider.setDarkMode(darkMode);
+                preferences.setBool(ThemeChanger.darkModeKey, darkMode);
 
-        setState(() {
-          this.isDarkMode = darkMode;
+                setState(() {
+                  this.isDarkMode = darkMode;
+                });
+              },
+            );
+          }
+          return CircularProgressIndicator();
         });
-      },
-    );
   }
 
   Widget _bannerDivider(BuildContext context, String title) {

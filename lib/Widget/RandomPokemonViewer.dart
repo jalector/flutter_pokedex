@@ -51,7 +51,6 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
             height: size.height * 0.25,
             width: size.width,
             child: PageView.builder(
-              pageSnapping: false,
               itemCount: pokemons.length,
               physics: BouncingScrollPhysics(),
               onPageChanged: (int index) {
@@ -81,7 +80,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
         margin: EdgeInsets.all((selected == index) ? 0 : 20),
         padding: EdgeInsets.all(10),
         child: Material(
-          color: theme.primaryColorDark,
+          color: Colors.black,
           borderRadius: BorderRadius.circular(10),
           elevation: 3.5,
           child: ClipRRect(
@@ -93,9 +92,9 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  child: Image.asset(
-                    "assets/effect.gif",
-                    fit: BoxFit.fill,
+                  child: Image(
+                    image: AssetImage("assets/effect.gif"),
+                    fit: BoxFit.contain,
                   ),
                 ),
                 Positioned(
@@ -112,8 +111,11 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
                     ),
                   ),
                 ),
-                PokemonImage(
-                  Pokemon.getURLImage(pokemon.id, null),
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: PokemonImage(
+                    Pokemon.getURLImage(pokemon.id, null),
+                  ),
                 ),
                 Container(
                   margin: EdgeInsets.all(15),
