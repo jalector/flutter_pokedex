@@ -13,12 +13,12 @@ import 'Provider/PokedexProvider.dart';
 void main() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
-  runApp(MyApp(preferences.getBool(ThemeChanger.darkModeKey) ?? true));
+  runApp(MyApp(preferences.getInt(ThemeChanger.darkModeKey) ?? 0));
 }
 
 class MyApp extends StatefulWidget {
-  final bool darkMode;
-  MyApp(this.darkMode);
+  final int themeNumber;
+  MyApp(this.themeNumber);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -29,105 +29,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return PokedexProvider(
       child: ChangeNotifierProvider(
-        builder: (BuildContext context) => ThemeChanger(widget.darkMode),
+        builder: (BuildContext context) => ThemeChanger(widget.themeNumber),
         child: Pokedex(),
       ),
     );
   }
-
-  // ThemeData _theme() {
-  //   Color _primary = Color.fromRGBO(155, 89, 182, 1);
-  //   Color _primaryVariant = Color.fromRGBO(155, 89, 182, 1);
-  //   Color _secondary = Color.fromRGBO(52, 73, 92, 1);
-  //   Color _secondaryVariant = Colors.red;
-  //   return ThemeData(
-  //     primaryColor: Color.fromRGBO(155, 89, 182, 1),
-  //     accentColor: Color.fromRGBO(52, 73, 92, 1),
-  //     backgroundColor: Color.fromRGBO(155, 89, 182, 1),
-  //     scaffoldBackgroundColor: Color.fromRGBO(155, 89, 182, 1),
-  //     primaryColorDark: Color.fromRGBO(26, 188, 156, 1),
-  //     primaryColorLight: Colors.green,
-  //     brightness: Brightness.dark,
-  //     accentColorBrightness: Brightness.dark,
-  //     primaryColorBrightness: Brightness.dark,
-  //     appBarTheme: AppBarTheme(
-  //       color: _primary,
-  //       textTheme: TextTheme(
-  //         display1: TextStyle(
-  //           fontWeight: FontWeight.bold,
-  //           color: Colors.black,
-  //         ),
-  //         display2: TextStyle(
-  //           fontWeight: FontWeight.bold,
-  //           color: Colors.black,
-  //         ),
-  //         display3: TextStyle(
-  //           fontWeight: FontWeight.bold,
-  //           color: Colors.black,
-  //         ),
-  //         display4: TextStyle(
-  //           fontWeight: FontWeight.bold,
-  //           color: Colors.black,
-  //         ),
-  //         title: TextStyle(
-  //           color: Colors.black,
-  //           fontWeight: FontWeight.bold,
-  //         ),
-  //       ),
-  //     ),
-  //     colorScheme: ColorScheme(
-  //       primary: _primary,
-  //       primaryVariant: _primaryVariant,
-  //       secondary: _secondary,
-  //       secondaryVariant: _secondaryVariant,
-  //       surface: Colors.black,
-  //       background: Colors.black,
-  //       error: Colors.red,
-  //       onPrimary: _primary,
-  //       onSecondary: _primaryVariant,
-  //       onSurface: _primary,
-  //       onBackground: Colors.purple,
-  //       onError: Colors.red,
-  //       brightness: Brightness.light,
-  //     ),
-  //     textTheme: TextTheme(
-  //       display1: TextStyle(
-  //         fontSize: 72,
-  //         fontWeight: FontWeight.bold,
-  //         color: Colors.white,
-  //       ),
-  //       display2: TextStyle(
-  //         fontSize: 60,
-  //         fontWeight: FontWeight.bold,
-  //         color: Colors.white,
-  //       ),
-  //       display3: TextStyle(
-  //         fontSize: 50,
-  //         fontWeight: FontWeight.bold,
-  //         color: Colors.white,
-  //       ),
-  //       display4: TextStyle(
-  //         fontSize: 50,
-  //         fontWeight: FontWeight.bold,
-  //         color: Colors.white,
-  //       ),
-  //       title: TextStyle(
-  //         fontSize: 30,
-  //         color: Colors.white,
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //       caption: TextStyle(
-  //         fontSize: 15,
-  //       ),
-  //       overline: TextStyle(
-  //         fontSize: 15,
-  //       ),
-  //       body1: TextStyle(
-  //         fontSize: 15,
-  //       ),
-  //     ),
-  //   );
-  // }
 }
 
 class Pokedex extends StatelessWidget {

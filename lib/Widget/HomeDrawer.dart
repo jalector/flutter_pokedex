@@ -16,7 +16,7 @@ class HomeDrawer extends StatefulWidget {
 }
 
 class _HomeDrawerState extends State<HomeDrawer> {
-  bool isDarkMode = false;
+  int themeNumber = 0;
 
   @override
   void initState() {
@@ -93,18 +93,21 @@ class _HomeDrawerState extends State<HomeDrawer> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             SharedPreferences preferences = snapshot.data;
-            isDarkMode = preferences.getBool(ThemeChanger.darkModeKey);
+            themeNumber = preferences.getInt(ThemeChanger.darkModeKey) ?? 0;
 
-            return SwitchListTile(
-              title: Text("Dark mode"),
-              value: this.isDarkMode,
-              onChanged: (bool darkMode) {
+            return Slider(
+              label: "Theme #$themeNumber",
+              value: themeNumber.toDouble(),
+              min: 0,
+              max: ThemeChanger.totalNumberOfThemes.toDouble() - 1,
+              divisions: ThemeChanger.totalNumberOfThemes - 1,
+              onChanged: (double theme) {
                 var provider = Provider.of<ThemeChanger>(context);
-                provider.setDarkMode(darkMode);
-                preferences.setBool(ThemeChanger.darkModeKey, darkMode);
+                provider.setTheme(theme.toInt());
+                preferences.setInt(ThemeChanger.darkModeKey, theme.toInt());
 
                 setState(() {
-                  this.isDarkMode = darkMode;
+                  this.themeNumber = theme.toInt();
                 });
               },
             );

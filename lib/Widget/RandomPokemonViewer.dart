@@ -62,6 +62,18 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
               },
             ),
           );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Container(
+              child: Text(
+                snapshot.error,
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .copyWith(color: Colors.red),
+              ),
+            ),
+          );
         } else {
           return CustomLoader();
         }
