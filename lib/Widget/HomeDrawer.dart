@@ -16,8 +16,6 @@ class HomeDrawer extends StatefulWidget {
 }
 
 class _HomeDrawerState extends State<HomeDrawer> {
-  int themeNumber = 0;
-
   @override
   void initState() {
     super.initState();
@@ -33,7 +31,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       constraints: BoxConstraints(
         maxWidth: 650,
       ),
-      color: theme.primaryColorDark,
+      color: theme.primaryColor,
       padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
       child: SafeArea(
         bottom: false,
@@ -69,7 +67,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ],
                 ),
               ),
-              this._bannerDivider(context, "Generations"),
+              this._bannerDivider(context, "Region"),
               this._generation(context, Generation(1, "Kanto")),
               this._generation(context, Generation(2, "Johto")),
               this._generation(context, Generation(3, "Hoenn")),
@@ -88,32 +86,46 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   Widget changeTheme(BuildContext context) {
-    return FutureBuilder<SharedPreferences>(
-        future: SharedPreferences.getInstance(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            SharedPreferences preferences = snapshot.data;
-            themeNumber = preferences.getInt(ThemeChanger.darkModeKey) ?? 0;
-
-            return Slider(
-              label: "Theme #$themeNumber",
-              value: themeNumber.toDouble(),
-              min: 0,
-              max: ThemeChanger.totalNumberOfThemes.toDouble() - 1,
-              divisions: ThemeChanger.totalNumberOfThemes - 1,
-              onChanged: (double theme) {
+    return Column(
+      children: <Widget>[
+        this._bannerDivider(context, "Theme"),
+        FutureBuilder<SharedPreferences>(
+            future: SharedPreferences.getInstance(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                SharedPreferences preferences = snapshot.data;
                 var provider = Provider.of<ThemeChanger>(context);
-                provider.setTheme(theme.toInt());
-                preferences.setInt(ThemeChanger.darkModeKey, theme.toInt());
+                var themeNumber =
+                    preferences.getInt(ThemeChanger.darkModeKey) ?? 0;
 
-                setState(() {
-                  this.themeNumber = theme.toInt();
-                });
-              },
-            );
-          }
-          return CircularProgressIndicator();
-        });
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List<Widget>.generate(
+                    ThemeChanger.totalNumberOfThemes,
+                    (int index) {
+                      return Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 5),
+                          child: RaisedButton(
+                            child: Text("${index + 1}"),
+                            onPressed: (themeNumber == index)
+                                ? null
+                                : () {
+                                    provider.setTheme(index);
+                                    preferences.setInt(
+                                        ThemeChanger.darkModeKey, index);
+                                  },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+              return CircularProgressIndicator();
+            }),
+      ],
+    );
   }
 
   Widget _bannerDivider(BuildContext context, String title) {

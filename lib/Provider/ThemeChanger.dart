@@ -47,27 +47,32 @@ class ThemeChanger with ChangeNotifier {
       brightness: Brightness.dark,
       accentColorBrightness: Brightness.dark,
       primaryColorBrightness: Brightness.dark,
+      buttonColor: _secondaryVariant,
       appBarTheme: AppBarTheme(
         color: _primary,
         textTheme: TextTheme(
           display1: TextStyle(
+            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display2: TextStyle(
+            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display3: TextStyle(
+            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display4: TextStyle(
+            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           title: TextStyle(
-            color: Colors.black,
+            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -89,37 +94,45 @@ class ThemeChanger with ChangeNotifier {
       ),
       textTheme: TextTheme(
         display1: TextStyle(
+          fontFamily: 'Avocado',
           fontSize: 72,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
         display2: TextStyle(
+          fontFamily: 'Avocado',
           fontSize: 60,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
         display3: TextStyle(
+          fontFamily: 'Avocado',
           fontSize: 50,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
         display4: TextStyle(
+          fontFamily: 'Avocado',
           fontSize: 50,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
         title: TextStyle(
+          fontFamily: 'Avocado',
           fontSize: 30,
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),
         caption: TextStyle(
+          fontFamily: 'Avocado',
           fontSize: 15,
         ),
         overline: TextStyle(
+          fontFamily: 'Avocado',
           fontSize: 15,
         ),
         body1: TextStyle(
+          fontFamily: 'Avocado',
           fontSize: 15,
         ),
       ),

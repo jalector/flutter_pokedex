@@ -17,7 +17,10 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       drawer: HomeDrawer(),
       appBar: AppBar(
-        title: Text("Pokedex"),
+        title: Text(
+          "Pokedex",
+          style: style.textTheme.title,
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -37,7 +40,7 @@ class HomePage extends StatelessWidget {
             children: <Widget>[
               SizedBox(height: 20),
               Text(
-                "Generations",
+                "Region",
                 style: style.textTheme.title,
               ),
               PageViewGeneration(),
