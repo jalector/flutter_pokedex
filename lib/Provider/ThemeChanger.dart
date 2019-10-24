@@ -19,7 +19,6 @@ class ThemeChanger with ChangeNotifier {
     switch (themeData) {
       case 0:
         this._themeData = ThemeData.dark();
-
         break;
       case 1:
         this._themeData = ThemeData.light();

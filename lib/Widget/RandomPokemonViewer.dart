@@ -39,27 +39,26 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
   @override
   Widget build(BuildContext context) {
     PokedexProvider provider = PokedexProvider.of(context);
-    Size size = MediaQuery.of(context).size;
-
     return StreamBuilder<List<Pokemon>>(
       stream: provider.bloc.pokedexStream,
       builder: (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
         if (snapshot.hasData) {
           List<Pokemon> pokemons = snapshot.data;
 
-          return Container(
-            height: size.height * 0.25,
-            width: size.width,
-            child: PageView.builder(
-              itemCount: pokemons.length,
-              physics: BouncingScrollPhysics(),
-              onPageChanged: (int index) {
-                setState(() => this.selected = index);
-              },
-              controller: this.pageCtrl,
-              itemBuilder: (BuildContext context, int index) {
-                return this._pokemonCard(context, pokemons[index], index);
-              },
+          return AspectRatio(
+            aspectRatio: 2.3,
+            child: Container(
+              child: PageView.builder(
+                itemCount: pokemons.length,
+                physics: BouncingScrollPhysics(),
+                onPageChanged: (int index) {
+                  setState(() => this.selected = index);
+                },
+                controller: this.pageCtrl,
+                itemBuilder: (BuildContext context, int index) {
+                  return this._pokemonCard(context, pokemons[index], index);
+                },
+              ),
             ),
           );
         } else if (snapshot.hasError) {
@@ -97,24 +96,24 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
           elevation: 3.5,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Stack(
-              children: <Widget>[
-                Positioned(
-                  top: 0,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Image(
-                    image: AssetImage("assets/effect.gif"),
-                    fit: BoxFit.contain,
+            child: AnimatedOpacity(
+              duration: Duration(milliseconds: 300),
+              opacity: ((selected == index) ? 1 : 0.3),
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Image(
+                      image: AssetImage("assets/effect.gif"),
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-                Positioned(
-                  bottom: 5,
-                  left: 10,
-                  child: AnimatedOpacity(
-                    duration: Duration(milliseconds: 300),
-                    opacity: ((selected == index) ? 1 : 0.3),
+                  Positioned(
+                    bottom: 5,
+                    left: 10,
                     child: Text(
                       "${pokemon.name}",
                       style: theme.textTheme.title.copyWith(
@@ -122,23 +121,23 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: PokemonImage(
-                    Pokemon.getURLImage(pokemon.id, null),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: PokemonImage(
+                      Pokemon.getURLImage(pokemon.id, null),
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(15),
-                  padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(10),
+                  Container(
+                    margin: EdgeInsets.all(15),
+                    padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text("#${pokemon.id}"),
                   ),
-                  child: Text("#${pokemon.id}"),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

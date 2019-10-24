@@ -39,7 +39,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           children: <Widget>[
             Text(
               "${pokemon.name}",
-              style: Theme.of(context).textTheme.display2,
+              style: Theme.of(context).textTheme.title,
             ),
             Spacer(),
             Text("#${pokemon.id}", style: Theme.of(context).textTheme.title),

@@ -4,6 +4,7 @@ import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:flutter_pokedex/Widget/HomeDrawer.dart';
 import 'package:flutter_pokedex/Widget/PageViewGeneration.dart';
 import 'package:flutter_pokedex/Widget/PokemonFusion.dart';
+import 'package:flutter_pokedex/Widget/PokemonNews.dart';
 import 'package:flutter_pokedex/Widget/RandomPokemonViewer.dart';
 
 class HomePage extends StatelessWidget {
@@ -38,6 +39,7 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(bottom: 100),
           child: Column(
             children: <Widget>[
+              PokemonNews(),
               SizedBox(height: 20),
               Text(
                 "Region",

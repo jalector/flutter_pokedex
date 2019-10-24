@@ -72,47 +72,8 @@ class _PageViewGenerationState extends State<PageViewGeneration>
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
-    return Stack(
-      children: <Widget>[
-        this._pageViewer(size),
-        Positioned(
-          right: 0,
-          child: Column(
-            children: <Widget>[
-              RaisedButton(
-                elevation: 5,
-                shape: CircleBorder(),
-                color: Theme.of(context).accentColor,
-                child: Icon(Icons.home),
-                onPressed: () {
-                  this._pageCtrl.animateToPage(
-                        this.selectedIndex,
-                        duration: Duration(
-                          milliseconds:
-                              (this.selectedIndex == this.regions.length - 1)
-                                  ? 300
-                                  : 500,
-                        ),
-                        curve: Curves.easeInOut,
-                      );
-                  setState(() {});
-                },
-              )
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _pageViewer(Size size) {
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: size.height * 0.25,
-        maxWidth: size.width,
-      ),
+    return AspectRatio(
+      aspectRatio: 2.5,
       child: PageView.builder(
         controller: this._pageCtrl,
         itemCount: this.regions.length,
