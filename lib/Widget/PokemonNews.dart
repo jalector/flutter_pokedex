@@ -10,20 +10,29 @@ class PokemonNews extends StatefulWidget {
 }
 
 class _PokemonNewsState extends State<PokemonNews> {
-  List<int> items = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  List<Color> items = [
+    Colors.red,
+    Colors.purple,
+    Colors.redAccent,
+    Colors.blue,
+    Colors.green,
+    Colors.blueAccent,
+    Colors.purpleAccent,
+    Colors.blueGrey,
+    Colors.teal,
+  ];
   double currentCard = 0;
   PageController pageCtrl;
 
   @override
   void initState() {
     pageCtrl = PageController(
-      initialPage: 1,
+      initialPage: items.length - 1,
     );
 
     pageCtrl.addListener(() {
       setState(() {
-        currentCard = pageCtrl.page;
-        print(currentCard);
+        this.currentCard = pageCtrl.page;
       });
     });
 
@@ -37,6 +46,8 @@ class _PokemonNewsState extends State<PokemonNews> {
         _cardStack(context),
         Positioned.fill(
           child: PageView.builder(
+            reverse: true,
+            physics: BouncingScrollPhysics(),
             controller: pageCtrl,
             itemCount: items.length,
             itemBuilder: (context, index) {
@@ -49,12 +60,16 @@ class _PokemonNewsState extends State<PokemonNews> {
   }
 
   Widget _cardStack(BuildContext context) {
+    var padding = 10.0;
+
+    var cardAspectRatio = 0.6;
+    var widgetAspectRatio = cardAspectRatio * 1.2;
+
     return AspectRatio(
-      aspectRatio: 0.75,
+      aspectRatio: widgetAspectRatio,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints contraints) {
-          var padding = 20;
-
+          List<Widget> children = [];
           var width = contraints.maxWidth;
           var height = contraints.maxHeight;
 
@@ -62,37 +77,41 @@ class _PokemonNewsState extends State<PokemonNews> {
           var safeHeight = height - 2 * padding;
 
           var heightOfPrimaryCard = safeHeight;
-          var widthOfPrimaryCard = heightOfPrimaryCard * 0.75;
+          var widthOfPrimaryCard = heightOfPrimaryCard * cardAspectRatio;
 
           var primaryCardLeft = safeWidth - widthOfPrimaryCard;
           var horizontalInset = primaryCardLeft / 2;
 
-          return Stack(
-            children: items.map<Widget>((int index) {
-              var delta = index - currentCard;
-              bool isOnRight = delta > 0;
+          for (var i = 0; i < items.length; i++) {
+            var delta = i - currentCard;
+            bool isOnRight = delta > 0;
 
-              var start = padding +
-                  max(
+            var start = padding +
+                max(
                     primaryCardLeft -
                         horizontalInset * -delta * (isOnRight ? 15 : 1),
-                    0.0,
-                  );
+                    0.0);
 
-              return Positioned.directional(
-                top: padding + 20 * max(-delta, 0.0),
-                bottom: padding + 20 * max(-delta, 0.0),
-                start: start,
-                textDirection: TextDirection.rtl,
-                child: AspectRatio(
-                  aspectRatio: 0.75 * 1.2,
-                  child: Container(
-                    color: Colors.red,
-                    child: Center(child: Text("$index")),
+            children.add(Positioned.directional(
+              top: padding + max(-delta, 0.0),
+              bottom: padding + max(-delta, 0.0),
+              start: start - 30,
+              textDirection: TextDirection.rtl,
+              child: AspectRatio(
+                aspectRatio: 0.75 * 1.2,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: items[i].withOpacity(0.3),
                   ),
+                  child: Center(child: Text("Item")),
                 ),
-              );
-            }).toList(),
+              ),
+            ));
+          }
+
+          return Stack(
+            children: children,
           );
         },
       ),
