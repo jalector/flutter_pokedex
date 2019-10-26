@@ -39,7 +39,6 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(bottom: 100),
           child: Column(
             children: <Widget>[
-              PokemonNews(),
               SizedBox(height: 20),
               Text(
                 "Region",
