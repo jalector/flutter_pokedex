@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/Sprite.dart';
+
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Util.dart';
+
+import 'Sprite_model.dart';
 
 class Pokemon {
   int id;

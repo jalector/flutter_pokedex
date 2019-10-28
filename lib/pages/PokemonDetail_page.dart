@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/Sprite.dart';
+import 'package:flutter_pokedex/Model/Sprite_model.dart';
+
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:video_player/video_player.dart';
 

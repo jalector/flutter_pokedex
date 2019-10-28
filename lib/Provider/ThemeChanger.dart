@@ -18,10 +18,18 @@ class ThemeChanger with ChangeNotifier {
     print("newThemeData $themeData");
     switch (themeData) {
       case 0:
-        this._themeData = ThemeData.dark();
+        this._themeData = ThemeData.dark().copyWith(
+          textTheme: TextTheme(
+            title: TextStyle(fontFamily: "Roboto"),
+          ),
+        );
         break;
       case 1:
-        this._themeData = ThemeData.light();
+        this._themeData = ThemeData.light().copyWith(
+          textTheme: TextTheme(
+            title: TextStyle(fontFamily: "Roboto"),
+          ),
+        );
         break;
       case 2:
         this._themeData = _personalTheme();

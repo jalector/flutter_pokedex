@@ -3,7 +3,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Bloc/Pokedex_bloc.dart';
-import 'package:flutter_pokedex/Model/Sprite.dart';
+import 'package:flutter_pokedex/Model/New_model.dart';
+import 'package:flutter_pokedex/Model/Sprite_model.dart';
+
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 
@@ -177,6 +179,23 @@ class PokedexProvider extends InheritedWidget {
       response.object = Pokemon.fromJsonDetail(
         json.decode(response.answer.body),
       );
+    } else {
+      throw response.reasonPhrase;
+    }
+
+    return response;
+  }
+
+  Future<HttpAnswer<List<New>>> getPokemonNews() async {
+    var response = await this._globalRequest.get<List<New>>(
+      "www.pokemon.com",
+      "es/api/news",
+      params: {"index": "0", "count": "4"},
+    );
+
+    if (response.ok) {
+      response.object =
+          New.fronJsonCollection(json.decode(response.answer.body));
     } else {
       throw response.reasonPhrase;
     }

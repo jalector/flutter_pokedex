@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/CustomSearchDelegate.dart';
+import 'package:flutter_pokedex/Model/New_model.dart';
+import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
+import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/HomeDrawer.dart';
 import 'package:flutter_pokedex/Widget/PageViewGeneration.dart';
 import 'package:flutter_pokedex/Widget/PokemonFusion.dart';
@@ -39,7 +42,6 @@ class HomePage extends StatelessWidget {
           padding: EdgeInsets.only(bottom: 100),
           child: Column(
             children: <Widget>[
-              PokemonNews(),
               SizedBox(height: 20),
               Text(
                 "Region",
@@ -60,6 +62,20 @@ class HomePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: PokemonFusion(),
+              ),
+              FutureBuilder<HttpAnswer<List<New>>>(
+                future: provider.getPokemonNews(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<HttpAnswer<List<New>>> snapshot) {
+                  print(snapshot.error);
+                  if (snapshot.hasData) {
+                    return PokemonNews(snapshot.data.object);
+                  } else if (snapshot.hasError) {
+                    return Text(snapshot.error);
+                  } else {
+                    return CustomLoader();
+                  }
+                },
               ),
             ],
           ),
