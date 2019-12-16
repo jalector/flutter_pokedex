@@ -11,8 +11,8 @@ import 'Pages/Home_page.dart';
 import 'Provider/PokedexProvider.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences preferences = await SharedPreferences.getInstance();
-
   runApp(MyApp(preferences.getInt(ThemeChanger.darkModeKey) ?? 0));
 }
 

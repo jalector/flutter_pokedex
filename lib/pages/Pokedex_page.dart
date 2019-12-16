@@ -12,6 +12,8 @@ class PokedexPage extends StatefulWidget {
 
 class _PokedexPageState extends State<PokedexPage> {
   final GlobalRequest globalRequest = GlobalRequest();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+  bool agua = true;
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +24,53 @@ class _PokedexPageState extends State<PokedexPage> {
       onWillPop: () async {
         provider.bloc.onChangeSearchedPokemon("");
         provider.loadRandomPokemons(3, cleanPokedex: true);
-
         return true;
       },
       child: Scaffold(
+        key: this.scaffoldKey,
         backgroundColor: theme.primaryColorDark,
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.search),
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: this._bottomSheetBuilder,
+              backgroundColor: Colors.transparent,
+            );
+          },
+        ),
         body: this._pokedex(context, provider),
+      ),
+    );
+  }
+
+  Widget _bottomSheetBuilder(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Container(
+      height: size.height * 0.4,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        color: Colors.green,
+      ),
+      padding: EdgeInsets.all(30),
+      child: Wrap(
+        children: <Widget>[
+          FilterChip(
+            label: Text("Water"),
+            selected: agua,
+            avatar: CircleAvatar(
+              child: Container(
+                color: Colors.red,
+              ),
+            ),
+            onSelected: (value) {
+              setState(() {
+                agua = !agua;
+              });
+            },
+          ),
+        ],
       ),
     );
   }
