@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Bloc/Pokedex_bloc.dart';
 import 'package:flutter_pokedex/Model/New_model.dart';
@@ -39,7 +40,6 @@ class PokedexProvider extends InheritedWidget {
 
   void getPokedexGeneration(int generation, {bool cleanPokedex = false}) async {
     if (cleanPokedex) this.bloc.addPokedex(null);
-
     if (this.bloc.pokedex != null && this.bloc.pokedex.length > 0) return;
 
     HttpAnswer<List<Pokemon>> answer = await this
@@ -49,7 +49,7 @@ class PokedexProvider extends InheritedWidget {
 
     if (answer.ok) {
       List<dynamic> content = json.decode(answer.answer.body);
-      answer.object = Pokemon.fromJsonCollection(content);
+      answer.object = await compute(Pokemon.fromJsonCollection, content);
       this.bloc.addPokedex(answer.object);
     } else {
       this.bloc.addPokedexError(answer.reasonPhrase);
@@ -58,7 +58,6 @@ class PokedexProvider extends InheritedWidget {
 
   void getPokedexByType(String type, {bool cleanPokedex = false}) async {
     if (cleanPokedex) this.bloc.addPokedex(null);
-
     if (this.bloc.pokedex != null && this.bloc.pokedex.length > 0) return;
 
     HttpAnswer<List<Pokemon>> answer =
@@ -69,7 +68,7 @@ class PokedexProvider extends InheritedWidget {
 
     if (answer.ok) {
       List<dynamic> content = json.decode(answer.answer.body);
-      answer.object = Pokemon.fromJsonCollection(content);
+      answer.object = await compute(Pokemon.fromJsonCollection, content);
       this.bloc.addPokedex(answer.object);
     } else {
       this.bloc.addPokedexError(answer.reasonPhrase);
@@ -85,17 +84,7 @@ class PokedexProvider extends InheritedWidget {
               "api/search/$searched",
             );
     if (answer.ok) {
-      List<Pokemon> found = [];
-
-      List items = json.decode(answer.answer.body);
-
-      for (Map rawPoke in items) {
-        if (rawPoke["entity"] == "Pokemon") {
-          found.add(Pokemon.fromJson(rawPoke));
-        }
-      }
-      answer.object = found;
-
+      answer.object = await compute(searchPokemonParser, answer.answer.body);
       if (answer.object.length > 0) {
         this.bloc.addPokedex(answer.object);
       } else {
@@ -104,6 +93,14 @@ class PokedexProvider extends InheritedWidget {
     } else {
       this.bloc.addPokedexError(answer.reasonPhrase);
     }
+  }
+
+  static Future<List<Pokemon>> searchPokemonParser(String rawJson) {
+    return json
+        .decode(rawJson)
+        .where((element) => element["entity"] == "Pokemon")
+        .map<Pokemon>(((poke) => Pokemon.fromJson(poke)))
+        .toList();
   }
 
   void loadRandomPokemons(int amount, {bool cleanPokedex = false}) async {
