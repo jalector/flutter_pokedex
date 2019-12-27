@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
+import 'package:flutter_pokedex/Widget/BottomSheetFilter.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 
@@ -45,34 +46,7 @@ class _PokedexPageState extends State<PokedexPage> {
   }
 
   Widget _bottomSheetBuilder(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
-    return Container(
-      height: size.height * 0.4,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        color: Colors.green,
-      ),
-      padding: EdgeInsets.all(30),
-      child: Wrap(
-        children: <Widget>[
-          FilterChip(
-            label: Text("Water"),
-            selected: agua,
-            avatar: CircleAvatar(
-              child: Container(
-                color: Colors.red,
-              ),
-            ),
-            onSelected: (value) {
-              setState(() {
-                agua = !agua;
-              });
-            },
-          ),
-        ],
-      ),
-    );
+    return BottomSheetFilter();
   }
 
   Widget _pokedex(BuildContext context, PokedexProvider provider) {

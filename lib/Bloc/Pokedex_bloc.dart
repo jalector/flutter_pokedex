@@ -13,46 +13,54 @@ class PokedexBloc {
     return PokedexBloc._instance;
   }
 
-  PokedexBloc._();
+  PokedexBloc._() {
+    _filterPokemonController.sink.add({
+      "Water": false,
+      "Fire": false,
+      "Grass": false,
+      "Ground": false,
+      "Electric": false,
+    });
+  }
 
   final _pokedexController = BehaviorSubject<List<Pokemon>>();
   final _searchedPokemonController = BehaviorSubject<String>();
   final _loadingPokemonsController = BehaviorSubject<bool>();
+  final _filterPokemonController = BehaviorSubject<Map<String, bool>>();
 
+  Stream<String> get searchedPokemonStream => _searchedPokemonController.stream;
+  Stream<bool> get loadingPokemonsStream => _loadingPokemonsController.stream;
   Stream<List<Pokemon>> get pokedexStream =>
       _pokedexController.stream.transform(
         StreamTransformer<List<Pokemon>, List<Pokemon>>.fromHandlers(
           handleData: (List<Pokemon> pokedex, sink) {
-            if (pokedex != null) {
-              if (searchedPokemon == null || searchedPokemon.isEmpty) {
-                sink.add(pokedex);
-              } else {
-                var list = pokedex
-                    .where(
-                      (Pokemon poke) => (poke.name.toLowerCase().contains(
-                            searchedPokemon.toLowerCase(),
-                          )),
-                    )
-                    .toList();
-                if (list.length > 0) {
-                  sink.add(list);
-                } else {
-                  sink.addError("Pokemon no found");
-                  onChangeSearchedPokemonErro("Pokemon no found");
-                }
-              }
+            if (pokedex == null) return;
+            List<Pokemon> filter = pokedex;
+
+            /// Serach about a concept
+            if (searchedPokemon != null && searchedPokemon.isNotEmpty) {
+              filter = filter
+                  .where((Pokemon poke) => poke.name
+                      .toLowerCase()
+                      .contains(searchedPokemon.toLowerCase()))
+                  .toList();
+            }
+
+            if (filter.isNotEmpty) {
+              sink.add(filter);
+            } else {
+              sink.addError("Pokemon no found");
             }
           },
         ),
       );
 
-  Stream<String> get searchedPokemonStream => _searchedPokemonController.stream;
-  Stream<bool> get loadingPokemonsStream => _loadingPokemonsController.stream;
+  Function(bool) get isLoading => _loadingPokemonsController.sink.add;
+  Function(Map<String, bool>) get addFilter =>
+      _filterPokemonController.sink.add;
 
   Function(List<Pokemon>) get addPokedex => _pokedexController.sink.add;
   Function(String) get addPokedexError => _pokedexController.sink.addError;
-
-  Function(bool) get isLoading => _loadingPokemonsController.sink.add;
 
   Function(String) get onChangeSearchedPokemon =>
       _searchedPokemonController.sink.add;
@@ -62,10 +70,12 @@ class PokedexBloc {
   List<Pokemon> get pokedex => _pokedexController.value;
   String get searchedPokemon => _searchedPokemonController.value;
   bool get loading => _loadingPokemonsController.value;
+  Map<String, bool> get filter => _filterPokemonController.value;
 
   void dispose() {
     _pokedexController.close();
     _searchedPokemonController.close();
     _loadingPokemonsController.close();
+    _filterPokemonController.close();
   }
 }
