@@ -34,8 +34,7 @@ class PokedexProvider extends InheritedWidget {
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
   static PokedexProvider of(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(PokedexProvider)
-        as PokedexProvider);
+    return (context.dependOnInheritedWidgetOfExactType<PokedexProvider>());
   }
 
   void getPokedexGeneration(int generation, {bool cleanPokedex = false}) async {
@@ -84,7 +83,12 @@ class PokedexProvider extends InheritedWidget {
               "api/search/$searched",
             );
     if (answer.ok) {
-      answer.object = await compute(searchPokemonParser, answer.answer.body);
+      answer.object = json
+          .decode(answer.answer.body)
+          .where((element) => element["entity"] == "Pokemon")
+          .map<Pokemon>(((poke) => Pokemon.fromJson(poke)))
+          .toList();
+
       if (answer.object.length > 0) {
         this.bloc.addPokedex(answer.object);
       } else {

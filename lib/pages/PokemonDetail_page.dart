@@ -11,6 +11,8 @@ import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 import 'package:flutter_pokedex/Widget/PokemonVideo.dart';
 
+import "dart:io" show Platform;
+
 class PokemonDetailPage extends StatefulWidget {
   @override
   _PokemonDetailPageState createState() => _PokemonDetailPageState();
@@ -201,17 +203,20 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   Widget _image(Pokemon pokemon) {
     String imageURL = Pokemon.getURLImage(pokemon.id, pokemon.form);
 
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          "pokemonImage",
-          arguments: imageURL,
-        );
-      },
-      child: Hero(
-        tag: "image",
-        child: PokemonImage(imageURL),
+    return AspectRatio(
+      aspectRatio: 2 / 3,
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            "pokemonImage",
+            arguments: imageURL,
+          );
+        },
+        child: Hero(
+          tag: "image",
+          child: PokemonImage(imageURL),
+        ),
       ),
     );
   }
@@ -441,7 +446,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   Widget _pokemonPreview(Pokemon pokemon) {
     return (pokemon.generation >= 5 || pokemon.form == "Alola")
         ? this._image(pokemon)
-        : this._video(pokemon);
+        : (Platform.isAndroid || Platform.isIOS)
+            ? this._video(pokemon)
+            : this._image(pokemon);
   }
 
   Widget _family(BuildContext context, Pokemon pokemon) {

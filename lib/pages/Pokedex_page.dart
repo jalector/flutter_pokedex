@@ -34,43 +34,12 @@ class _PokedexPageState extends State<PokedexPage> {
           onPressed: () {
             showModalBottomSheet(
               context: context,
-              builder: this._bottomSheetBuilder,
+              builder: (context) => _BottomSheet(),
               backgroundColor: Colors.transparent,
             );
           },
         ),
         body: this._pokedex(context, provider),
-      ),
-    );
-  }
-
-  Widget _bottomSheetBuilder(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
-    return Container(
-      height: size.height * 0.4,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        color: Colors.green,
-      ),
-      padding: EdgeInsets.all(30),
-      child: Wrap(
-        children: <Widget>[
-          FilterChip(
-            label: Text("Water"),
-            selected: agua,
-            avatar: CircleAvatar(
-              child: Container(
-                color: Colors.red,
-              ),
-            ),
-            onSelected: (value) {
-              setState(() {
-                agua = !agua;
-              });
-            },
-          ),
-        ],
       ),
     );
   }
@@ -218,6 +187,55 @@ class _PokedexPageState extends State<PokedexPage> {
           onChanged: provider.bloc.onChangeSearchedPokemon,
         );
       },
+    );
+  }
+}
+
+class _BottomSheet extends StatefulWidget {
+  const _BottomSheet({Key key}) : super(key: key);
+
+  @override
+  __BottomSheetState createState() => __BottomSheetState();
+}
+
+class __BottomSheetState extends State<_BottomSheet> {
+  bool agua = false;
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Container(
+      height: size.height * 0.4,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        color: Colors.green,
+      ),
+      padding: EdgeInsets.all(5),
+      child: Wrap(
+        children: <Widget>[
+          Checkbox(
+            value: agua,
+            tristate: true,
+            onChanged: (value) {
+              agua = !agua;
+              setState(() {});
+            },
+          ),
+          FilterChip(
+            label: Text("Water"),
+            selected: agua,
+            onSelected: (value) {
+              setState(() {
+                agua = !agua;
+                print(value);
+                print(agua);
+                print("-------");
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
 }

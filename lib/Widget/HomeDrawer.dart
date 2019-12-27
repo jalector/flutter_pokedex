@@ -8,6 +8,8 @@ import 'package:flutter_pokedex/Provider/ThemeChanger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'dart:io' show Platform;
+
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({Key key}) : super(key: key);
 
@@ -86,46 +88,48 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   Widget changeTheme(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        this._bannerDivider(context, "Theme"),
-        FutureBuilder<SharedPreferences>(
-            future: SharedPreferences.getInstance(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                SharedPreferences preferences = snapshot.data;
-                var provider = Provider.of<ThemeChanger>(context);
-                var themeNumber =
-                    preferences.getInt(ThemeChanger.darkModeKey) ?? 0;
+    return (Platform.isAndroid || Platform.isIOS)
+        ? Column(
+            children: <Widget>[
+              this._bannerDivider(context, "Theme"),
+              FutureBuilder<SharedPreferences>(
+                  future: SharedPreferences.getInstance(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      SharedPreferences preferences = snapshot.data;
+                      var provider = Provider.of<ThemeChanger>(context);
+                      var themeNumber =
+                          preferences.getInt(ThemeChanger.darkModeKey) ?? 0;
 
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List<Widget>.generate(
-                    ThemeChanger.totalNumberOfThemes,
-                    (int index) {
-                      return Expanded(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 5),
-                          child: RaisedButton(
-                            child: Text("${index + 1}"),
-                            onPressed: (themeNumber == index)
-                                ? null
-                                : () {
-                                    provider.setTheme(index);
-                                    preferences.setInt(
-                                        ThemeChanger.darkModeKey, index);
-                                  },
-                          ),
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List<Widget>.generate(
+                          ThemeChanger.totalNumberOfThemes,
+                          (int index) {
+                            return Expanded(
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 5),
+                                child: RaisedButton(
+                                  child: Text("${index + 1}"),
+                                  onPressed: (themeNumber == index)
+                                      ? null
+                                      : () {
+                                          provider.setTheme(index);
+                                          preferences.setInt(
+                                              ThemeChanger.darkModeKey, index);
+                                        },
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       );
-                    },
-                  ),
-                );
-              }
-              return CircularProgressIndicator();
-            }),
-      ],
-    );
+                    }
+                    return CircularProgressIndicator();
+                  }),
+            ],
+          )
+        : Container();
   }
 
   Widget _bannerDivider(BuildContext context, String title) {

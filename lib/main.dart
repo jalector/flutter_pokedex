@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Provider/ThemeChanger.dart';
+import 'package:flutter_pokedex/pages/Home_page.dart';
 import 'package:flutter_pokedex/pages/Pokedex_page.dart';
 import 'package:flutter_pokedex/pages/PokemonDetail_page.dart';
 import 'package:flutter_pokedex/pages/PokemonImage_page.dart';
@@ -7,13 +8,19 @@ import 'package:flutter_pokedex/pages/PokemonVideo_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Pages/Home_page.dart';
 import 'Provider/PokedexProvider.dart';
+
+import 'dart:io' show Platform;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  runApp(MyApp(preferences.getInt(ThemeChanger.darkModeKey) ?? 0));
+  var theme = 0;
+
+  if (Platform.isAndroid || Platform.isIOS) {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    theme = preferences.getInt(ThemeChanger.darkModeKey) ?? 0;
+  }
+  runApp(MyApp(theme));
 }
 
 class MyApp extends StatefulWidget {
