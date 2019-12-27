@@ -34,7 +34,7 @@ class PokedexProvider extends InheritedWidget {
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
   static PokedexProvider of(BuildContext context) {
-    return (context.dependOnInheritedWidgetOfExactType<PokedexProvider>());
+    return context.dependOnInheritedWidgetOfExactType<PokedexProvider>();
   }
 
   void getPokedexGeneration(int generation, {bool cleanPokedex = false}) async {

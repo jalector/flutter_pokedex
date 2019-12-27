@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
+import 'package:flutter_pokedex/Widget/BottomSheetFilter.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 
@@ -42,6 +43,10 @@ class _PokedexPageState extends State<PokedexPage> {
         body: this._pokedex(context, provider),
       ),
     );
+  }
+
+  Widget _bottomSheetBuilder(BuildContext context) {
+    return BottomSheetFilter();
   }
 
   Widget _pokedex(BuildContext context, PokedexProvider provider) {
