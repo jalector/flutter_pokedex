@@ -35,7 +35,8 @@ class _PokedexPageState extends State<PokedexPage> {
           onPressed: () {
             showModalBottomSheet(
               context: context,
-              builder: (context) => _BottomSheet(),
+              isDismissible: true,
+              builder: (context) => BottomSheetFilter(),
               backgroundColor: Colors.transparent,
             );
           },
@@ -45,22 +46,23 @@ class _PokedexPageState extends State<PokedexPage> {
     );
   }
 
-  Widget _bottomSheetBuilder(BuildContext context) {
-    return BottomSheetFilter();
-  }
-
-  Widget _pokedex(BuildContext context, PokedexProvider provider) {
-    String title = ModalRoute.of(context).settings.arguments;
-    Size size = MediaQuery.of(context).size;
+  double _calculateCardWidth(Size size) {
     double cardWidth;
 
-    if (size.width > 1200) {
+    if (size.width > 1500) {
+      cardWidth = size.width * 0.1;
+    } else if (size.width > 1200) {
       cardWidth = size.width * 0.15;
     } else if (size.width >= 750) {
       cardWidth = size.width * 0.175;
     } else {
       cardWidth = size.width * 0.35;
     }
+    return cardWidth;
+  }
+
+  Widget _pokedex(BuildContext context, PokedexProvider provider) {
+    String title = ModalRoute.of(context).settings.arguments;
 
     return CustomScrollView(
       physics: BouncingScrollPhysics(),
@@ -86,7 +88,8 @@ class _PokedexPageState extends State<PokedexPage> {
             List<Pokemon> pokedex = snapshot.data;
             if (snapshot.hasData) {
               builder = SliverGrid.extent(
-                maxCrossAxisExtent: cardWidth,
+                maxCrossAxisExtent:
+                    this._calculateCardWidth(MediaQuery.of(context).size),
                 children: pokedex
                     .map<Widget>((Pokemon pokemon) =>
                         this._pokemonCard(context, pokemon))
@@ -192,55 +195,6 @@ class _PokedexPageState extends State<PokedexPage> {
           onChanged: provider.bloc.onChangeSearchedPokemon,
         );
       },
-    );
-  }
-}
-
-class _BottomSheet extends StatefulWidget {
-  const _BottomSheet({Key key}) : super(key: key);
-
-  @override
-  __BottomSheetState createState() => __BottomSheetState();
-}
-
-class __BottomSheetState extends State<_BottomSheet> {
-  bool agua = false;
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
-    return Container(
-      height: size.height * 0.4,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        color: Colors.green,
-      ),
-      padding: EdgeInsets.all(5),
-      child: Wrap(
-        children: <Widget>[
-          Checkbox(
-            value: agua,
-            tristate: true,
-            onChanged: (value) {
-              agua = !agua;
-              setState(() {});
-            },
-          ),
-          FilterChip(
-            label: Text("Water"),
-            selected: agua,
-            onSelected: (value) {
-              setState(() {
-                agua = !agua;
-                print(value);
-                print(agua);
-                print("-------");
-              });
-            },
-          ),
-        ],
-      ),
     );
   }
 }

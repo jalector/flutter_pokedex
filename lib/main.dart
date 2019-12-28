@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Provider/ThemeChanger.dart';
-import 'package:flutter_pokedex/pages/Home_page.dart';
-import 'package:flutter_pokedex/pages/Pokedex_page.dart';
-import 'package:flutter_pokedex/pages/PokemonDetail_page.dart';
-import 'package:flutter_pokedex/pages/PokemonImage_page.dart';
-import 'package:flutter_pokedex/pages/PokemonVideo_page.dart';
+import 'package:flutter_pokedex/Pages/Home_page.dart';
+import 'package:flutter_pokedex/Pages/Pokedex_page.dart';
+import 'package:flutter_pokedex/Pages/PokemonDetail_page.dart';
+import 'package:flutter_pokedex/Pages/PokemonImage_page.dart';
+import 'package:flutter_pokedex/Pages/PokemonVideo_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
