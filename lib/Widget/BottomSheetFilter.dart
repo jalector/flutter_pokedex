@@ -5,7 +5,9 @@ import 'package:flutter_pokedex/Bloc/Pokedex_bloc.dart';
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 
 class BottomSheetFilter extends StatefulWidget {
-  BottomSheetFilter({Key key}) : super(key: key);
+  final Function(void Function()) update;
+
+  BottomSheetFilter({@required this.update});
 
   @override
   _BottomSheetFilterState createState() => _BottomSheetFilterState();
@@ -28,12 +30,12 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
         selected: available,
         onSelected: (value) {
           setState(() {
-            available = !available;
             filterTypes[type] = !filterTypes[type];
             print("Filter by: $type: $available");
             print(filterTypes);
             bloc.addFilter(filterTypes);
           });
+          this.widget.update(() {});
         },
       ));
     });

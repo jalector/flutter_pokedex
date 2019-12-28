@@ -33,7 +33,42 @@ class PokedexBloc {
   Stream<List<Pokemon>> get pokedexStream =>
       _pokedexController.stream.transform(
         StreamTransformer<List<Pokemon>, List<Pokemon>>.fromHandlers(
-          handleData: handlePokedexData,
+          handleData: (List<Pokemon> pokedex, sink) {
+            print("HERE !!!");
+            if (pokedex == null) return;
+            List<Pokemon> filterPokedex = pokedex;
+
+            /// Serach about a concept
+            if (searchedPokemon != null && searchedPokemon.isNotEmpty) {
+              filterPokedex = filterPokedex
+                  .where((Pokemon poke) => poke.name
+                      .toLowerCase()
+                      .contains(searchedPokemon.toLowerCase()))
+                  .toList();
+            }
+
+            print("Start with: " + filterPokedex.length.toString());
+            filter.forEach((String type, bool available) {
+              if (available) {
+                filterPokedex = filterPokedex.where((Pokemon poke) {
+                  bool isType1 = type.toLowerCase().contains(poke.type1);
+
+                  bool isType2 = (poke.type2.isEmpty)
+                      ? false
+                      : type.toLowerCase().contains(poke.type2);
+
+                  return isType1 || isType2;
+                }).toList();
+              }
+            });
+            print("End with: " + filterPokedex.length.toString());
+
+            if (filterPokedex.isNotEmpty) {
+              sink.add(filterPokedex);
+            } else {
+              sink.addError("Pokemon no found");
+            }
+          },
         ),
       );
 
@@ -59,33 +94,5 @@ class PokedexBloc {
     _searchedPokemonController.close();
     _loadingPokemonsController.close();
     _filterPokemonController.close();
-  }
-
-  void handlePokedexData(List<Pokemon> pokedex, sink) {
-    if (pokedex == null) return;
-    List<Pokemon> filterPokedex = pokedex;
-
-    /// Serach about a concept
-    if (searchedPokemon != null && searchedPokemon.isNotEmpty) {
-      filterPokedex = filterPokedex
-          .where((Pokemon poke) =>
-              poke.name.toLowerCase().contains(searchedPokemon.toLowerCase()))
-          .toList();
-    }
-
-    filter.forEach((String type, bool available) {
-      if (available) {
-        filterPokedex = filterPokedex.where((Pokemon poke) {
-          return type.toLowerCase().contains(poke.type1) ||
-              type.toLowerCase().contains(poke.type2);
-        }).toList();
-      }
-    });
-
-    if (filterPokedex.isNotEmpty) {
-      sink.add(filterPokedex);
-    } else {
-      sink.addError("Pokemon no found");
-    }
   }
 }

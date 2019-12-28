@@ -36,7 +36,7 @@ class _PokedexPageState extends State<PokedexPage> {
             showModalBottomSheet(
               context: context,
               isDismissible: true,
-              builder: (context) => BottomSheetFilter(),
+              builder: (context) => BottomSheetFilter(update: setState),
               backgroundColor: Colors.transparent,
             );
           },
@@ -192,7 +192,12 @@ class _PokedexPageState extends State<PokedexPage> {
             fontWeight: FontWeight.bold,
           ),
           initialValue: provider.bloc.searchedPokemon,
-          onChanged: provider.bloc.onChangeSearchedPokemon,
+          onChanged: (val) {
+            provider.bloc.onChangeSearchedPokemon(val);
+          },
+          onEditingComplete: () {
+            setState(() {});
+          },
         );
       },
     );
