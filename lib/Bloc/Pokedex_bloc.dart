@@ -27,6 +27,7 @@ class PokedexBloc {
 
   Stream<String> get searchedPokemonStream => _searchedPokemonController.stream;
   Stream<bool> get loadingPokemonsStream => _loadingPokemonsController.stream;
+  Stream<Map<String, bool>> get filterTypes => _filterPokemonController.stream;
   Stream<int> get filterModeStream => _filterModeController.stream;
   Stream<List<Pokemon>> get pokedexStream =>
       _pokedexController.stream.transform(

@@ -33,7 +33,6 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     PokedexProvider provider = PokedexProvider.of(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 5,
         backgroundColor: Theme.of(context).primaryColor,
@@ -277,8 +276,12 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _description(Pokemon pokemon) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 5, left: 5),
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+      decoration: BoxDecoration(
+        color: Colors.black38,
+        borderRadius: BorderRadius.circular(5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

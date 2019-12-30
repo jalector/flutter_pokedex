@@ -31,7 +31,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
     return Container(
       width: size.width * 0.8,
       constraints: BoxConstraints(
-        maxWidth: 650,
+        maxWidth: 400,
       ),
       color: theme.primaryColor,
       padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
@@ -55,7 +55,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     Positioned(
                       right: 0,
                       child: Image.network(
-                        Pokemon.getURLImage(Random().nextInt(800) + 1, null),
+                        Pokemon.getURLImage(
+                          Random().nextInt(800) + 1,
+                          null,
+                          full: false,
+                        ),
                         color: theme.primaryColor,
                       ),
                     ),
@@ -88,6 +92,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   Widget changeTheme(BuildContext context) {
+    return (Platform.isAndroid || Platform.isIOS)
+        ? this.changeThemePersitence(context)
+        : this.changeThemeWithoutPersitence(context);
+  }
+
+  Widget changeThemePersitence(BuildContext context) {
     return (Platform.isAndroid || Platform.isIOS)
         ? Column(
             children: <Widget>[
@@ -130,6 +140,35 @@ class _HomeDrawerState extends State<HomeDrawer> {
             ],
           )
         : Container();
+  }
+
+  Widget changeThemeWithoutPersitence(BuildContext context) {
+    var provider = Provider.of<ThemeChanger>(context);
+
+    return Column(
+      children: <Widget>[
+        this._bannerDivider(context, "Theme"),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List<Widget>.generate(
+            ThemeChanger.totalNumberOfThemes,
+            (int index) {
+              return Expanded(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  child: RaisedButton(
+                    child: Text("${index + 1}"),
+                    onPressed: () {
+                      provider.setTheme(index);
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _bannerDivider(BuildContext context, String title) {

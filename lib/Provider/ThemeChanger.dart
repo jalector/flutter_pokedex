@@ -55,31 +55,27 @@ class ThemeChanger with ChangeNotifier {
       accentColorBrightness: Brightness.dark,
       primaryColorBrightness: Brightness.dark,
       buttonColor: _secondaryVariant,
+      fontFamily: 'Avocado',
       appBarTheme: AppBarTheme(
         color: _primary,
         textTheme: TextTheme(
           display1: TextStyle(
-            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display2: TextStyle(
-            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display3: TextStyle(
-            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           display4: TextStyle(
-            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
           title: TextStyle(
-            fontFamily: 'Avocado',
             fontWeight: FontWeight.bold,
           ),
         ),

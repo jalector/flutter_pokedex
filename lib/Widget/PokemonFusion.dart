@@ -97,6 +97,7 @@ class _PokemonFusionState extends State<PokemonFusion> {
   Widget _pokemonChild(BuildContext context) {
     String image =
         "https://images.alexonsager.net/pokemon/fused/${this._pokemonOne}/${this._pokemonOne}.${this._pokemonTwo}.png";
+
     return Expanded(
       child: GestureDetector(
         onTap: () {

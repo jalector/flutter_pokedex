@@ -15,12 +15,10 @@ class PokedexPage extends StatefulWidget {
 class _PokedexPageState extends State<PokedexPage> {
   final GlobalRequest globalRequest = GlobalRequest();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-  bool agua = true;
 
   @override
   Widget build(BuildContext context) {
     PokedexProvider provider = PokedexProvider.of(context);
-    ThemeData theme = Theme.of(context);
 
     return WillPopScope(
       onWillPop: () async {
@@ -31,20 +29,86 @@ class _PokedexPageState extends State<PokedexPage> {
       },
       child: Scaffold(
         key: this.scaffoldKey,
-        backgroundColor: theme.primaryColorDark,
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.search),
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isDismissible: true,
-              builder: (context) => BottomSheetFilter(update: setState),
-              backgroundColor: Colors.transparent,
-            );
-          },
-        ),
+        floatingActionButton: _floatinFilterButtons(context),
         body: this._pokedex(context, provider),
       ),
+    );
+  }
+
+  Widget _floatinFilterButtons(BuildContext context) {
+    PokedexProvider provider = PokedexProvider.of(context);
+    return StreamBuilder(
+      stream: provider.bloc.filterTypes,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        Widget widget = CircularProgressIndicator();
+
+        if (snapshot.hasData && this._filterIsActive(snapshot.data)) {
+          widget = _getFloatincButtons(context, snapshot.data);
+        } else {
+          widget = this._filterButton(context);
+        }
+        return widget;
+      },
+    );
+  }
+
+  bool _filterIsActive(Map<String, bool> types) {
+    return types.values.where((bool available) => available).isNotEmpty;
+  }
+
+  Widget _getFloatincButtons(BuildContext context, Map<String, bool> types) {
+    List<Widget> buttonTypes = [];
+    ThemeData theme = Theme.of(context);
+    PokedexProvider provider = PokedexProvider.of(context);
+    types.forEach((String type, bool available) {
+      if (available) {
+        buttonTypes.add(Padding(
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          child: FloatingActionButton(
+            elevation: 0,
+            child: Image.asset("assets/badges_type/${type.toLowerCase()}.png"),
+            onPressed: () {
+              types[type] = !types[type];
+              provider.bloc.addFilter(types);
+
+              setState(() {});
+            },
+          ),
+        ));
+      }
+    });
+
+    buttonTypes.add(this._filterButton(context));
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(50),
+      child: Container(
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: theme.accentColor.withOpacity(0.7),
+        ),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: buttonTypes,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _filterButton(BuildContext context) {
+    return FloatingActionButton(
+      child: Icon(Icons.search),
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          isDismissible: true,
+          builder: (context) => BottomSheetFilter(update: setState),
+          backgroundColor: Colors.transparent,
+        );
+      },
     );
   }
 
@@ -72,15 +136,9 @@ class _PokedexPageState extends State<PokedexPage> {
         SliverAppBar(
           floating: true,
           pinned: false,
-          title: this.searchField(provider),
-          elevation: 15,
-          flexibleSpace: SafeArea(
-            child: Text(
-              title,
-              textAlign: TextAlign.right,
-              style: Theme.of(context).textTheme.display2,
-            ),
-          ),
+          elevation: 5,
+          centerTitle: false,
+          title: Text(title, style: Theme.of(context).textTheme.display1),
         ),
         StreamBuilder<List<Pokemon>>(
           stream: provider.bloc.pokedexStream,
@@ -135,6 +193,7 @@ class _PokedexPageState extends State<PokedexPage> {
   }
 
   Widget _pokemonCard(BuildContext context, Pokemon pokemon) {
+    ThemeData theme = Theme.of(context);
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, "pokemonDetail", arguments: pokemon);
@@ -148,12 +207,12 @@ class _PokedexPageState extends State<PokedexPage> {
         child: Stack(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 5),
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColorLight,
+                color: Theme.of(context).primaryColorDark,
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: Text("#${pokemon.id}"),
+              child: Text("#${pokemon.id}", style: theme.textTheme.caption),
             ),
             Positioned(
               bottom: 0,
@@ -166,42 +225,16 @@ class _PokedexPageState extends State<PokedexPage> {
                 ),
               ),
             ),
-            PokemonImage(Pokemon.getURLImage(pokemon.id, pokemon.form)),
+            PokemonImage(
+              Pokemon.getURLImage(
+                pokemon.id,
+                pokemon.form,
+                full: false,
+              ),
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget searchField(PokedexProvider provider) {
-    return StreamBuilder<String>(
-      stream: provider.bloc.searchedPokemonStream,
-      builder: (context, snapshot) {
-        return TextFormField(
-          decoration: InputDecoration(
-            hintText: "Search your pokemon",
-            errorText: snapshot.error,
-            border: InputBorder.none,
-            hintStyle: TextStyle(
-              color: Colors.white.withOpacity(0.5),
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-          ),
-          initialValue: provider.bloc.searchedPokemon,
-          onChanged: (val) {
-            provider.bloc.onChangeSearchedPokemon(val);
-          },
-          onEditingComplete: () {
-            setState(() {});
-          },
-        );
-      },
     );
   }
 }

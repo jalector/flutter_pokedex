@@ -174,7 +174,7 @@ class Pokemon {
     );
   }
 
-  static String getURLImage(int number, String form) {
+  static String getURLImage(int number, String form, {bool full = true}) {
     String n = number.toString();
     if (n.length == 1) {
       n = "00$n";
@@ -182,7 +182,8 @@ class Pokemon {
       n = "0$n";
     }
 
-    return GlobalRequest.image + n + "${(form == "Alola") ? "_f2" : ""}.png";
+    return ((full) ? GlobalRequest.imageFull : GlobalRequest.image) +
+        "$n${(form == "Alola") ? "_f2" : ""}.png";
   }
 
   static String getURLVideo(String name, String form) {

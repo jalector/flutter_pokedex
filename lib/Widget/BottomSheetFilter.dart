@@ -20,7 +20,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     ThemeData theme = Theme.of(context);
-    PokedexBloc bloc = PokedexProvider.of(context).bloc;
+    PokedexProvider provider = PokedexProvider.of(context);
 
     return Stack(
       children: <Widget>[
@@ -62,8 +62,10 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                   style: theme.textTheme.title,
                 ),
                 SizedBox(height: 15),
+                this.searchField(context, provider),
+                SizedBox(height: 15),
                 CupertinoSlidingSegmentedControl(
-                  groupValue: bloc.filterMode,
+                  groupValue: provider.bloc.filterMode,
                   backgroundColor: theme.primaryColor,
                   thumbColor: theme.colorScheme.secondaryVariant,
                   children: {
@@ -71,7 +73,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                     PokedexBloc.filterModeExclusive: Text("Exclusive"),
                   },
                   onValueChanged: (int i) {
-                    bloc.changeFilterMode(i);
+                    provider.bloc.changeFilterMode(i);
                     setState(() {});
                     widget.update(() {});
                   },
@@ -80,7 +82,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                 Expanded(
                   child: SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
-                    child: Wrap(children: typeChips(context, bloc)),
+                    child: Wrap(children: typeChips(context, provider.bloc)),
                   ),
                 ),
               ],
@@ -88,6 +90,41 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget searchField(BuildContext context, PokedexProvider provider) {
+    return StreamBuilder<String>(
+      stream: provider.bloc.searchedPokemonStream,
+      builder: (context, snapshot) {
+        return TextFormField(
+          decoration: InputDecoration(
+            hintText: "Search your pokemon",
+            errorText: snapshot.error,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+            hintStyle: TextStyle(
+              color: Colors.white.withOpacity(0.5),
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+          initialValue: provider.bloc.searchedPokemon,
+          onChanged: (val) {
+            provider.bloc.onChangeSearchedPokemon(val);
+          },
+          onEditingComplete: () {
+            this.widget.update(() {});
+          },
+        );
+      },
     );
   }
 
