@@ -5,8 +5,8 @@ import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 
 class PokedexBloc {
   static PokedexBloc _instance;
-  static int filter_mode_inclusive = 0;
-  static int filter_mode_exclusive = 1;
+  static int filterModeInclusive = 0;
+  static int filterModeExclusive = 1;
 
   factory PokedexBloc() {
     if (PokedexBloc._instance == null) {
@@ -16,28 +16,7 @@ class PokedexBloc {
   }
 
   PokedexBloc._() {
-    _filterPokemonController.sink.add({
-      "Bug": false,
-      "Dragon": false,
-      "Fairy": false,
-      "Poison": false,
-      "Fire": false,
-      "Ghost": false,
-      "Ground": false,
-      "Rock": false,
-      "Normal": false,
-      "Psychic": false,
-      "Steel": false,
-      "Water": false,
-      "Dark": false,
-      "Electric": false,
-      "Fighting": false,
-      "Flying": false,
-      "Grass": false,
-      "Ice": false,
-    });
-
-    this.changeFilterMode(filter_mode_inclusive);
+    this.cleanFilter();
   }
 
   final _pokedexController = BehaviorSubject<List<Pokemon>>();
@@ -52,7 +31,7 @@ class PokedexBloc {
   Stream<List<Pokemon>> get pokedexStream =>
       _pokedexController.stream.transform(
         StreamTransformer<List<Pokemon>, List<Pokemon>>.fromHandlers(
-          handleData: handlePokedexData,
+          handleData: _handlePokedexData,
         ),
       );
 
@@ -83,9 +62,11 @@ class PokedexBloc {
     _filterModeController.close();
   }
 
-  void handlePokedexData(List<Pokemon> pokedex, sink) {
+  void _handlePokedexData(List<Pokemon> pokedex, sink) {
     if (pokedex == null) return;
     List<Pokemon> filterPokedex = pokedex;
+    String filterByTypes = "";
+    int amountOfAvailableTypes = 0;
 
     /// Serach about a concept
     if (searchedPokemon != null && searchedPokemon.isNotEmpty) {
@@ -95,9 +76,11 @@ class PokedexBloc {
           .toList();
     }
 
-    String filterByTypes = "";
     filter.forEach((String type, bool available) {
-      filterByTypes += (available) ? type.toLowerCase() : "";
+      if (available) {
+        filterByTypes += type.toLowerCase();
+        amountOfAvailableTypes++;
+      }
     });
 
     if (filterByTypes.isNotEmpty) {
@@ -108,12 +91,14 @@ class PokedexBloc {
             : false;
         var show = true;
 
-        if (filterMode == filter_mode_inclusive) {
+        /// if amountOfAvailablesTypes == 1, need to get all of this type and no
+        /// check the other types, is like inclucive mode
+        if (filterMode == filterModeInclusive || amountOfAvailableTypes == 1) {
           show = type1 || type2;
-        } else if (filterMode == filter_mode_inclusive) {
+        } else if (filterMode == filterModeExclusive) {
           show = type1 && type2;
         }
-        return;
+        return show;
       }).toList();
     }
 
@@ -122,5 +107,30 @@ class PokedexBloc {
     } else {
       sink.addError("Pokemon no found");
     }
+  }
+
+  void cleanFilter() {
+    _filterPokemonController.sink.add({
+      "Bug": false,
+      "Dragon": false,
+      "Fairy": false,
+      "Poison": false,
+      "Fire": false,
+      "Ghost": false,
+      "Ground": false,
+      "Rock": false,
+      "Normal": false,
+      "Psychic": false,
+      "Steel": false,
+      "Water": false,
+      "Dark": false,
+      "Electric": false,
+      "Fighting": false,
+      "Flying": false,
+      "Grass": false,
+      "Ice": false,
+    });
+
+    this.changeFilterMode(filterModeInclusive);
   }
 }
