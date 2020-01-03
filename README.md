@@ -66,3 +66,12 @@ Hago uso de bibliotecas para varias cosas, como los son para el video:
 - [Pokemon Go Hub](https://pokemongohub.net/)
 - [Pokemon Fusion](https://pokemon.alexonsager.net/)
 - [Flutter](https://flutter.dev/)
+
+
+
+
+
+>Realmente apreciearía si me dejas tu opion o agregas alguna funcionalidad, soy nuevo en flutter y mi intención es aprender y compartir mi trabajo.
+>
+> - Mi correo: [juda_alector@hotmail.com](mailto:juda_alector@hotmail.com)
+> - Twitter: [yuda_alector](https://twitter.com/yuda_alector)
