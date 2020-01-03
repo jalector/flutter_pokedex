@@ -449,9 +449,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   Widget _pokemonPreview(Pokemon pokemon) {
     return (pokemon.generation >= 5 || pokemon.form == "Alola")
         ? this._image(pokemon)
-        : (Platform.isAndroid || Platform.isIOS)
-            ? this._video(pokemon)
-            : this._image(pokemon);
+        : (Platform.isAndroid) ? this._video(pokemon) : this._image(pokemon);
   }
 
   Widget _family(BuildContext context, Pokemon pokemon) {

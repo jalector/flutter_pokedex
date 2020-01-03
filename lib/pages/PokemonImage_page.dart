@@ -6,7 +6,7 @@ class PokemonImagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String image = ModalRoute.of(context).settings.arguments;
+    String imageURL = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
       appBar: AppBar(
@@ -19,7 +19,7 @@ class PokemonImagePage extends StatelessWidget {
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
           child: Hero(
             tag: "image",
-            child: PokemonImage(image),
+            child: PokemonImage(imageURL),
           ),
         ),
       ),

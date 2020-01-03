@@ -109,10 +109,7 @@ class _PokemonFusionState extends State<PokemonFusion> {
             color: Theme.of(context).accentColor.withOpacity(0.6),
             borderRadius: BorderRadius.circular(15),
           ),
-          child: Hero(
-            tag: "image",
-            child: PokemonImage(image),
-          ),
+          child: PokemonImage(image),
         ),
       ),
     );
