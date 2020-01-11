@@ -46,7 +46,7 @@ class HomePage extends StatelessWidget {
               PageViewGeneration(),
               SizedBox(height: 20),
               Text(
-                "Find new pokemons",
+                "Find new pokemon",
                 style: style.textTheme.title,
               ),
               RandomPokemonViewer(provider),

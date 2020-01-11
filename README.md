@@ -10,7 +10,7 @@ La aplicación puede mostrar siete de las ocho generaciones de pokemón, en las 
 
 - Ver los pokémon por generación (Kanto, Johto, Hoenn...)
 - Ver los pokémon por tipo
-- Filtrar dentro de la pantalla de pokedex los pokemons por nombre o tipo
+- Filtrar dentro de la pantalla de pokedex los pokemon por nombre o tipo
 
 Dentro de la aplicación se puede cambiar el tema de toda la aplicación dentro del menu lateral hasta la parte de abajo. 
 

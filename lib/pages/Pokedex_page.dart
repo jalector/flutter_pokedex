@@ -188,7 +188,8 @@ class _PokedexPageState extends State<PokedexPage> {
               );
             } else {
               builder = SliverList(
-                delegate: SliverChildListDelegate([CustomLoader()]),
+                delegate: SliverChildListDelegate(
+                    [Center(heightFactor: 2, child: CustomLoader())]),
               );
             }
 
@@ -201,45 +202,50 @@ class _PokedexPageState extends State<PokedexPage> {
 
   Widget _pokemonCard(BuildContext context, Pokemon pokemon) {
     ThemeData theme = Theme.of(context);
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, "pokemonDetail", arguments: pokemon);
-      },
-      child: Container(
-        margin: EdgeInsets.all(5),
-        decoration: BoxDecoration(
+    return Padding(
+      padding: EdgeInsets.all(5),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: Material(
           color: Theme.of(context).primaryColor,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColorDark,
-                borderRadius: BorderRadius.circular(5),
+          child: InkWell(
+            onTap: () => Navigator.pushNamed(context, "pokemonDetail",
+                arguments: pokemon),
+            child: Container(
+              margin: EdgeInsets.all(5),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColorDark,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child:
+                        Text("#${pokemon.id}", style: theme.textTheme.caption),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 20,
+                    child: Opacity(
+                      opacity: 0.2,
+                      child: Text(
+                        pokemon.name,
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                    ),
+                  ),
+                  PokemonImage(
+                    Pokemon.getURLImage(
+                      pokemon.id,
+                      pokemon.form,
+                      full: false,
+                    ),
+                  ),
+                ],
               ),
-              child: Text("#${pokemon.id}", style: theme.textTheme.caption),
             ),
-            Positioned(
-              bottom: 0,
-              left: 20,
-              child: Opacity(
-                opacity: 0.2,
-                child: Text(
-                  pokemon.name,
-                  style: Theme.of(context).textTheme.title,
-                ),
-              ),
-            ),
-            PokemonImage(
-              Pokemon.getURLImage(
-                pokemon.id,
-                pokemon.form,
-                full: false,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

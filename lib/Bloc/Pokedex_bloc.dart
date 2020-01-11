@@ -87,7 +87,8 @@ class PokedexBloc {
     if (filterByTypes.isNotEmpty) {
       filterPokedex = filterPokedex.where((Pokemon poke) {
         var type1 = filterByTypes.contains(poke.type1);
-        var type2 = (poke.type2.isNotEmpty)
+
+        var type2 = (poke.type2 != null && poke.type2.isNotEmpty)
             ? filterByTypes.contains(poke.type2)
             : false;
         var show = true;

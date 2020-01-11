@@ -4,12 +4,37 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "name": "Flutter",
+            "name": "Android [release]",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "debug"
-        }
+            "flutterMode": "release"
+        },
+
+        {
+            "name": "Android",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554"
+        },
+        {
+            "name": "MacOS",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "macos"
+            
+        },
+        
+    ],
+    "compounds": [
+		{
+			"name": "All Devices",
+			"configurations": ["Android", "MacOS"],
+        },
+		{
+			"name": "Android [Release]",
+			"configurations": ["Android [release]"],
+        },
+        
     ]
 }

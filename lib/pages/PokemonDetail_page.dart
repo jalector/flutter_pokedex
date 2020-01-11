@@ -473,7 +473,8 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _pokemonEvolution(BuildContext context, Pokemon pokemon) {
-    return Padding(
+    Size size = MediaQuery.of(context).size;
+    return Container(
       padding: const EdgeInsets.all(5),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -505,8 +506,13 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                     arguments: pokemon,
                   );
                 },
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.25,
+                child: Container(
+                  width: size.width * 0.3,
+                  height: size.width * 0.3,
+                  constraints: BoxConstraints(
+                    maxHeight: 200,
+                    maxWidth: 200,
+                  ),
                   child: PokemonImage(
                     Pokemon.getURLImage(pokemon.id, pokemon.form),
                   ),
@@ -581,7 +587,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       );
 
       pokemonSprite.sprites.forEach((Sprite sprite) {
-        imageSprite.add(this._spriteUI(sprite));
+        imageSprite.add(this._spriteUI(context, pokemon, sprite));
       });
     });
 
@@ -592,35 +598,45 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     );
   }
 
-  Widget _spriteUI(Sprite sprite) {
-    return Container(
-      margin: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white24,
-      ),
-      width: MediaQuery.of(context).size.width * 0.25,
-      child: Stack(
-        children: <Widget>[
-          (sprite.shiny)
-              ? Image.asset(
-                  'assets/sparkles.gif',
-                  fit: BoxFit.cover,
-                )
-              : Container(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              sprite.gender,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white38,
+  Widget _spriteUI(BuildContext context, Pokemon pokemon, Sprite sprite) {
+    Size size = MediaQuery.of(context).size;
+    return GestureDetector(
+      onTap: () =>
+          Navigator.of(context).pushNamed("pokemonSprite", arguments: pokemon),
+      child: Container(
+        margin: EdgeInsets.all(5),
+        constraints: BoxConstraints(
+          maxHeight: 200,
+          maxWidth: 200,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white24,
+        ),
+        width: size.width * 0.3,
+        height: size.width * 0.3,
+        child: Stack(
+          children: <Widget>[
+            (sprite.shiny)
+                ? Image.asset(
+                    'assets/sparkles.gif',
+                    fit: BoxFit.cover,
+                  )
+                : Container(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                sprite.gender,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white38,
+                ),
               ),
             ),
-          ),
-          PokemonImage(
-              "${GlobalRequest.sprites}${(sprite.form != "Pixel" ? "normal" : "pixels")}/${sprite.sprite}"),
-        ],
+            PokemonImage(
+                "${GlobalRequest.sprites}${(sprite.form != "Pixel" ? "normal" : "pixels")}/${sprite.sprite}"),
+          ],
+        ),
       ),
     );
   }

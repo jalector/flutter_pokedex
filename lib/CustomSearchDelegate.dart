@@ -56,24 +56,9 @@ class CustomSearchDelegate extends SearchDelegate {
       stream: provider.bloc.pokedexStream,
       builder: (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
         ThemeData theme = Theme.of(context);
+
         if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data.length + 1,
-            physics: BouncingScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              if (index == 0) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 25),
-                    child: Text("Result: ${snapshot.data.length} pokemons"),
-                  ),
-                );
-              } else {
-                Pokemon pokemon = snapshot.data[index - 1];
-                return pokemonCard(context, theme, pokemon);
-              }
-            },
-          );
+          return gridPokemonSeach(context, snapshot.data);
         } else if (snapshot.hasError) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -93,58 +78,128 @@ class CustomSearchDelegate extends SearchDelegate {
     );
   }
 
-  Widget pokemonCard(BuildContext context, ThemeData theme, Pokemon pokemon) {
-    Size size = MediaQuery.of(context).size;
-    double cardSize = size.width * 0.4;
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          bottom: 0,
-          right: 10,
-          left: 10,
-          child: Material(
-            borderRadius: BorderRadius.circular(10),
-            elevation: 5,
-            color: theme.primaryColorDark,
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context)
-                    .pushNamed("pokemonDetail", arguments: pokemon);
-              },
-              child: Padding(
-                padding: EdgeInsets.only(top: 5, bottom: 10),
-                child: Row(
-                  children: <Widget>[
-                    SizedBox(width: cardSize - 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          pokemon.name,
-                          style: theme.textTheme.title,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            _pokemonType(pokemon.type1),
-                            SizedBox(width: 15),
-                            _pokemonType(pokemon.type2),
-                          ],
-                        ),
-                      ],
-                    )
-                  ],
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    PokedexProvider provider = PokedexProvider.of(context);
+
+    return StreamBuilder<List<Pokemon>>(
+      stream: provider.bloc.pokedexStream,
+      builder: (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+        ThemeData theme = Theme.of(context);
+
+        if (snapshot.hasData) {
+          return gridPokemonSeach(context, snapshot.data);
+        } else if (snapshot.hasError) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Center(
+                child: Text(
+                  snapshot.error,
+                  style: theme.textTheme.title,
                 ),
-              ),
-            ),
+              )
+            ],
+          );
+        } else {
+          return CustomLoader();
+        }
+      },
+    );
+  }
+
+  Widget gridPokemonSeach(BuildContext context, List<Pokemon> data) {
+    ThemeData theme = Theme.of(context);
+    return CustomScrollView(
+      physics: BouncingScrollPhysics(),
+      slivers: <Widget>[
+        SliverAppBar(
+          expandedHeight: 100,
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          floating: true,
+          flexibleSpace: FlexibleSpaceBar(
+            title: Text("Result: ${data.length} pokemon"),
           ),
         ),
-        SizedBox(
-          width: cardSize,
-          child: PokemonImage(
-            Pokemon.getURLImage(pokemon.id, pokemon.form),
+        SliverGrid(
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 300,
+            mainAxisSpacing: 0.0,
+            crossAxisSpacing: 0.0,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              Pokemon pokemon = data[index];
+              return pokemonCard(context, theme, pokemon);
+            },
+            childCount: data.length,
           ),
         ),
       ],
+    );
+  }
+
+  Widget pokemonCard(BuildContext context, ThemeData theme, Pokemon pokemon) {
+    Size size = MediaQuery.of(context).size;
+    double cardSize = size.width * 0.3;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Material(
+        child: InkWell(
+          onTap: () => Navigator.of(context)
+              .pushNamed("pokemonDetail", arguments: pokemon),
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                bottom: 10,
+                right: 10,
+                left: 10,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: theme.primaryColorDark,
+                  ),
+                  padding: EdgeInsets.only(top: 5, bottom: 10),
+                  child: Row(
+                    children: <Widget>[
+                      SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            pokemon.name,
+                            style: theme.textTheme.title,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              _pokemonType(pokemon.type1),
+                              SizedBox(width: 15),
+                              _pokemonType(pokemon.type2),
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: size.height * 0.05,
+                right: -5,
+                child: Container(
+                  width: cardSize,
+                  constraints: BoxConstraints(maxWidth: 170),
+                  child: PokemonImage(
+                    Pokemon.getURLImage(pokemon.id, pokemon.form),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -165,10 +220,5 @@ class CustomSearchDelegate extends SearchDelegate {
         Text(type),
       ],
     );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return Container();
   }
 }
