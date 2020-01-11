@@ -9,10 +9,12 @@ class CustomLoader extends StatelessWidget {
     return Center(
       child: Container(
         padding: EdgeInsets.symmetric(
-            vertical: size.height * 0.03, horizontal: size.width * 0.12),
+          vertical: 20,
+          horizontal: 30,
+        ),
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColorDark,
-          borderRadius: BorderRadius.circular(size.width * 0.02),
+          borderRadius: BorderRadius.circular(size.width * 0.01),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -23,7 +25,7 @@ class CustomLoader extends StatelessWidget {
               semanticsValue: "Loading",
               strokeWidth: 10,
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 10),
             Text(
               "Loading",
               textAlign: TextAlign.center,

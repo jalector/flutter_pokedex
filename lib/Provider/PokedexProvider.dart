@@ -9,6 +9,7 @@ import 'package:flutter_pokedex/Model/Sprite_model.dart';
 
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
+export 'package:flutter_pokedex/Model/Pokemon_model.dart';
 
 class PokedexProvider extends InheritedWidget {
   static PokedexProvider _instance;
@@ -119,7 +120,7 @@ class PokedexProvider extends InheritedWidget {
 
     for (var i = 0; i < amount; i++) {
       HttpAnswer<Pokemon> answer =
-          await this.getPokemonMinimalInfo(random.nextInt(400) + 1);
+          await this.getPokemon(Pokemon(id: random.nextInt(400) + 1));
 
       if (answer.ok) {
         List<Pokemon> list = this.bloc.pokedex ?? <Pokemon>[];

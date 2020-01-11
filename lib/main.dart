@@ -8,6 +8,7 @@ import 'package:flutter_pokedex/Pages/PokemonVideo_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Pages/PokemonHeight_page.dart';
 import 'Provider/PokedexProvider.dart';
 
 import 'dart:io' show Platform;
@@ -36,7 +37,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return PokedexProvider(
       child: ChangeNotifierProvider(
-        builder: (BuildContext context) => ThemeChanger(widget.themeNumber),
+        create: (BuildContext context) => ThemeChanger(widget.themeNumber),
         child: Pokedex(),
       ),
     );
@@ -59,6 +60,7 @@ class Pokedex extends StatelessWidget {
         "pokemonDetail": (BuildContext context) => PokemonDetailPage(),
         "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
         "pokemonImage": (BuildContext context) => PokemonImagePage(),
+        "pokemonHeight": (BuildContext context) => PokemonHeightPage(),
       },
       theme: theme.getTheme(),
     );

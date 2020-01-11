@@ -3,8 +3,6 @@ import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 
-import 'Model/Pokemon_model.dart';
-
 class CustomSearchDelegate extends SearchDelegate {
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -93,7 +91,6 @@ class CustomSearchDelegate extends SearchDelegate {
         }
       },
     );
-    //PokedexProvider.of(context).se
   }
 
   Widget pokemonCard(BuildContext context, ThemeData theme, Pokemon pokemon) {
