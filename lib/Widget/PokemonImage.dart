@@ -8,7 +8,7 @@ class PokemonImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return FadeInImage(
       image: NetworkImage(image),
-      fit: BoxFit.contain,
+      fit: BoxFit.cover,
       width: MediaQuery.of(context).size.width,
       placeholder: AssetImage("assets/load_pokeball.gif"),
     );

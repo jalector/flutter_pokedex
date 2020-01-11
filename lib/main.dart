@@ -5,6 +5,7 @@ import 'package:flutter_pokedex/Pages/Pokedex_page.dart';
 import 'package:flutter_pokedex/Pages/PokemonDetail_page.dart';
 import 'package:flutter_pokedex/Pages/PokemonImage_page.dart';
 import 'package:flutter_pokedex/Pages/PokemonVideo_page.dart';
+import 'package:flutter_pokedex/pages/PokemonSprite_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,6 +60,7 @@ class Pokedex extends StatelessWidget {
         "pokemonDetail": (BuildContext context) => PokemonDetailPage(),
         "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
         "pokemonImage": (BuildContext context) => PokemonImagePage(),
+        "pokemonSprite": (BuildContext context) => PokemonSpritePage(),
       },
       theme: theme.getTheme(),
     );

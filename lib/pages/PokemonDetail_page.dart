@@ -581,7 +581,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       );
 
       pokemonSprite.sprites.forEach((Sprite sprite) {
-        imageSprite.add(this._spriteUI(sprite));
+        imageSprite.add(this._spriteUI(context, pokemon, sprite));
       });
     });
 
@@ -592,35 +592,39 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     );
   }
 
-  Widget _spriteUI(Sprite sprite) {
-    return Container(
-      margin: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white24,
-      ),
-      width: MediaQuery.of(context).size.width * 0.25,
-      child: Stack(
-        children: <Widget>[
-          (sprite.shiny)
-              ? Image.asset(
-                  'assets/sparkles.gif',
-                  fit: BoxFit.cover,
-                )
-              : Container(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              sprite.gender,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white38,
+  Widget _spriteUI(BuildContext context, Pokemon pokemon, Sprite sprite) {
+    return GestureDetector(
+      onTap: () =>
+          Navigator.of(context).pushNamed("pokemonSprite", arguments: pokemon),
+      child: Container(
+        margin: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white24,
+        ),
+        width: MediaQuery.of(context).size.width * 0.25,
+        child: Stack(
+          children: <Widget>[
+            (sprite.shiny)
+                ? Image.asset(
+                    'assets/sparkles.gif',
+                    fit: BoxFit.cover,
+                  )
+                : Container(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                sprite.gender,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white38,
+                ),
               ),
             ),
-          ),
-          PokemonImage(
-              "${GlobalRequest.sprites}${(sprite.form != "Pixel" ? "normal" : "pixels")}/${sprite.sprite}"),
-        ],
+            PokemonImage(
+                "${GlobalRequest.sprites}${(sprite.form != "Pixel" ? "normal" : "pixels")}/${sprite.sprite}"),
+          ],
+        ),
       ),
     );
   }
