@@ -47,7 +47,6 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
     return ChangeNotifierProvider<PageControllerNotifier>(
       create: (_) => PageControllerNotifier(pageController),
       child: Scaffold(
-        appBar: AppBar(),
         body: SafeArea(
           child: StreamBuilder(
             stream: provider.bloc.pokedexStream,
@@ -78,19 +77,43 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
   }
 
   Widget pokemonStack(BuildContext context, List<Pokemon> pokemon) {
+    ThemeData theme = Theme.of(context);
+    Size size = MediaQuery.of(context).size;
+
     var maxHeight = getMaxHeight(pokemon);
+
     return Stack(
       children: <Widget>[
         pokemonLines(context, maxHeight),
         pokemonImages(context, maxHeight, pokemon),
         Positioned.fill(
           child: PageView(
+            physics: BouncingScrollPhysics(),
             controller: pageController,
-            pageSnapping: false,
             scrollDirection: Axis.horizontal,
+            pageSnapping: false,
             children: List<Widget>.generate(pokemon.length, (int intem) {
               return Container();
             }),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: theme.accentColor,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  color: theme.primaryColorDark,
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -104,36 +127,53 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
     return Consumer<PageControllerNotifier>(
       builder: (context, notifier, child) {
         List<Widget> images = [];
-        double relation = (size.height * 0.75) / maxHeight;
-        double scrollMove = -notifier.page * pokemon.length * 10;
+        double relation = (size.height * 0.8) / maxHeight;
+        double scrollMove = -notifier.page * pokemon.length * 45;
+        double pokemonWidth = 0;
         for (int i = pokemon.length - 1; i >= 0; i--) {
           var poke = pokemon[i];
+          pokemonWidth += poke.height * 65 * (maxHeight + 1);
+
           images.add(
             Positioned(
-              bottom: size.height * 0.07,
-              top: relation / poke.height * 0.4,
-              left: (size.width * 0.3) + (150 * i) + scrollMove,
+              bottom: size.height * 0.095,
+              height: relation * poke.height,
+              left: pokemonWidth + scrollMove,
               child: Container(
-                color: Colors.white10,
-                child: Image.network(
-                  Pokemon.getURLImage(poke.id, poke.form),
-                  fit: BoxFit.cover,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.white10,
+                ),
+                child: Stack(
+                  overflow: Overflow.visible,
+                  children: <Widget>[
+                    Image.network(
+                      Pokemon.getURLImage(poke.id, poke.form),
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(top: -15, child: Text("${poke.height}m")),
+                  ],
                 ),
               ),
             ),
           );
         }
 
-        return Stack(children: images);
+        return Stack(
+          fit: StackFit.expand,
+          children: images,
+        );
       },
     );
   }
 
   Widget pokemonLines(BuildContext context, int maxHeight) {
     ThemeData theme = Theme.of(context);
+    Size size = MediaQuery.of(context).size;
+
     return Positioned.fill(
       child: CustomPaint(
-        painter: TablePainter(theme: theme, maxHeight: maxHeight),
+        painter: TablePainter(theme: theme, maxHeight: maxHeight, size: size),
         child: Container(),
       ),
     );
@@ -159,17 +199,17 @@ class PageControllerNotifier with ChangeNotifier {
 
 class TablePainter extends CustomPainter {
   final ThemeData theme;
+  Size size;
 
   /// Cada unidad es un metro
   int maxHeight = 3;
 
-  TablePainter({@required this.theme, this.maxHeight});
+  TablePainter({@required this.theme, this.size, this.maxHeight});
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(Canvas canvas, _) {
     var paint = Paint()..color = theme.scaffoldBackgroundColor;
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-
     printLines(theme, size, canvas);
   }
 
@@ -181,27 +221,27 @@ class TablePainter extends CustomPainter {
       ..color = theme.colorScheme.secondaryVariant
       ..strokeWidth = 2;
 
-    double spaceBetweenLines = (size.height * 0.85) / maxHeight;
+    double padding = size.height * 0.05;
+    double spaceBetweenLines = (size.height * 0.8) / maxHeight;
 
-    var padding = size.height * 0.05;
-
-    for (int i = maxHeight - 1; i >= 0; i--) {
-      var position = i * spaceBetweenLines + padding * 1.5;
+    for (int i = maxHeight; i >= 0; i--) {
+      var position = i * spaceBetweenLines + padding;
       var point1 = Offset(padding, position);
       var point2 = Offset(size.width - padding, position);
 
-      drawText(theme, size, canvas, point1, maxHeight - i);
-      drawMiniLines(theme, size, canvas, spaceBetweenLines, point1.dy, padding);
-      canvas.drawLine(point1, point2, paint);
-    }
+      if (i != maxHeight) {
+        drawMiniLines(
+            theme, size, canvas, spaceBetweenLines, point1.dy, padding);
+      }
 
-    var lastPosition = maxHeight * spaceBetweenLines + padding * 1.5;
-    canvas.drawLine(
-      Offset(padding, lastPosition),
-      Offset(size.width - padding, lastPosition),
-      paint,
-    );
-    drawText(theme, size, canvas, Offset(padding, lastPosition), 0);
+      canvas.drawLine(point1, point2, paint);
+
+      drawText(theme, size, canvas, Offset(point1.dx, point1.dy - 15),
+          maxHeight - i); // Left Text
+      drawText(theme, size, canvas, Offset(point2.dx - 15, point2.dy - 15),
+          maxHeight - i); // Right Text
+
+    }
   }
 
   void drawText(
@@ -216,7 +256,7 @@ class TablePainter extends CustomPainter {
     var paragraph = paragraphBuilder.build();
     paragraph.layout(ui.ParagraphConstraints(width: 300));
 
-    canvas.drawParagraph(paragraph, Offset(offset.dx, offset.dy - 15));
+    canvas.drawParagraph(paragraph, offset);
   }
 
   void drawMiniLines(ThemeData theme, Size size, Canvas canvas,
