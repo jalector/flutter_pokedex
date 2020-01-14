@@ -14,6 +14,7 @@ class PokemonHeightPage extends StatefulWidget {
 }
 
 class _PokemonHeightPageState extends State<PokemonHeightPage> {
+  final double screenHeightUsable = 0.65;
   PageController pageController;
 
   @override
@@ -32,10 +33,10 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
     pageController.dispose();
 
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
     ]);
 
     super.dispose();
@@ -77,9 +78,6 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
   }
 
   Widget pokemonStack(BuildContext context, List<Pokemon> pokemon) {
-    Size size = MediaQuery.of(context).size;
-
-    print("$size pokemon stack");
     var maxHeight = getMaxHeight(pokemon);
 
     return Stack(
@@ -109,20 +107,19 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
     return Consumer<PageControllerNotifier>(
       builder: (context, notifier, child) {
         List<Widget> images = [];
-        double relation = (size.height * 0.8) / maxHeight;
+        double relation = (size.height * screenHeightUsable) / maxHeight;
         double scrollMove = -notifier.page * pokemon.length * 45;
         double pokemonWidth = 0;
 
         for (int i = pokemon.length - 1; i >= 0; i--) {
           var poke = pokemon[i];
 
-          pokemonWidth += (poke.height * 4) * (maxHeight * 1) + (10 * i);
+          pokemonWidth += (poke.height * 4) * (maxHeight * 8);
 
           images.add(
             Positioned(
-              bottom: size.height * 0.095,
+              bottom: size.height * 0.08,
               height: relation * poke.height,
-              //width: relation * poke.height,
               right: pokemonWidth + scrollMove,
               child: Container(
                 decoration: BoxDecoration(
@@ -153,15 +150,65 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
   }
 
   Widget pokemonLines(BuildContext context, int maxHeight) {
-    ThemeData theme = Theme.of(context);
-    Size size = MediaQuery.of(context).size;
+    List<Widget> list = [];
 
-    return Positioned.fill(
-      child: CustomPaint(
-        painter: TablePainter(theme: theme, maxHeight: maxHeight, size: size),
-        child: Container(),
-      ),
-    );
+    list
+      ..addAll(createLines(context, maxHeight))
+      ..addAll(createText(context, maxHeight));
+
+    return Positioned.fill(child: Stack(children: list));
+  }
+
+  List<Widget> createLines(BuildContext context, int maxHeight) {
+    Size size = MediaQuery.of(context).size;
+    ThemeData theme = Theme.of(context);
+    int totalLines = (maxHeight * 5);
+
+    double padding = size.height * 0.08;
+    double spaceBetweenLines = (size.height * screenHeightUsable) / totalLines;
+
+    return List.generate(totalLines + 1, (int i) {
+      var position = i * spaceBetweenLines + (padding);
+
+      return Positioned(
+        bottom: position,
+        width: size.width * 0.95,
+        left: size.width * 0.025,
+        height: 1,
+        child: Container(
+          child: Divider(
+            thickness: ((i % 5) == 0) ? 2 : 0.2,
+            color: theme.accentColor,
+          ),
+        ),
+      );
+    });
+  }
+
+  List<Widget> createText(BuildContext context, int maxHeight) {
+    Size size = MediaQuery.of(context).size;
+    ThemeData theme = Theme.of(context);
+
+    double padding = size.height * 0.08;
+    double spaceBetweenLines = (size.height * screenHeightUsable) / maxHeight;
+
+    return List.generate(maxHeight + 1, (int i) {
+      var position = i * spaceBetweenLines + (padding);
+
+      return Positioned(
+        bottom: position + 2,
+        width: size.width * 0.95,
+        left: size.width * 0.025 + 10,
+        child: Container(
+          child: Text(
+            "${i}m",
+            style: theme.textTheme.caption.copyWith(
+              color: theme.accentColor,
+            ),
+          ),
+        ),
+      );
+    });
   }
 }
 
@@ -180,89 +227,4 @@ class PageControllerNotifier with ChangeNotifier {
 
   double get offset => _offset;
   double get page => _page;
-}
-
-class TablePainter extends CustomPainter {
-  final ThemeData theme;
-  final Size size;
-
-  /// Cada unidad es un metro
-  int maxHeight = 3;
-
-  TablePainter({@required this.theme, this.maxHeight, this.size});
-
-  @override
-  void paint(Canvas canvas, _) {
-    print("$size canvas");
-    var paint = Paint()..color = theme.scaffoldBackgroundColor;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-    printLines(theme, size, canvas);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
-
-  void printLines(ThemeData theme, Size size, Canvas canvas) {
-    var paint = Paint()
-      ..color = theme.colorScheme.secondaryVariant
-      ..strokeWidth = 2;
-
-    double padding = size.height * 0.05 - 1;
-    double spaceBetweenLines = (size.height * 0.8) / maxHeight;
-
-    for (int i = maxHeight; i >= 0; i--) {
-      var position = i * spaceBetweenLines + padding;
-      var point1 = Offset(padding, position);
-      var point2 = Offset(size.width - padding, position);
-
-      if (i != maxHeight) {
-        drawMiniLines(
-            theme, size, canvas, spaceBetweenLines, point1.dy, padding);
-      }
-
-      canvas.drawLine(point1, point2, paint);
-
-      drawText(theme, size, canvas, Offset(point1.dx, point1.dy - 15),
-          maxHeight - i); // Left Text
-      drawText(theme, size, canvas, Offset(point2.dx - 15, point2.dy - 15),
-          maxHeight - i); // Right Text1
-
-      if (i == 2)
-        print(
-            "$point1 ${maxHeight - i} > ${size.height}/${point1.dy} =  ${size.height / point1.dy}");
-    }
-  }
-
-  void drawText(
-      ThemeData theme, Size size, Canvas canvas, Offset offset, int height) {
-    var paragraphBuilder = ui.ParagraphBuilder(ui.ParagraphStyle())
-      ..pushStyle(ui.TextStyle(
-        color: theme.textTheme.caption.color,
-        fontSize: theme.textTheme.caption.fontSize,
-      ))
-      ..addText("${height}m");
-
-    var paragraph = paragraphBuilder.build();
-    paragraph.layout(ui.ParagraphConstraints(width: 300));
-
-    canvas.drawParagraph(paragraph, offset);
-  }
-
-  void drawMiniLines(ThemeData theme, Size size, Canvas canvas,
-      double spaceBetweenLines, double yPosition, double padding) {
-    var paintMini = Paint()
-      ..color = theme.colorScheme.secondaryVariant
-      ..strokeWidth = 0.6;
-
-    double spaceBetweenLinesmini = spaceBetweenLines / 5;
-
-    for (var j = 4; j >= 0; j--) {
-      var miniPosition = j * spaceBetweenLinesmini;
-
-      var p1 = Offset(padding, yPosition + miniPosition);
-      var p2 = Offset(size.width - padding, yPosition + miniPosition);
-
-      canvas.drawLine(p1, p2, paintMini);
-    }
-  }
 }
