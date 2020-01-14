@@ -47,18 +47,18 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
     return ChangeNotifierProvider<PageControllerNotifier>(
       create: (_) => PageControllerNotifier(pageController),
       child: Scaffold(
-        body: SafeArea(
-          child: StreamBuilder(
-            stream: provider.bloc.pokedexStream,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return pokemonStack(context, orderBySize(snapshot.data));
-              }
-              return Center(
-                child: CustomLoader(),
-              );
-            },
-          ),
+        appBar: AppBar(),
+        body: StreamBuilder<List<Pokemon>>(
+          stream: provider.bloc.pokedexStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+            if (snapshot.hasData && snapshot.data.length > 0) {
+              return pokemonStack(context, orderBySize(snapshot.data));
+            }
+            return Center(
+              child: CustomLoader(),
+            );
+          },
         ),
       ),
     );
@@ -77,9 +77,9 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
   }
 
   Widget pokemonStack(BuildContext context, List<Pokemon> pokemon) {
-    ThemeData theme = Theme.of(context);
     Size size = MediaQuery.of(context).size;
 
+    print("$size pokemon stack");
     var maxHeight = getMaxHeight(pokemon);
 
     return Stack(
@@ -92,28 +92,10 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
             controller: pageController,
             scrollDirection: Axis.horizontal,
             pageSnapping: false,
+            reverse: true,
             children: List<Widget>.generate(pokemon.length, (int intem) {
               return Container();
             }),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: theme.accentColor,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  color: theme.primaryColorDark,
-                ),
-              ),
-            ),
           ),
         ),
       ],
@@ -130,15 +112,18 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
         double relation = (size.height * 0.8) / maxHeight;
         double scrollMove = -notifier.page * pokemon.length * 45;
         double pokemonWidth = 0;
+
         for (int i = pokemon.length - 1; i >= 0; i--) {
           var poke = pokemon[i];
-          pokemonWidth += poke.height * 65 * (maxHeight + 1);
+
+          pokemonWidth += (poke.height * 4) * (maxHeight * 1) + (10 * i);
 
           images.add(
             Positioned(
               bottom: size.height * 0.095,
               height: relation * poke.height,
-              left: pokemonWidth + scrollMove,
+              //width: relation * poke.height,
+              right: pokemonWidth + scrollMove,
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
@@ -199,15 +184,16 @@ class PageControllerNotifier with ChangeNotifier {
 
 class TablePainter extends CustomPainter {
   final ThemeData theme;
-  Size size;
+  final Size size;
 
   /// Cada unidad es un metro
   int maxHeight = 3;
 
-  TablePainter({@required this.theme, this.size, this.maxHeight});
+  TablePainter({@required this.theme, this.maxHeight, this.size});
 
   @override
   void paint(Canvas canvas, _) {
+    print("$size canvas");
     var paint = Paint()..color = theme.scaffoldBackgroundColor;
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
     printLines(theme, size, canvas);
@@ -221,7 +207,7 @@ class TablePainter extends CustomPainter {
       ..color = theme.colorScheme.secondaryVariant
       ..strokeWidth = 2;
 
-    double padding = size.height * 0.05;
+    double padding = size.height * 0.05 - 1;
     double spaceBetweenLines = (size.height * 0.8) / maxHeight;
 
     for (int i = maxHeight; i >= 0; i--) {
@@ -239,8 +225,11 @@ class TablePainter extends CustomPainter {
       drawText(theme, size, canvas, Offset(point1.dx, point1.dy - 15),
           maxHeight - i); // Left Text
       drawText(theme, size, canvas, Offset(point2.dx - 15, point2.dy - 15),
-          maxHeight - i); // Right Text
+          maxHeight - i); // Right Text1
 
+      if (i == 2)
+        print(
+            "$point1 ${maxHeight - i} > ${size.height}/${point1.dy} =  ${size.height / point1.dy}");
     }
   }
 
