@@ -62,18 +62,23 @@ class _PokedexPageState extends State<PokedexPage> {
     PokedexProvider provider = PokedexProvider.of(context);
     types.forEach((String type, bool available) {
       if (available) {
-        buttonTypes.add(Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-          child: FloatingActionButton(
-            heroTag: type,
-            elevation: 0,
-            child: Image.asset("assets/badges_type/${type.toLowerCase()}.png"),
-            onPressed: () {
-              types[type] = !types[type];
-              provider.bloc.addFilter(types);
-              setState(() {});
-            },
+        buttonTypes.add(FloatingActionButton(
+          tooltip: "$type filter",
+          heroTag: type,
+          mini: true,
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: Image.asset(
+              "assets/badges_type/${type.toLowerCase()}.png",
+              fit: BoxFit.contain,
+            ),
           ),
+          onPressed: () {
+            types[type] = !types[type];
+            provider.bloc.addFilter(types);
+            setState(() {});
+          },
         ));
       }
     });
@@ -85,7 +90,7 @@ class _PokedexPageState extends State<PokedexPage> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(50),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 0),
           decoration: BoxDecoration(
             color: theme.accentColor.withOpacity(0.7),
           ),
@@ -102,20 +107,18 @@ class _PokedexPageState extends State<PokedexPage> {
   }
 
   Widget _filterButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: FloatingActionButton(
-        child: Icon(Icons.search),
-        heroTag: "searchButton",
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isDismissible: true,
-            builder: (context) => BottomSheetFilter(update: setState),
-            backgroundColor: Colors.transparent,
-          );
-        },
-      ),
+    return FloatingActionButton(
+      child: Icon(Icons.search),
+      mini: true,
+      heroTag: "searchButton",
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          isDismissible: true,
+          builder: (context) => BottomSheetFilter(update: setState),
+          backgroundColor: Colors.transparent,
+        );
+      },
     );
   }
 

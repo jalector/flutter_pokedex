@@ -23,6 +23,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
     PokedexProvider provider = PokedexProvider.of(context);
 
     return Stack(
+      overflow: Overflow.visible,
       children: <Widget>[
         Positioned.fill(
           child: Container(
@@ -32,11 +33,21 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
             ),
           ),
         ),
+        Positioned.fill(
+          top: -25,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              "Select the pokemon by type or name",
+              textAlign: TextAlign.center,
+              style: theme.textTheme.title,
+            ),
+          ),
+        ),
         Align(
           heightFactor: 1,
           alignment: Alignment.center,
           child: Container(
-            height: size.height * 0.5,
             constraints: BoxConstraints(maxWidth: 600),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -56,14 +67,9 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                   indent: size.width * 0.18,
                   color: Colors.white70,
                 ),
-                SizedBox(height: 15),
-                Text(
-                  "Select the type of pokemon that you want to filter",
-                  style: theme.textTheme.title,
-                ),
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 this.searchField(context, provider),
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 CupertinoSlidingSegmentedControl(
                   groupValue: provider.bloc.filterMode,
                   backgroundColor: theme.primaryColor,
@@ -78,7 +84,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
                     widget.update(() {});
                   },
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 Expanded(
                   child: SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
