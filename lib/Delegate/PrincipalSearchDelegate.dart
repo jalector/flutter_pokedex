@@ -3,11 +3,10 @@ import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 
-class CustomSearchDelegate extends SearchDelegate {
+class PrincipalSearchDelegate extends SearchDelegate {
   @override
   ThemeData appBarTheme(BuildContext context) {
     ThemeData theme = Theme.of(context);
-
     return theme;
   }
 
@@ -192,7 +191,7 @@ class CustomSearchDelegate extends SearchDelegate {
                   width: cardSize,
                   constraints: BoxConstraints(maxWidth: 170),
                   child: PokemonImage(
-                    Pokemon.getURLImage(pokemon.id, pokemon.form),
+                    Pokemon.getURLImage(pokemon.id, pokemon.form, full: false),
                   ),
                 ),
               ),

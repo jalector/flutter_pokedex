@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_pokedex/Delegate/HeightSeachDelegate.dart';
 import 'package:provider/provider.dart';
 
 import '../Provider/PokedexProvider.dart';
@@ -46,7 +47,24 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
     return ChangeNotifierProvider<PageControllerNotifier>(
       create: (_) => PageControllerNotifier(pageController),
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Text("How tall is your pokemon?"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                showSearch(
+                  context: context,
+                  delegate: HeightSearchDelegate(),
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: null,
+            )
+          ],
+        ),
         body: StreamBuilder<List<Pokemon>>(
           stream: provider.bloc.pokedexStream,
           builder:
@@ -64,7 +82,8 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
   }
 
   List<Pokemon> orderBySize(List<Pokemon> list) {
-    return list..sort((a, b) => a.height.compareTo(b.height));
+    //return list..sort((a, b) => a.height.compareTo(b.height));
+    return [];
   }
 
   int getMaxHeight(List<Pokemon> pokemon) {

@@ -4,11 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
     
         {
             "name": "Android",
             "request": "launch",
             "type": "dart",
+            
         },
 
         {
@@ -30,10 +32,6 @@
 		{
 			"name": "All Devices",
 			"configurations": ["Android", "MacOS"],
-        },
-		{
-			"name": "Android [Release]",
-			"configurations": ["Android [release]"],
         },
         
     ]

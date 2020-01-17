@@ -22,80 +22,85 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
     ThemeData theme = Theme.of(context);
     PokedexProvider provider = PokedexProvider.of(context);
 
-    return Stack(
-      overflow: Overflow.visible,
-      children: <Widget>[
-        Positioned.fill(
-          child: Container(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-              child: Container(color: Colors.transparent),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: 550,
+      ),
+      child: Stack(
+        overflow: Overflow.visible,
+        children: <Widget>[
+          Positioned.fill(
+            child: Container(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                child: Container(color: Colors.transparent),
+              ),
             ),
           ),
-        ),
-        Positioned.fill(
-          top: -25,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              "Select the pokemon by type or name",
-              textAlign: TextAlign.center,
-              style: theme.textTheme.title,
+          Positioned.fill(
+            top: -25,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                "Select the pokemon by type or name",
+                textAlign: TextAlign.center,
+                style: theme.textTheme.title,
+              ),
             ),
           ),
-        ),
-        Align(
-          heightFactor: 1,
-          alignment: Alignment.center,
-          child: Container(
-            constraints: BoxConstraints(maxWidth: 600),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              color: theme.colorScheme.secondaryVariant.withOpacity(0.5),
-            ),
-            padding: EdgeInsets.only(
-              top: 0,
-              bottom: 10,
-              left: size.width * 0.02,
-              right: size.width * 0.02,
-            ),
-            child: Column(
-              children: <Widget>[
-                Divider(
-                  thickness: 3,
-                  endIndent: size.width * 0.18,
-                  indent: size.width * 0.18,
-                  color: Colors.white70,
-                ),
-                SizedBox(height: 10),
-                this.searchField(context, provider),
-                SizedBox(height: 10),
-                CupertinoSlidingSegmentedControl(
-                  groupValue: provider.bloc.filterMode,
-                  backgroundColor: theme.primaryColor,
-                  thumbColor: theme.colorScheme.secondaryVariant,
-                  children: {
-                    PokedexBloc.filterModeInclusive: Text("Inclusive"),
-                    PokedexBloc.filterModeExclusive: Text("Exclusive"),
-                  },
-                  onValueChanged: (int i) {
-                    provider.bloc.changeFilterMode(i);
-                    setState(() {});
-                    widget.update(() {});
-                  },
-                ),
-                SizedBox(height: 10),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Wrap(children: typeChips(context, provider.bloc)),
+          Align(
+            heightFactor: 1,
+            alignment: Alignment.center,
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 600),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                color: theme.colorScheme.secondaryVariant.withOpacity(0.5),
+              ),
+              padding: EdgeInsets.only(
+                top: 0,
+                bottom: 10,
+                left: size.width * 0.02,
+                right: size.width * 0.02,
+              ),
+              child: Column(
+                children: <Widget>[
+                  Divider(
+                    thickness: 3,
+                    endIndent: size.width * 0.18,
+                    indent: size.width * 0.18,
+                    color: Colors.white70,
                   ),
-                ),
-              ],
+                  SizedBox(height: 10),
+                  this.searchField(context, provider),
+                  SizedBox(height: 10),
+                  CupertinoSlidingSegmentedControl(
+                    groupValue: provider.bloc.filterMode,
+                    backgroundColor: theme.primaryColor,
+                    thumbColor: theme.colorScheme.secondaryVariant,
+                    children: {
+                      PokedexBloc.filterModeInclusive: Text("Inclusive"),
+                      PokedexBloc.filterModeExclusive: Text("Exclusive"),
+                    },
+                    onValueChanged: (int i) {
+                      provider.bloc.changeFilterMode(i);
+                      setState(() {});
+                      widget.update(() {});
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Wrap(children: typeChips(context, provider.bloc)),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

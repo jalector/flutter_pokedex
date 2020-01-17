@@ -5,8 +5,8 @@ import 'package:flutter_pokedex/Model/Pokemon_model.dart';
 
 class PokedexBloc {
   static PokedexBloc _instance;
-  static int filterModeInclusive = 0;
-  static int filterModeExclusive = 1;
+  static const int filterModeInclusive = 0;
+  static const int filterModeExclusive = 1;
 
   factory PokedexBloc() {
     if (PokedexBloc._instance == null) {
@@ -19,41 +19,54 @@ class PokedexBloc {
     this.cleanFilter();
   }
 
+  /// Pokedex Controller
   final _pokedexController = BehaviorSubject<List<Pokemon>>();
-  final _searchedPokemonController = BehaviorSubject<String>();
-  final _loadingPokemonsController = BehaviorSubject<bool>();
-  final _filterPokemonController = BehaviorSubject<Map<String, bool>>();
-  final _filterModeController = BehaviorSubject<int>();
+  List<Pokemon> get pokedex => _pokedexController.value;
 
-  Stream<String> get searchedPokemonStream => _searchedPokemonController.stream;
-  Stream<bool> get loadingPokemonsStream => _loadingPokemonsController.stream;
-  Stream<Map<String, bool>> get filterTypes => _filterPokemonController.stream;
-  Stream<int> get filterModeStream => _filterModeController.stream;
   Stream<List<Pokemon>> get pokedexStream =>
       _pokedexController.stream.transform(
         StreamTransformer<List<Pokemon>, List<Pokemon>>.fromHandlers(
           handleData: _handlePokedexData,
         ),
       );
-
-  Function(int) get changeFilterMode => _filterModeController.sink.add;
-  Function(bool) get isLoading => _loadingPokemonsController.sink.add;
-  Function(Map<String, bool>) get addFilter =>
-      _filterPokemonController.sink.add;
-
   Function(List<Pokemon>) get addPokedex => _pokedexController.sink.add;
   Function(String) get addPokedexError => _pokedexController.sink.addError;
 
+  /// Pokemon Height Controller
+  final _pokemonHeightController = BehaviorSubject<List<Pokemon>>();
+  List<Pokemon> get pokemonHeigh => _pokemonHeightController.value;
+  Stream<List<Pokemon>> get pokemonHeightStream =>
+      _pokemonHeightController.stream;
+  Function(List<Pokemon>) get addPokemonHeight =>
+      _pokemonHeightController.sink.add;
+
+  /// Search Pokemon Controller
+  final _searchedPokemonController = BehaviorSubject<String>();
+  Stream<String> get searchedPokemonStream => _searchedPokemonController.stream;
+  String get searchedPokemon => _searchedPokemonController.value;
   Function(String) get onChangeSearchedPokemon =>
       _searchedPokemonController.sink.add;
   Function(String) get onChangeSearchedPokemonError =>
       _searchedPokemonController.sink.addError;
 
-  List<Pokemon> get pokedex => _pokedexController.value;
-  String get searchedPokemon => _searchedPokemonController.value;
+  /// Loading Pokemon Controller
+  final _loadingPokemonsController = BehaviorSubject<bool>();
+  Stream<bool> get loadingPokemonsStream => _loadingPokemonsController.stream;
+  Function(bool) get isLoading => _loadingPokemonsController.sink.add;
   bool get loading => _loadingPokemonsController.value;
+
+  /// Filter Pokemon Controller
+  final _filterPokemonController = BehaviorSubject<Map<String, bool>>();
+  Stream<Map<String, bool>> get filterTypes => _filterPokemonController.stream;
   Map<String, bool> get filter => _filterPokemonController.value;
+  Function(Map<String, bool>) get addFilter =>
+      _filterPokemonController.sink.add;
+
+  /// Filter Mode Controller
+  final _filterModeController = BehaviorSubject<int>();
   int get filterMode => _filterModeController.value;
+  Stream<int> get filterModeStream => _filterModeController.stream;
+  Function(int) get changeFilterMode => _filterModeController.sink.add;
 
   void dispose() {
     _pokedexController.close();
@@ -61,6 +74,7 @@ class PokedexBloc {
     _loadingPokemonsController.close();
     _filterPokemonController.close();
     _filterModeController.close();
+    _pokemonHeightController.close();
   }
 
   void _handlePokedexData(List<Pokemon> pokedex, sink) {

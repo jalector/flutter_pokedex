@@ -14,6 +14,7 @@ export 'package:flutter_pokedex/Model/Pokemon_model.dart';
 class PokedexProvider extends InheritedWidget {
   static PokedexProvider _instance;
   final PokedexBloc bloc = PokedexBloc();
+
   final GlobalRequest _globalRequest = GlobalRequest();
 
   factory PokedexProvider({Key key, Widget child}) {

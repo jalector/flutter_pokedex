@@ -634,7 +634,10 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
               ),
             ),
             PokemonImage(
-                "${GlobalRequest.sprites}${(sprite.form != "Pixel" ? "normal" : "pixels")}/${sprite.sprite}"),
+              "${GlobalRequest.sprites}"
+              "${(sprite.form != "Pixel" ? "normal" : "pixels")}/"
+              "${sprite.sprite}",
+            ),
           ],
         ),
       ),

@@ -109,6 +109,25 @@ class Pokemon {
     this.maxcp,
   });
 
+  @override
+  bool operator ==(pokemon) {
+    var equal = false;
+
+    if ("Pokemon" == pokemon.runtimeType.toString()) {
+      var ids = id == pokemon.id;
+      var forms = form == pokemon.form;
+
+      ///if
+      equal = ids && forms; //are true
+    } else {
+      equal = identical(this, pokemon);
+    }
+    return equal;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
   factory Pokemon.fromJson(Map<String, dynamic> json) => Pokemon(
         id: json["id"],
         name: json["name"],

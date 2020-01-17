@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dart:io' show Platform;
 
+import 'PokemonImage.dart';
+
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({Key key}) : super(key: key);
 
@@ -53,14 +55,17 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 child: Stack(
                   children: <Widget>[
                     Positioned(
-                      right: 0,
-                      child: Image.network(
+                      right: 5,
+                      bottom: 5,
+                      top: 5,
+                      child: PokemonImage(
                         Pokemon.getURLImage(
                           Random().nextInt(800) + 1,
                           null,
                           full: false,
                         ),
-                        color: theme.primaryColor,
+                        obscureColor: theme.primaryColor,
+                        fullWidth: false,
                       ),
                     ),
                     Center(
