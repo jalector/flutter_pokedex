@@ -132,6 +132,18 @@ class PokedexProvider extends InheritedWidget {
     this.bloc.isLoading(false);
   }
 
+  void addPokemonHeight(Pokemon pokemon) async {
+    bloc.addPokemonHeight(pokemon);
+    HttpAnswer<Pokemon> fullPokemon = await getPokemon(pokemon);
+
+    if (fullPokemon.ok) {
+      bloc.removePokemonHeight(pokemon);
+      bloc.addPokemonHeight(fullPokemon.object);
+    } else {
+      this.bloc.addErrorPokemonHeight("No se pudo obtener la infomación");
+    }
+  }
+
   ///Futures, jus a snapshot for information
 
   Future<HttpAnswer<Pokemon>> getPokemon(Pokemon pokemon) async {

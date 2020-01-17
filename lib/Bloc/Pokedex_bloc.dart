@@ -37,8 +37,17 @@ class PokedexBloc {
   List<Pokemon> get pokemonHeigh => _pokemonHeightController.value;
   Stream<List<Pokemon>> get pokemonHeightStream =>
       _pokemonHeightController.stream;
-  Function(List<Pokemon>) get addPokemonHeight =>
+
+  Function(String) get addErrorPokemonHeight =>
+      _pokemonHeightController.sink.addError;
+  Function(Pokemon) get addPokemonHeight => (Pokemon pokemon) {
+        _pokemonHeightController.sink.add(pokemonHeigh..add(pokemon));
+      };
+  Function(List<Pokemon>) get addPokemonListHeight =>
       _pokemonHeightController.sink.add;
+
+  Function(Pokemon) get removePokemonHeight => (Pokemon pokemon) =>
+      _pokemonHeightController.sink.add(pokemonHeigh..remove(pokemon));
 
   /// Search Pokemon Controller
   final _searchedPokemonController = BehaviorSubject<String>();
@@ -146,7 +155,7 @@ class PokedexBloc {
       "Grass": false,
       "Ice": false,
     });
-
+    _pokemonHeightController.sink.add([]);
     this.changeFilterMode(filterModeInclusive);
   }
 }

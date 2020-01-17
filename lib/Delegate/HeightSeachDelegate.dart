@@ -1,13 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_pokedex/Bloc/Pokedex_bloc.dart';
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:flutter_pokedex/Widget/CustomLoader.dart';
 import 'package:flutter_pokedex/Widget/PokemonImage.dart';
 
 class HeightSearchDelegate extends SearchDelegate {
-  List<Pokemon> pokemonList = [];
-
   @override
   ThemeData appBarTheme(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -45,7 +44,7 @@ class HeightSearchDelegate extends SearchDelegate {
         children: <Widget>[
           Center(
             child: Text(
-              "Search term must be longer than three letters.",
+              "Search term must be longer than one letters.",
             ),
           )
         ],
@@ -59,6 +58,7 @@ class HeightSearchDelegate extends SearchDelegate {
       stream: provider.bloc.pokedexStream,
       builder: (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
         ThemeData theme = Theme.of(context);
+        Size size = MediaQuery.of(context).size;
 
         if (snapshot.hasData) {
           return gridPokemonSeach(context, snapshot.data);
@@ -66,6 +66,12 @@ class HeightSearchDelegate extends SearchDelegate {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Image(
+                image: AssetImage("assets/unown.png"),
+                color: theme.accentColor.withOpacity(0.3),
+                width: size.width * 0.5,
+                fit: BoxFit.cover,
+              ),
               Center(
                 child: Text(
                   snapshot.error,
@@ -122,6 +128,8 @@ class HeightSearchDelegate extends SearchDelegate {
   }
 
   Widget dragTargetSliver(BuildContext context) {
+    PokedexProvider provider = PokedexProvider.of(context);
+    PokedexBloc bloc = provider.bloc;
     ThemeData theme = Theme.of(context);
 
     return SliverPersistentHeader(
@@ -130,35 +138,60 @@ class HeightSearchDelegate extends SearchDelegate {
       delegate: _SliverAppBarDelegate(
         minHeight: 100,
         maxHeight: 210,
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          decoration: BoxDecoration(
-            color: theme.primaryColorDark,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DragTarget<Pokemon>(
-            onWillAccept: (poke) =>
-                pokemonList.where((p) => p == poke).length == 0,
-            onAccept: (Pokemon p) => pokemonList.add(p),
-            builder: (BuildContext context, acepted, denied) {
-              var elements = pokemonDragged(context, denied,
-                  type: DragType.denied)
-                ..addAll(
-                    pokemonDragged(context, acepted, type: DragType.acepted))
-                ..addAll(pokemonDragged(context, pokemonList.reversed.toList(),
-                    type: null));
+        child: StreamBuilder<List<Pokemon>>(
+            stream: bloc.pokemonHeightStream,
+            initialData: [],
+            builder: (context, snapshot) {
+              Widget widget;
+              if (snapshot.hasData) {
+                widget = Container(
+                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: theme.primaryColorDark,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: DragTarget<Pokemon>(
+                    onWillAccept: (poke) =>
+                        bloc.pokemonHeigh.where((p) => p == poke).length == 0,
+                    onAccept: (Pokemon pokemon) {
+                      provider.addPokemonHeight(pokemon);
+                    },
+                    builder: (BuildContext context, acepted, denied) {
+                      var elements =
+                          pokemonDragged(context, denied, type: DragType.denied)
+                            ..addAll(
+                              pokemonDragged(context, acepted,
+                                  type: DragType.acepted),
+                            )
+                            ..addAll(
+                              pokemonDragged(
+                                  context, bloc.pokemonHeigh.reversed.toList(),
+                                  type: null),
+                            );
 
-              return Wrap(
-                children: elements,
-              );
-            },
-          ),
-        ),
+                      return Wrap(
+                        children: elements,
+                      );
+                    },
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                widget = Center(
+                  child: Text(snapshot.error),
+                );
+              } else {
+                widget = Center(child: CircularProgressIndicator());
+              }
+
+              return widget;
+            }),
       ),
     );
   }
 
   pokemonDragged(BuildContext context, List<dynamic> pokemon, {DragType type}) {
+    PokedexProvider provider = PokedexProvider.of(context);
+    PokedexBloc bloc = provider.bloc;
     ThemeData theme = Theme.of(context);
 
     return pokemon.map<Widget>((dynamic poke) {
@@ -177,9 +210,7 @@ class HeightSearchDelegate extends SearchDelegate {
         ),
         child: InkWell(
           onTap: () {
-            print(pokemonList);
-            pokemonList.remove(poke);
-            print(pokemonList);
+            bloc.removePokemonHeight(poke);
           },
           child: Column(
             children: <Widget>[

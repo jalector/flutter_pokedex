@@ -85,7 +85,7 @@ class Pokemon {
     this.baseCaptureRate,
     this.description,
     this.weight,
-    this.height,
+    this.height = 0,
     this.buddySize,
     this.baseFleeRate,
     this.kmDistanceToHatch,

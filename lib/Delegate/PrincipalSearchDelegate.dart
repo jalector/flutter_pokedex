@@ -55,6 +55,7 @@ class PrincipalSearchDelegate extends SearchDelegate {
       stream: provider.bloc.pokedexStream,
       builder: (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
         ThemeData theme = Theme.of(context);
+        Size size = MediaQuery.of(context).size;
 
         if (snapshot.hasData) {
           return gridPokemonSeach(context, snapshot.data);
@@ -62,12 +63,18 @@ class PrincipalSearchDelegate extends SearchDelegate {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Image(
+                image: AssetImage("assets/unown.png"),
+                color: theme.accentColor.withOpacity(0.3),
+                width: size.width * 0.5,
+                fit: BoxFit.cover,
+              ),
               Center(
                 child: Text(
                   snapshot.error,
                   style: theme.textTheme.title,
                 ),
-              )
+              ),
             ],
           );
         } else {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_pokedex/Delegate/HeightSeachDelegate.dart';
 import 'package:provider/provider.dart';
 
@@ -19,71 +18,64 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
   @override
   void initState() {
     pageController = PageController();
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
     super.initState();
   }
 
   @override
   void dispose() {
     pageController.dispose();
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var provider = PokedexProvider.of(context);
-    return ChangeNotifierProvider<PageControllerNotifier>(
-      create: (_) => PageControllerNotifier(pageController),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("How tall is your pokemon?"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                showSearch(
-                  context: context,
-                  delegate: HeightSearchDelegate(),
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: null,
-            )
-          ],
-        ),
-        body: StreamBuilder<List<Pokemon>>(
-          stream: provider.bloc.pokedexStream,
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
-            if (snapshot.hasData && snapshot.data.length > 0) {
-              return pokemonStack(context, orderBySize(snapshot.data));
-            }
-            return Center(
-              child: CustomLoader(),
-            );
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        provider.bloc.addPokemonListHeight([]);
+        return true;
+      },
+      child: ChangeNotifierProvider<PageControllerNotifier>(
+        create: (_) => PageControllerNotifier(pageController),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("How tall is your pokemon?"),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(
+                    context: context,
+                    delegate: HeightSearchDelegate(),
+                  );
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: null,
+              )
+            ],
+          ),
+          body: StreamBuilder<List<Pokemon>>(
+            stream: provider.bloc.pokemonHeightStream,
+            initialData: [],
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+              if (snapshot.hasData) {
+                return pokemonStack(context, orderBySize(snapshot.data));
+              }
+              return Center(
+                child: CustomLoader(),
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
   List<Pokemon> orderBySize(List<Pokemon> list) {
-    //return list..sort((a, b) => a.height.compareTo(b.height));
-    return [];
+    return list..sort((a, b) => a.height.compareTo(b.height));
   }
 
   int getMaxHeight(List<Pokemon> pokemon) {
