@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -39,9 +40,11 @@ class PokedexProvider extends InheritedWidget {
     return context.dependOnInheritedWidgetOfExactType<PokedexProvider>();
   }
 
+  ///Stream operations
+
   void getPokedexGeneration(int generation, {bool cleanPokedex = false}) async {
-    if (cleanPokedex) this.bloc.addPokedex(null);
-    if (this.bloc.pokedex != null && this.bloc.pokedex.length > 0) return;
+    if (cleanPokedex) bloc.clearPokedex();
+    if (bloc.pokedex != null && bloc.pokedex.length > 0) return;
 
     HttpAnswer<List<Pokemon>> answer = await this
         ._globalRequest
@@ -51,15 +54,15 @@ class PokedexProvider extends InheritedWidget {
     if (answer.ok) {
       List<dynamic> content = json.decode(answer.answer.body);
       answer.object = await compute(Pokemon.fromJsonCollection, content);
-      this.bloc.addPokedex(answer.object);
+      bloc.pokedexAddList(answer.object);
     } else {
-      this.bloc.addPokedexError(answer.reasonPhrase);
+      bloc.pokedexAddError(answer.reasonPhrase);
     }
   }
 
   void getPokedexByType(String type, {bool cleanPokedex = false}) async {
-    if (cleanPokedex) this.bloc.addPokedex(null);
-    if (this.bloc.pokedex != null && this.bloc.pokedex.length > 0) return;
+    if (cleanPokedex) bloc.clearPokedex();
+    if (bloc.pokedex != null && bloc.pokedex.length > 0) return;
 
     HttpAnswer<List<Pokemon>> answer =
         await this._globalRequest.get<List<Pokemon>>(
@@ -70,14 +73,14 @@ class PokedexProvider extends InheritedWidget {
     if (answer.ok) {
       List<dynamic> content = json.decode(answer.answer.body);
       answer.object = await compute(Pokemon.fromJsonCollection, content);
-      this.bloc.addPokedex(answer.object);
+      bloc.pokedexAddList(answer.object);
     } else {
-      this.bloc.addPokedexError(answer.reasonPhrase);
+      bloc.pokedexAddError(answer.reasonPhrase);
     }
   }
 
   void searchPokemon(String searched) async {
-    this.bloc.addPokedex(null);
+    bloc.clearPokedex();
 
     HttpAnswer<List<Pokemon>> answer =
         await this._globalRequest.get<List<Pokemon>>(
@@ -92,12 +95,12 @@ class PokedexProvider extends InheritedWidget {
           .toList();
 
       if (answer.object.length > 0) {
-        this.bloc.addPokedex(answer.object);
+        bloc.pokedexAddList(answer.object);
       } else {
-        this.bloc.addPokedexError("No data found");
+        bloc.pokedexAddError("No pokemon found T-T");
       }
     } else {
-      this.bloc.addPokedexError(answer.reasonPhrase);
+      bloc.pokedexAddError(answer.reasonPhrase);
     }
   }
 
@@ -112,37 +115,43 @@ class PokedexProvider extends InheritedWidget {
   void loadRandomPokemons(int amount, {bool cleanPokedex = false}) async {
     Random random = Random();
 
-    if (cleanPokedex) this.bloc.addPokedex(null);
+    if (cleanPokedex) bloc.clearPokedex();
 
-    this.bloc.isLoading(true);
-    if (this.bloc.pokedex == null) {
-      this.bloc.addPokedex([]);
+    bloc.isLoading(true);
+
+    if (bloc.pokedex == null) {
+      bloc.pokedexAddList([]);
     }
 
     for (var i = 0; i < amount; i++) {
       HttpAnswer<Pokemon> answer =
-          await this.getPokemon(Pokemon(id: random.nextInt(400) + 1));
+          await this.getPokemonMinimalInfo(random.nextInt(400) + 1);
 
       if (answer.ok) {
-        List<Pokemon> list = this.bloc.pokedex ?? <Pokemon>[];
-        list.add(answer.object);
-        this.bloc.addPokedex(list);
+        bloc.addPokemon(answer.object);
       }
     }
-    this.bloc.isLoading(false);
+    bloc.isLoading(false);
   }
 
+  /// Pokemon Height Controller Operations
   void addPokemonHeight(Pokemon pokemon) async {
-    bloc.addPokemonHeight(pokemon);
     HttpAnswer<Pokemon> fullPokemon = await getPokemon(pokemon);
 
     if (fullPokemon.ok) {
-      bloc.removePokemonHeight(pokemon);
-      bloc.addPokemonHeight(fullPokemon.object);
+      var list = bloc.pokemonHeigh;
+
+      print(list);
+      list[list.indexOf(pokemon)] = fullPokemon.object;
+      print(list);
+      bloc.pokemonHeightAddList(list);
+      print(bloc.pokemonHeigh);
     } else {
-      this.bloc.addErrorPokemonHeight("No se pudo obtener la infomación");
+      bloc.addErrorPokemonHeight("No se pudo obtener la infomación");
     }
   }
+
+  /// Filter mode controller
 
   ///Futures, jus a snapshot for information
 

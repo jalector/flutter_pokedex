@@ -4,19 +4,10 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
         {
-            "name": "Android",
+            "name": "Emulator",
             "request": "launch",
             "type": "dart",
-            
-        },
-
-        {
-            "name": "Android[emulator]",
-            "request": "launch",
-            "type": "dart",
-            "deviceId": "emulator-5554"
         },
         {
             "name": "MacOS",
@@ -30,7 +21,7 @@
     "compounds": [
 		{
 			"name": "All Devices",
-			"configurations": ["Android", "MacOS"],
+			"configurations": ["Emulator", "MacOS"],
         },
         
     ]

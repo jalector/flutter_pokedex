@@ -27,7 +27,7 @@ class PrincipalSearchDelegate extends SearchDelegate {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
-        PokedexProvider.of(context).bloc.addPokedex(null);
+        PokedexProvider.of(context).bloc.clearPokedex();
         close(context, null);
       },
     );

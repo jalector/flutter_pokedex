@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Delegate/HeightSeachDelegate.dart';
 import 'package:provider/provider.dart';
 
+import '../Delegate/HeightSeachDelegate.dart';
 import '../Provider/PokedexProvider.dart';
 import '../Widget/CustomLoader.dart';
 
@@ -32,7 +32,7 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
     var provider = PokedexProvider.of(context);
     return WillPopScope(
       onWillPop: () async {
-        provider.bloc.addPokemonListHeight([]);
+        provider.bloc.clearPokedex();
         return true;
       },
       child: ChangeNotifierProvider<PageControllerNotifier>(
@@ -42,7 +42,7 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
             title: Text("How tall is your pokemon?"),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.search),
+                icon: Icon(Icons.add),
                 onPressed: () {
                   showSearch(
                     context: context,

@@ -30,7 +30,6 @@ class HeightSearchDelegate extends SearchDelegate {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
-        PokedexProvider.of(context).bloc.addPokedex(null);
         close(context, null);
       },
     );
@@ -63,18 +62,19 @@ class HeightSearchDelegate extends SearchDelegate {
         if (snapshot.hasData) {
           return gridPokemonSeach(context, snapshot.data);
         } else if (snapshot.hasError) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          return Stack(
             children: <Widget>[
-              Image(
-                image: AssetImage("assets/unown.png"),
-                color: theme.accentColor.withOpacity(0.3),
-                width: size.width * 0.5,
-                fit: BoxFit.cover,
+              Center(
+                child: Image(
+                  image: AssetImage("assets/unown.png"),
+                  color: theme.accentColor.withOpacity(0.3),
+                  width: size.width * 0.5,
+                  fit: BoxFit.contain,
+                ),
               ),
               Center(
                 child: Text(
-                  snapshot.error,
+                  snapshot.error.toString(),
                   style: theme.textTheme.title,
                 ),
               )
@@ -91,29 +91,39 @@ class HeightSearchDelegate extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     PokedexProvider provider = PokedexProvider.of(context);
 
-    return StreamBuilder<List<Pokemon>>(
-      stream: provider.bloc.pokedexStream,
-      builder: (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
-        ThemeData theme = Theme.of(context);
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          right: 0,
+          left: 0,
+          child: dragTargetPokemon(context),
+        ),
+        StreamBuilder<List<Pokemon>>(
+          stream: provider.bloc.pokedexStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+            ThemeData theme = Theme.of(context);
 
-        if (snapshot.hasData) {
-          return gridPokemonSeach(context, snapshot.data);
-        } else if (snapshot.hasError) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Center(
-                child: Text(
-                  snapshot.error,
-                  style: theme.textTheme.title,
-                ),
-              )
-            ],
-          );
-        } else {
-          return CustomLoader();
-        }
-      },
+            if (snapshot.hasData) {
+              return gridPokemonSeach(context, snapshot.data);
+            } else if (snapshot.hasError) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Center(
+                    child: Text(
+                      snapshot.error,
+                      style: theme.textTheme.title,
+                    ),
+                  )
+                ],
+              );
+            } else {
+              return CustomLoader();
+            }
+          },
+        ),
+      ],
     );
   }
 
@@ -128,64 +138,75 @@ class HeightSearchDelegate extends SearchDelegate {
   }
 
   Widget dragTargetSliver(BuildContext context) {
-    PokedexProvider provider = PokedexProvider.of(context);
-    PokedexBloc bloc = provider.bloc;
-    ThemeData theme = Theme.of(context);
-
     return SliverPersistentHeader(
       pinned: true,
       floating: true,
       delegate: _SliverAppBarDelegate(
         minHeight: 100,
         maxHeight: 210,
-        child: StreamBuilder<List<Pokemon>>(
-            stream: bloc.pokemonHeightStream,
-            initialData: [],
-            builder: (context, snapshot) {
-              Widget widget;
-              if (snapshot.hasData) {
-                widget = Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: theme.primaryColorDark,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: DragTarget<Pokemon>(
-                    onWillAccept: (poke) =>
-                        bloc.pokemonHeigh.where((p) => p == poke).length == 0,
-                    onAccept: (Pokemon pokemon) {
-                      provider.addPokemonHeight(pokemon);
-                    },
-                    builder: (BuildContext context, acepted, denied) {
-                      var elements =
-                          pokemonDragged(context, denied, type: DragType.denied)
-                            ..addAll(
-                              pokemonDragged(context, acepted,
-                                  type: DragType.acepted),
-                            )
-                            ..addAll(
-                              pokemonDragged(
-                                  context, bloc.pokemonHeigh.reversed.toList(),
-                                  type: null),
-                            );
-
-                      return Wrap(
-                        children: elements,
-                      );
-                    },
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                widget = Center(
-                  child: Text(snapshot.error),
-                );
-              } else {
-                widget = Center(child: CircularProgressIndicator());
-              }
-
-              return widget;
-            }),
+        child: dragTargetPokemon(context),
       ),
+    );
+  }
+
+  Widget dragTargetPokemon(BuildContext context) {
+    PokedexProvider provider = PokedexProvider.of(context);
+    ThemeData theme = Theme.of(context);
+    PokedexBloc bloc = provider.bloc;
+    var pokemonDraggedList = bloc.pokemonHeigh;
+
+    return StreamBuilder<List<Pokemon>>(
+      stream: bloc.pokemonHeightStream,
+      builder: (context, snapshot) {
+        Widget widget;
+        if (snapshot.hasData) {
+          widget = Container(
+            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            decoration: BoxDecoration(
+              color: theme.primaryColorDark,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: DragTarget<Pokemon>(
+              onWillAccept: (poke) =>
+                  pokemonDraggedList.where((p) => p == poke).length == 0,
+              onAccept: (Pokemon pokemon) {
+                print("Pokemon acepted: $pokemon");
+                provider.addPokemonHeight(pokemon);
+                pokemonDraggedList.add(pokemon);
+              },
+              builder: (BuildContext context, acepted, denied) {
+                List<Pokemon> draggedPokemon = pokemonDraggedList;
+
+                var elements = pokemonDragged(context, denied,
+                    type: DragType.denied)
+                  ..addAll(
+                    pokemonDragged(context, acepted, type: DragType.acepted),
+                  );
+
+                if (draggedPokemon != null) {
+                  elements.addAll(pokemonDragged(
+                    context,
+                    pokemonDraggedList,
+                    type: null,
+                  ));
+                }
+
+                return SingleChildScrollView(
+                  child: Wrap(children: elements),
+                );
+              },
+            ),
+          );
+        } else if (snapshot.hasError) {
+          widget = Center(
+            child: Text(snapshot.error),
+          );
+        } else {
+          widget = Center(child: CircularProgressIndicator());
+        }
+
+        return widget;
+      },
     );
   }
 
@@ -276,7 +297,7 @@ class HeightSearchDelegate extends SearchDelegate {
               Positioned(
                 bottom: size.height * 0.04,
                 right: -5,
-                child: LongPressDraggable<Pokemon>(
+                child: Draggable<Pokemon>(
                   data: pokemon,
                   childWhenDragging: Container(
                     width: cardSize,

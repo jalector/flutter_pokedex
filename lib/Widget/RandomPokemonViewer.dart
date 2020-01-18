@@ -65,7 +65,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
           return Center(
             child: Container(
               child: Text(
-                snapshot.error,
+                snapshot.error.toString(),
                 style: Theme.of(context)
                     .textTheme
                     .title
