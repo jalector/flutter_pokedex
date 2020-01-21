@@ -153,7 +153,6 @@ class HeightSearchDelegate extends SearchDelegate {
     PokedexProvider provider = PokedexProvider.of(context);
     ThemeData theme = Theme.of(context);
     PokedexBloc bloc = provider.bloc;
-    var pokemonDraggedList = bloc.pokemonHeigh;
 
     return StreamBuilder<List<Pokemon>>(
       stream: bloc.pokemonHeightStream,
@@ -168,32 +167,26 @@ class HeightSearchDelegate extends SearchDelegate {
             ),
             child: DragTarget<Pokemon>(
               onWillAccept: (poke) =>
-                  pokemonDraggedList.where((p) => p == poke).length == 0,
+                  bloc.pokemonHeigh.where((p) => p == poke).length == 0,
               onAccept: (Pokemon pokemon) {
                 print("Pokemon acepted: $pokemon");
-                provider.addPokemonHeight(pokemon);
-                pokemonDraggedList.add(pokemon);
+                provider.addPokemonHeight(pokemon, bloc.pokemonHeigh.length);
               },
               builder: (BuildContext context, acepted, denied) {
-                List<Pokemon> draggedPokemon = pokemonDraggedList;
+                var elements = <Widget>[];
 
-                var elements = pokemonDragged(context, denied,
-                    type: DragType.denied)
+                elements
                   ..addAll(
                     pokemonDragged(context, acepted, type: DragType.acepted),
+                  )
+                  ..addAll(
+                    pokemonDragged(context, denied, type: DragType.denied),
+                  )
+                  ..addAll(
+                    pokemonDragged(context, bloc.pokemonHeigh, type: null),
                   );
 
-                if (draggedPokemon != null) {
-                  elements.addAll(pokemonDragged(
-                    context,
-                    pokemonDraggedList,
-                    type: null,
-                  ));
-                }
-
-                return SingleChildScrollView(
-                  child: Wrap(children: elements),
-                );
+                return Wrap(children: elements);
               },
             ),
           );
@@ -297,7 +290,7 @@ class HeightSearchDelegate extends SearchDelegate {
               Positioned(
                 bottom: size.height * 0.04,
                 right: -5,
-                child: Draggable<Pokemon>(
+                child: LongPressDraggable<Pokemon>(
                   data: pokemon,
                   childWhenDragging: Container(
                     width: cardSize,

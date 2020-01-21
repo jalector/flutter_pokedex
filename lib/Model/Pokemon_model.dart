@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
@@ -287,6 +288,15 @@ class Pokemon {
   @override
   String toString() {
     return "#$id $name";
+  }
+
+  void completePokemon(Future<HttpAnswer<Pokemon>> futurePokemon) async {
+    HttpAnswer<Pokemon> answer = await futurePokemon;
+
+    print("The pokemon get is : ${answer.ok}");
+    if (answer.ok) {
+      height = answer.object.height;
+    }
   }
 }
 

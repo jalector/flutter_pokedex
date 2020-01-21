@@ -29,7 +29,10 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    Size size = MediaQuery.of(context).size;
     var provider = PokedexProvider.of(context);
+
     return WillPopScope(
       onWillPop: () async {
         provider.bloc.clearPokedex();
@@ -59,10 +62,32 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
           body: StreamBuilder<List<Pokemon>>(
             stream: provider.bloc.pokemonHeightStream,
             initialData: [],
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                return pokemonStack(context, orderBySize(snapshot.data));
+                if (snapshot.data.length > 0) {
+                  return pokemonStack(context, orderBySize(snapshot.data));
+                } else {
+                  return Center(
+                    child: Stack(
+                      children: <Widget>[
+                        Center(
+                          child: Image(
+                            image: AssetImage("assets/unown.png"),
+                            color: theme.accentColor.withOpacity(0.3),
+                            width: size.width * 0.5,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            "Add more pokemons",
+                            style: theme.textTheme.title,
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }
               }
               return Center(
                 child: CustomLoader(),
@@ -75,7 +100,9 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
   }
 
   List<Pokemon> orderBySize(List<Pokemon> list) {
-    return list..sort((a, b) => a.height.compareTo(b.height));
+    return list
+      ..sort((a, b) => a.height.compareTo(b.height))
+      ..reversed.toList();
   }
 
   int getMaxHeight(List<Pokemon> pokemon) {
@@ -99,9 +126,16 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
             controller: pageController,
             scrollDirection: Axis.horizontal,
             pageSnapping: false,
-            reverse: true,
-            children: List<Widget>.generate(pokemon.length, (int intem) {
-              return Container();
+            children: List<Widget>.generate(pokemon.length, (int item) {
+              return Stack(
+                children: <Widget>[
+                  Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: Text("$item"),
+                  )
+                ],
+              );
             }),
           ),
         ),
@@ -112,28 +146,30 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
   Widget pokemonImages(
       BuildContext context, int maxHeight, List<Pokemon> pokemon) {
     Size size = MediaQuery.of(context).size;
+    ThemeData theme = Theme.of(context);
 
     return Consumer<PageControllerNotifier>(
       builder: (context, notifier, child) {
         List<Widget> images = [];
         double relation = (size.height * screenHeightUsable) / maxHeight;
-        double scrollMove = -notifier.page * pokemon.length * 45;
+        double scrollMove =
+            -notifier.page * pokemon.length * (pokemon.length - maxHeight);
         double pokemonWidth = 0;
 
-        for (int i = pokemon.length - 1; i >= 0; i--) {
+        for (int i = 0, e = pokemon.length; i < e; i++) {
           var poke = pokemon[i];
-
-          pokemonWidth += (poke.height * 4) * (maxHeight * 8);
+          var height = relation * poke.height;
 
           images.add(
             Positioned(
               bottom: size.height * 0.08,
-              height: relation * poke.height,
-              right: pokemonWidth + scrollMove,
+              height: height,
+              width: height,
+              left: (pokemon.length * 10) + scrollMove + pokemonWidth,
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  color: Colors.white10,
+                  color: Colors.black26,
                 ),
                 child: Stack(
                   overflow: Overflow.visible,
@@ -142,12 +178,29 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
                       Pokemon.getURLImage(poke.id, poke.form),
                       fit: BoxFit.cover,
                     ),
-                    Positioned(top: -15, child: Text("${poke.height}m")),
+                    Positioned(
+                      top: -15,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 1,
+                          horizontal: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.background,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                        child: Text(
+                          "${poke.name} ${poke.height}m",
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
           );
+
+          pokemonWidth += height + 70;
         }
 
         return Stack(

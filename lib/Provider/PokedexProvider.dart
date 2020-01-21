@@ -135,20 +135,13 @@ class PokedexProvider extends InheritedWidget {
   }
 
   /// Pokemon Height Controller Operations
-  void addPokemonHeight(Pokemon pokemon) async {
-    HttpAnswer<Pokemon> fullPokemon = await getPokemon(pokemon);
+  void addPokemonHeight(Pokemon pokemon, int index) async {
+    Future<HttpAnswer<Pokemon>> fullPokemon = getPokemon(pokemon);
 
-    if (fullPokemon.ok) {
-      var list = bloc.pokemonHeigh;
+    var list = bloc.pokemonHeigh;
 
-      print(list);
-      list[list.indexOf(pokemon)] = fullPokemon.object;
-      print(list);
-      bloc.pokemonHeightAddList(list);
-      print(bloc.pokemonHeigh);
-    } else {
-      bloc.addErrorPokemonHeight("No se pudo obtener la infomación");
-    }
+    list.add(pokemon..completePokemon(fullPokemon));
+    bloc.addPokemonListHeight(list);
   }
 
   /// Filter mode controller
