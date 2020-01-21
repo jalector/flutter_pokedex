@@ -224,6 +224,12 @@ class Pokemon {
     return list;
   }
 
+  static List<Pokemon> fromJsonCounterCollection(List<dynamic> json) {
+    return json
+        .map<Pokemon>((element) => Pokemon(id: element[0], name: element[1]))
+        .toList();
+  }
+
   static Color chooseByPokemonType(String type) {
     Color color = Colors.blue;
     switch (type.toLowerCase()) {
@@ -293,7 +299,6 @@ class Pokemon {
   void completePokemon(Future<HttpAnswer<Pokemon>> futurePokemon) async {
     HttpAnswer<Pokemon> answer = await futurePokemon;
 
-    print("The pokemon get is : ${answer.ok}");
     if (answer.ok) {
       height = answer.object.height;
     }

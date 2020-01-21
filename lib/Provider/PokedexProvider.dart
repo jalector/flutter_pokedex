@@ -219,4 +219,20 @@ class PokedexProvider extends InheritedWidget {
 
     return response;
   }
+
+  Future<HttpAnswer<List<Pokemon>>> getPokemonCounters(int id) async {
+    var request = await this._globalRequest.get<List<Pokemon>>(
+        GlobalRequest.pokemonHub, "api/pokemon/counters/$id");
+
+    if (request.ok) {
+      var data = json.decode(request.answer.body);
+
+      print(data.runtimeType);
+      request.object = Pokemon.fromJsonCounterCollection(data);
+    } else {
+      throw request.reasonPhrase;
+    }
+
+    return request;
+  }
 }

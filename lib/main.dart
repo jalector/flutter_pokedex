@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Provider/ThemeChanger.dart';
-import 'package:flutter_pokedex/Pages/Home_page.dart';
-import 'package:flutter_pokedex/Pages/Pokedex_page.dart';
-import 'package:flutter_pokedex/Pages/PokemonDetail_page.dart';
-import 'package:flutter_pokedex/Pages/PokemonImage_page.dart';
-import 'package:flutter_pokedex/Pages/PokemonVideo_page.dart';
-import 'package:flutter_pokedex/pages/PokemonSprite_page.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Provider/ThemeChanger.dart';
+import 'Pages/Home_page.dart';
+import 'Pages/Pokedex_page.dart';
+import 'Pages/PokemonImage_page.dart';
+import 'Pages/PokemonVideo_page.dart';
+import 'Pages/PokemonSprite_page.dart';
 import 'Pages/PokemonHeight_page.dart';
 import 'Provider/PokedexProvider.dart';
 
 import 'dart:io' show Platform;
+
+import 'pages/PokemonDetail_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,7 +60,7 @@ class Pokedex extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         "/": (BuildContext context) => HomePage(),
         "pokedex": (BuildContext context) => PokedexPage(),
-        "pokemonDetail": (BuildContext context) => PokemonDetailPage(),
+        "pokemonDetail": (BuildContext context) => PokemonDetailTabPage(),
         "pokemonVideo": (BuildContext context) => PokemonVideoPage(),
         "pokemonImage": (BuildContext context) => PokemonImagePage(),
         "pokemonHeight": (BuildContext context) => PokemonHeightPage(),

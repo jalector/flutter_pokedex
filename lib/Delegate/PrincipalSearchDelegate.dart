@@ -60,14 +60,15 @@ class PrincipalSearchDelegate extends SearchDelegate {
         if (snapshot.hasData) {
           return gridPokemonSeach(context, snapshot.data);
         } else if (snapshot.hasError) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          return Stack(
             children: <Widget>[
-              Image(
-                image: AssetImage("assets/unown.png"),
-                color: theme.accentColor.withOpacity(0.3),
-                width: size.width * 0.5,
-                fit: BoxFit.cover,
+              Positioned.fill(
+                child: Image(
+                  image: AssetImage("assets/unown.png"),
+                  color: theme.accentColor.withOpacity(0.3),
+                  width: size.width * 0.5,
+                  fit: BoxFit.cover,
+                ),
               ),
               Center(
                 child: Text(

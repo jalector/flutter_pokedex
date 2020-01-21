@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/Model/Sprite_model.dart';
 
 import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:flutter_pokedex/Model/Pokemon_model.dart';
@@ -13,7 +14,66 @@ import 'package:flutter_pokedex/Widget/PokemonVideo.dart';
 
 import "dart:io" show Platform;
 
+class PokemonDetailTabPage extends StatefulWidget {
+  const PokemonDetailTabPage({Key key}) : super(key: key);
+
+  @override
+  _PokemonDetailTabPageState createState() => _PokemonDetailTabPageState();
+}
+
+class _PokemonDetailTabPageState extends State<PokemonDetailTabPage> {
+  @override
+  Widget build(BuildContext context) {
+    Pokemon pokemon = ModalRoute.of(context).settings.arguments;
+
+    return DefaultTabController(
+      length: 3,
+      initialIndex: 1,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                "${pokemon.name}",
+                style: Theme.of(context).textTheme.title,
+              ),
+              Spacer(),
+              Text("#${pokemon.id}", style: Theme.of(context).textTheme.title),
+            ],
+          ),
+          centerTitle: false,
+        ),
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.transparent,
+          elevation: 0,
+          child: TabBar(
+            indicatorSize: TabBarIndicatorSize.label,
+            tabs: <Widget>[
+              Tab(icon: Icon(FontAwesomeIcons.shieldAlt)),
+              Tab(icon: Icon(FontAwesomeIcons.userAlt)),
+              Tab(icon: Icon(FontAwesomeIcons.exclamationTriangle)),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            PokemonCounterPage(pokemon),
+            PokemonDetailPage(pokemon),
+            Icon(Icons.directions_bike),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//// Pokemon Detail Page
+
 class PokemonDetailPage extends StatefulWidget {
+  final Pokemon pokemon;
+  PokemonDetailPage(this.pokemon);
+
   @override
   _PokemonDetailPageState createState() => _PokemonDetailPageState();
 }
@@ -29,25 +89,10 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    Pokemon pokemon = ModalRoute.of(context).settings.arguments;
+    Pokemon pokemon = widget.pokemon;
     PokedexProvider provider = PokedexProvider.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 5,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              "${pokemon.name}",
-              style: Theme.of(context).textTheme.title,
-            ),
-            Spacer(),
-            Text("#${pokemon.id}", style: Theme.of(context).textTheme.title),
-          ],
-        ),
-      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8),
@@ -145,14 +190,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       child: Column(
         children: <Widget>[
           this._generationBanner(context, pokemon),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Flexible(child: this._pokemonPreview(pokemon)),
-              Flexible(child: this._description(pokemon)),
-            ],
-          ),
+          this._pokemonPreview(pokemon),
           this._pokemonTypeBanners(pokemon),
+          this._description(pokemon),
           this._adjacentPokemon(context, pokemon),
           this._stats(context, pokemon),
           this._statisticsChart(context, pokemon),
@@ -201,9 +241,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   Widget _image(Pokemon pokemon) {
     String imageURL = Pokemon.getURLImage(pokemon.id, pokemon.form);
-
+    Orientation orientation = MediaQuery.of(context).orientation;
     return AspectRatio(
-      aspectRatio: 2 / 3,
+      aspectRatio: (orientation == Orientation.portrait) ? 1 : 2 / 3,
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(
@@ -277,7 +317,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   Widget _description(Pokemon pokemon) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.black38,
         borderRadius: BorderRadius.circular(5),
@@ -655,6 +695,45 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       child: Center(
         child: text,
       ),
+    );
+  }
+}
+
+/// Pokemon counter page
+
+class PokemonCounterPage extends StatelessWidget {
+  final Pokemon pokemon;
+  const PokemonCounterPage(this.pokemon);
+
+  @override
+  Widget build(BuildContext context) {
+    var provider = PokedexProvider.of(context);
+    return FutureBuilder<HttpAnswer<List<Pokemon>>>(
+      future: provider.getPokemonCounters(pokemon.id),
+      builder: (BuildContext context,
+          AsyncSnapshot<HttpAnswer<List<Pokemon>>> snapshot) {
+        Widget widget = CustomLoader();
+
+        if (snapshot.hasData) {
+          var pokes = snapshot.data.object;
+          widget = ListView.builder(
+            itemCount: pokes.length,
+            itemBuilder: (BuildContext context, int index) {
+              var poke = pokes[index];
+              return ListTile(
+                leading: Image.network(
+                  Pokemon.getURLImage(poke.id, null),
+                ),
+                title: Text(poke.name),
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          widget = Text(snapshot.error.toString());
+        }
+
+        return widget;
+      },
     );
   }
 }
