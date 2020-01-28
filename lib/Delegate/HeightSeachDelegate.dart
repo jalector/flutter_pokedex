@@ -283,6 +283,7 @@ class HeightSearchDelegate extends SearchDelegate {
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   child: Text(
                     pokemon.name,
+                    overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.title,
                   ),
                 ),

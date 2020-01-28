@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
-import 'package:flutter_pokedex/Widget/BottomSheetFilter.dart';
-import 'package:flutter_pokedex/Widget/CustomLoader.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+import '../Model/Pokemon_model.dart';
+import '../Provider/GlobalRequest.dart';
+import '../Provider/PokedexProvider.dart';
+import '../Widget/BottomSheetFilter.dart';
+import '../Widget/CustomLoader.dart';
+import '../Widget/PokemonCard.dart';
 
 class PokedexPage extends StatefulWidget {
   @override
@@ -139,6 +139,7 @@ class _PokedexPageState extends State<PokedexPage> {
 
   Widget _pokedex(BuildContext context, PokedexProvider provider) {
     String title = ModalRoute.of(context).settings.arguments;
+    Size size = MediaQuery.of(context).size;
 
     return CustomScrollView(
       physics: BouncingScrollPhysics(),
@@ -152,18 +153,21 @@ class _PokedexPageState extends State<PokedexPage> {
         ),
         StreamBuilder<List<Pokemon>>(
           stream: provider.bloc.pokedexStream,
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
             Widget builder;
             List<Pokemon> pokedex = snapshot.data;
+
             if (snapshot.hasData) {
-              builder = SliverGrid.extent(
-                maxCrossAxisExtent:
-                    this._calculateCardWidth(MediaQuery.of(context).size),
-                children: pokedex
-                    .map<Widget>((Pokemon pokemon) =>
-                        this._pokemonCard(context, pokemon))
-                    .toList(),
+              builder = SliverPadding(
+                padding: const EdgeInsets.all(5),
+                sliver: SliverGrid.extent(
+                  maxCrossAxisExtent: this._calculateCardWidth(size),
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  children: pokedex
+                      .map<Widget>((Pokemon pokemon) => PokemonCard(pokemon))
+                      .toList(),
+                ),
               );
             } else if (snapshot.hasError) {
               builder = SliverList(
@@ -200,57 +204,6 @@ class _PokedexPageState extends State<PokedexPage> {
           },
         ),
       ],
-    );
-  }
-
-  Widget _pokemonCard(BuildContext context, Pokemon pokemon) {
-    ThemeData theme = Theme.of(context);
-    return Padding(
-      padding: EdgeInsets.all(5),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(5),
-        child: Material(
-          color: Theme.of(context).primaryColor,
-          child: InkWell(
-            onTap: () => Navigator.pushNamed(context, "pokemonDetail",
-                arguments: pokemon),
-            child: Container(
-              margin: EdgeInsets.all(5),
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColorDark,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child:
-                        Text("#${pokemon.id}", style: theme.textTheme.caption),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 20,
-                    child: Opacity(
-                      opacity: 0.2,
-                      child: Text(
-                        pokemon.name,
-                        style: Theme.of(context).textTheme.title,
-                      ),
-                    ),
-                  ),
-                  PokemonImage(
-                    Pokemon.getURLImage(
-                      pokemon.id,
-                      pokemon.form,
-                      full: false,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
