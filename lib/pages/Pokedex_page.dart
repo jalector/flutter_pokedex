@@ -8,6 +8,10 @@ import '../Widget/CustomLoader.dart';
 import '../Widget/PokemonCard.dart';
 
 class PokedexPage extends StatefulWidget {
+  final String title;
+
+  PokedexPage(this.title);
+
   @override
   _PokedexPageState createState() => _PokedexPageState();
 }
@@ -138,7 +142,6 @@ class _PokedexPageState extends State<PokedexPage> {
   }
 
   Widget _pokedex(BuildContext context, PokedexProvider provider) {
-    String title = ModalRoute.of(context).settings.arguments;
     Size size = MediaQuery.of(context).size;
 
     return CustomScrollView(
@@ -149,7 +152,8 @@ class _PokedexPageState extends State<PokedexPage> {
           pinned: false,
           elevation: 5,
           centerTitle: false,
-          title: Text(title, style: Theme.of(context).textTheme.display1),
+          title:
+              Text(widget.title, style: Theme.of(context).textTheme.display1),
         ),
         StreamBuilder<List<Pokemon>>(
           stream: provider.bloc.pokedexStream,

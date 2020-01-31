@@ -89,19 +89,17 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    Pokemon pokemon = widget.pokemon;
     PokedexProvider provider = PokedexProvider.of(context);
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-          child: FutureBuilder<HttpAnswer<Pokemon>>(
-            future: provider.getPokemon(pokemon),
-            builder: (BuildContext context,
-                AsyncSnapshot<HttpAnswer<Pokemon>> snapshot) {
+          child: StreamBuilder(
+            stream: provider.bloc.pokemonDetailStream,
+            builder: (BuildContext context, AsyncSnapshot<Pokemon> snapshot) {
               if (snapshot.hasData) {
-                return _pokemonDetail(context, snapshot.data.object);
+                return _pokemonDetail(context, snapshot.data);
               } else if (snapshot.hasError) {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -604,7 +602,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _sprites(BuildContext context, Pokemon pokemon) {
-    if (pokemon.sprites.length == 0) {
+    if (pokemon.sprites != null && pokemon.sprites.length > 0) {
       return _noInfoMessage(
         Text("No sprites available"),
       );

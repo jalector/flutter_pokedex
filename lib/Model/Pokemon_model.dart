@@ -40,11 +40,12 @@ class Pokemon {
   double male;
   double female;
   int genderless;
-  List<Form> forms;
-  List<Description> descriptions;
-  List<TypeChart> typeChart;
-  List<String> weatherInfluences;
-  List<PokemonSprite> sprites;
+  List<Form> forms = [];
+  List<Description> descriptions = [];
+  List<TypeChart> typeChart = [];
+  List<String> weatherInfluences = [];
+  List<PokemonSprite> sprites = [];
+  List<Pokemon> counters = [];
   Map<String, int> cPs;
   int maxcp;
 
