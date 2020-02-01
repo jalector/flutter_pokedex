@@ -36,7 +36,6 @@ class PokemonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    print("${pokemon.name}: ${pokemon.type1} ${pokemon?.type2 ?? "TRONÉ"}");
     Widget widget = Container(
       margin: EdgeInsets.all(5),
       child: Stack(
@@ -60,7 +59,7 @@ class PokemonCard extends StatelessWidget {
                   width: 15,
                 ),
                 SizedBox(height: 5),
-                (pokemon.type2 != null)
+                (pokemon.type2 != null && pokemon.type2.isNotEmpty)
                     ? Image.network(
                         Pokemon.getUrlBadgetype(pokemon.type2),
                         width: 15,

@@ -258,6 +258,7 @@ class PokedexProvider extends InheritedWidget {
 
     if (response.ok) {
       pokemon.sprites = response.object;
+      bloc.addPokemonDetail(pokemon);
     } else {
       bloc.addPokemonDetailError(response.reasonPhrase);
     }

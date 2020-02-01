@@ -7,7 +7,8 @@ import 'Pages/PokemonImage_page.dart';
 import 'Pages/PokemonVideo_page.dart';
 import 'Pages/PokemonSprite_page.dart';
 import 'Pages/PokemonHeight_page.dart';
-import 'pages/PokemonDetail_page.dart';
+
+import 'Pages/PokemonDetail/PokemonDetailTab_page.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   Route route;
@@ -37,11 +38,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case "pokemonVideo":
       route = MaterialPageRoute(
         builder: (BuildContext context) => PokemonVideoPage(),
+        settings: settings,
       );
       break;
     case "pokemonImage":
       route = MaterialPageRoute(
         builder: (BuildContext context) => PokemonImagePage(),
+        settings: settings,
       );
       break;
     case "pokemonHeight":
@@ -52,6 +55,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case "pokemonSprite":
       route = MaterialPageRoute(
         builder: (BuildContext context) => PokemonSpritePage(),
+        settings: settings,
       );
       break;
   }
