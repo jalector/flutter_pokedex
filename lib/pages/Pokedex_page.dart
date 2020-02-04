@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
-import 'package:flutter_pokedex/Widget/BottomSheetFilter.dart';
-import 'package:flutter_pokedex/Widget/CustomLoader.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+import '../Model/Pokemon_model.dart';
+import '../Provider/GlobalRequest.dart';
+import '../Provider/PokedexProvider.dart';
+import '../Widget/BottomSheetFilter.dart';
+import '../Widget/CustomLoader.dart';
+import '../Widget/PokemonImage.dart';
 
 class PokedexPage extends StatefulWidget {
   @override
@@ -139,6 +139,7 @@ class _PokedexPageState extends State<PokedexPage> {
 
   Widget _pokedex(BuildContext context, PokedexProvider provider) {
     String title = ModalRoute.of(context).settings.arguments;
+    Size size = MediaQuery.of(context).size;
 
     return CustomScrollView(
       physics: BouncingScrollPhysics(),
@@ -150,54 +151,57 @@ class _PokedexPageState extends State<PokedexPage> {
           centerTitle: false,
           title: Text(title, style: Theme.of(context).textTheme.display1),
         ),
-        StreamBuilder<List<Pokemon>>(
-          stream: provider.bloc.pokedexStream,
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Pokemon>> snapshot) {
-            Widget builder;
-            List<Pokemon> pokedex = snapshot.data;
-            if (snapshot.hasData) {
-              builder = SliverGrid.extent(
-                maxCrossAxisExtent:
-                    this._calculateCardWidth(MediaQuery.of(context).size),
-                children: pokedex
-                    .map<Widget>((Pokemon pokemon) =>
-                        this._pokemonCard(context, pokemon))
-                    .toList(),
-              );
-            } else if (snapshot.hasError) {
-              builder = SliverList(
-                delegate: SliverChildListDelegate([
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.all(15),
-                          margin: EdgeInsets.all(35),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).errorColor,
-                            borderRadius: BorderRadius.circular(10),
+        SliverPadding(
+          padding: EdgeInsets.all(5),
+          sliver: StreamBuilder<List<Pokemon>>(
+            stream: provider.bloc.pokedexStream,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              Widget builder;
+              List<Pokemon> pokedex = snapshot.data;
+              if (snapshot.hasData) {
+                builder = SliverGrid.extent(
+                  maxCrossAxisExtent: this._calculateCardWidth(size),
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                  children: pokedex
+                      .map<Widget>((Pokemon pokemon) =>
+                          this._pokemonCard(context, pokemon))
+                      .toList(),
+                );
+              } else if (snapshot.hasError) {
+                builder = SliverList(
+                  delegate: SliverChildListDelegate([
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(15),
+                            margin: EdgeInsets.all(35),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).errorColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              snapshot.error.toString(),
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.title,
+                            ),
                           ),
-                          child: Text(
-                            snapshot.error.toString(),
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.title,
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ]),
-              );
-            } else {
-              builder = SliverList(
-                delegate: SliverChildListDelegate(
-                    [Center(heightFactor: 2, child: CustomLoader())]),
-              );
-            }
+                        )
+                      ],
+                    )
+                  ]),
+                );
+              } else {
+                builder = SliverList(
+                  delegate: SliverChildListDelegate(
+                      [Center(heightFactor: 2, child: CustomLoader())]),
+                );
+              }
 
-            return builder;
-          },
+              return builder;
+            },
+          ),
         ),
       ],
     );
@@ -205,48 +209,38 @@ class _PokedexPageState extends State<PokedexPage> {
 
   Widget _pokemonCard(BuildContext context, Pokemon pokemon) {
     ThemeData theme = Theme.of(context);
-    return Padding(
-      padding: EdgeInsets.all(5),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(5),
-        child: Material(
-          color: Theme.of(context).primaryColor,
-          child: InkWell(
-            onTap: () => Navigator.pushNamed(context, "pokemonDetail",
-                arguments: pokemon),
-            child: Container(
-              margin: EdgeInsets.all(5),
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColorDark,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child:
-                        Text("#${pokemon.id}", style: theme.textTheme.caption),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 20,
-                    child: Opacity(
-                      opacity: 0.2,
-                      child: Text(
-                        pokemon.name,
-                        style: Theme.of(context).textTheme.title,
-                      ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(5),
+      child: Material(
+        color: theme.primaryColor,
+        child: InkWell(
+          onTap: () =>
+              Navigator.pushNamed(context, "pokemonDetail", arguments: pokemon),
+          child: Container(
+            margin: EdgeInsets.all(5),
+            child: Stack(
+              children: <Widget>[
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                //   decoration: BoxDecoration(
+                //     color: Theme.of(context).primaryColorDark,
+                //     borderRadius: BorderRadius.circular(5),
+                //   ),
+                //   child: Text("#${pokemon.id}", style: theme.textTheme.caption),
+                // ),
+                Positioned(
+                  bottom: 0,
+                  left: 20,
+                  child: Opacity(
+                    opacity: 0.2,
+                    child: Text(
+                      pokemon.name,
+                      style: Theme.of(context).textTheme.title,
                     ),
                   ),
-                  PokemonImage(
-                    Pokemon.getURLImage(
-                      pokemon.id,
-                      pokemon.form,
-                      full: false,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                PokemonImage(pokemon.image),
+              ],
             ),
           ),
         ),

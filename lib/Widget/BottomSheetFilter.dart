@@ -1,9 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Bloc/Pokedex_bloc.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:flutter/cupertino.dart' show CupertinoSlidingSegmentedControl;
+
+import '../Provider/PokedexProvider.dart';
+import '../Bloc/Pokedex_bloc.dart';
 
 class BottomSheetFilter extends StatefulWidget {
   final Function(void Function()) update;

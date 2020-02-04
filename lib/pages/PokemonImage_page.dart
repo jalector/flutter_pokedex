@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+
+import '../Widget/PokemonImage.dart';
 
 class PokemonImagePage extends StatelessWidget {
   const PokemonImagePage({Key key}) : super(key: key);

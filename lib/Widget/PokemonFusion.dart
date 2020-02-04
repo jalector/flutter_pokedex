@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+import '../Widget/PokemonImage.dart';
 
 class PokemonFusion extends StatefulWidget {
   const PokemonFusion({Key key}) : super(key: key);

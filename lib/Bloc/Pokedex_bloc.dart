@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:rxdart/subjects.dart';
-import 'package:flutter_pokedex/Model/Pokemon_model.dart';
+import '../Model/Pokemon_model.dart';
 
 class PokedexBloc {
   static PokedexBloc _instance;
@@ -9,10 +9,10 @@ class PokedexBloc {
   static const int filterModeExclusive = 1;
 
   factory PokedexBloc() {
-    if (PokedexBloc._instance == null) {
-      PokedexBloc._instance = PokedexBloc._();
+    if (_instance == null) {
+      _instance = PokedexBloc._();
     }
-    return PokedexBloc._instance;
+    return _instance;
   }
 
   PokedexBloc._() {

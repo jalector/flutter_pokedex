@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/Generation_model.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
+import '../Model/Generation_model.dart';
+import '../Provider/PokedexProvider.dart';
 
 class PageViewGeneration extends StatefulWidget {
   PageViewGeneration({Key key}) : super(key: key);

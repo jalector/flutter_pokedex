@@ -1,10 +1,11 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Bloc/Pokedex_bloc.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
-import 'package:flutter_pokedex/Widget/CustomLoader.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+
+import '../Bloc/Pokedex_bloc.dart';
+import '../Provider/PokedexProvider.dart';
+import '../Widget/CustomLoader.dart';
+import '../Widget/PokemonImage.dart';
 
 class HeightSearchDelegate extends SearchDelegate {
   @override
@@ -228,9 +229,7 @@ class HeightSearchDelegate extends SearchDelegate {
           },
           child: Column(
             children: <Widget>[
-              PokemonImage(
-                Pokemon.getURLImage(poke.id, poke.form, full: false),
-              ),
+              PokemonImage(poke.image),
             ],
           ),
         ),
@@ -261,8 +260,6 @@ class HeightSearchDelegate extends SearchDelegate {
   Widget pokemonCard(BuildContext context, ThemeData theme, Pokemon pokemon) {
     Size size = MediaQuery.of(context).size;
     double cardSize = size.width * 0.3;
-    var pokemonImage =
-        Pokemon.getURLImage(pokemon.id, pokemon.form, full: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -296,7 +293,7 @@ class HeightSearchDelegate extends SearchDelegate {
                     width: cardSize,
                     constraints: BoxConstraints(maxWidth: 120),
                     child: PokemonImage(
-                      pokemonImage,
+                      pokemon.image,
                       obscureColor: theme.colorScheme.primaryVariant,
                     ),
                   ),
@@ -305,13 +302,13 @@ class HeightSearchDelegate extends SearchDelegate {
                     width: 120,
                     child: Opacity(
                       opacity: 0.8,
-                      child: PokemonImage(pokemonImage),
+                      child: PokemonImage(pokemon.image),
                     ),
                   ),
                   child: Container(
                     width: cardSize,
                     constraints: BoxConstraints(maxWidth: 120),
-                    child: PokemonImage(pokemonImage),
+                    child: PokemonImage(pokemon.image),
                   ),
                 ),
               ),

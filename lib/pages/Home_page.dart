@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Delegate/PrincipalSearchDelegate.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
-import 'package:flutter_pokedex/Widget/HomeDrawer.dart';
-import 'package:flutter_pokedex/Widget/PageViewGeneration.dart';
-import 'package:flutter_pokedex/Widget/PokemonFusion.dart';
-import 'package:flutter_pokedex/Widget/RandomPokemonViewer.dart';
+import '../Delegate/PrincipalSearchDelegate.dart';
+import '../Provider/PokedexProvider.dart';
+import '../Widget/HomeDrawer.dart';
+import '../Widget/PageViewGeneration.dart';
+import '../Widget/PokemonFusion.dart';
+import '../Widget/RandomPokemonViewer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key key}) : super(key: key);

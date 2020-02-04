@@ -1,9 +1,10 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
-import 'package:flutter_pokedex/Util.dart';
+import '../Provider/GlobalRequest.dart';
+import '../Util.dart';
 
 import 'Sprite_model.dart';
 
@@ -110,25 +111,6 @@ class Pokemon {
     this.maxcp,
   });
 
-  @override
-  bool operator ==(pokemon) {
-    var equal = false;
-
-    if ("Pokemon" == pokemon.runtimeType.toString()) {
-      var ids = id == pokemon.id;
-      var forms = form == pokemon.form;
-
-      ///if
-      equal = ids && forms; //are true
-    } else {
-      equal = identical(this, pokemon);
-    }
-    return equal;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
-
   factory Pokemon.fromJson(Map<String, dynamic> json) => Pokemon(
         id: json["id"],
         name: json["name"],
@@ -192,26 +174,6 @@ class Pokemon {
       cPs: Map.from(json["CPs"]).map((k, v) => MapEntry<String, int>(k, v)),
       maxcp: json["maxcp"],
     );
-  }
-
-  static String getURLImage(int number, String form, {bool full = true}) {
-    String n = number.toString();
-    if (n.length == 1) {
-      n = "00$n";
-    } else if (n.length == 2) {
-      n = "0$n";
-    }
-
-    return ((full) ? GlobalRequest.imageFull : GlobalRequest.image) +
-        "$n${(form == "Alola") ? "_f2" : ""}.png";
-  }
-
-  static String getURLVideo(String name, String form) {
-    return "${GlobalRequest.video}$name${(form != null ? "_$form" : "")}-small.mp4";
-  }
-
-  static String getUrlBadgetype(String type) {
-    return "https://db.pokemongohub.net/images/badges/thumb/Badge_Type_${Util.capitalize(type)}_01.png";
   }
 
   static List<Pokemon> fromJsonCollection(List json) {
@@ -291,18 +253,61 @@ class Pokemon {
     return color;
   }
 
-  @override
-  String toString() {
-    return "#$id $name";
-  }
-
   void completePokemon(Future<HttpAnswer<Pokemon>> futurePokemon) async {
     HttpAnswer<Pokemon> answer = await futurePokemon;
-
-    if (answer.ok) {
-      height = answer.object.height;
-    }
+    if (answer.ok) height = answer.object.height;
   }
+
+  /// Getters for url
+  static String standartID(int number) {
+    String n = number.toString();
+    if (n.length == 1) {
+      n = "00$n";
+    } else if (n.length == 2) {
+      n = "0$n";
+    }
+
+    return n;
+  }
+
+  String get image =>
+      "${GlobalRequest.image}${standartID(id)}${(form == "Alola") ? "_f2" : ""}.png";
+  String get fullImage =>
+      "${GlobalRequest.imageFull}${standartID(id)}${(form == "Alola") ? "_f2" : ""}.png";
+  String get video =>
+      "${GlobalRequest.video}$name${(form != null ? "_$form" : "")}-small.mp4";
+  String get gif => "${GlobalRequest.gif}${name.toLowerCase()}.gif";
+  String get pixel => "${GlobalRequest.pixel}${name.toLowerCase()}.png";
+
+  static String badgeType(String type) =>
+      "https://db.pokemongohub.net/images/badges/thumb/Badge_Type_${Util.capitalize(type)}_01.png";
+
+  static String randomPokemonImage({bool full = true}) {
+    String n = standartID(Random().nextInt(800) + 1).toString();
+    return ((full) ? GlobalRequest.imageFull : GlobalRequest.image) + "$n.png";
+  }
+
+  @override
+  String toString() => "#$id $name";
+
+  @override
+  bool operator ==(pokemon) {
+    var equal = false;
+
+    if ("Pokemon" == pokemon.runtimeType.toString()) {
+      var ids = id == pokemon.id;
+      var forms = form == pokemon.form;
+
+      ///if
+      equal = ids && forms; //are true
+    } else {
+      equal = identical(this, pokemon);
+    }
+    return equal;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class Description {

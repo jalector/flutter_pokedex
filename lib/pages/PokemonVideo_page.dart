@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Widget/PokemonVideo.dart';
 import 'package:video_player/video_player.dart';
+
+import '../Widget/PokemonVideo.dart';
 
 class PokemonVideoPage extends StatefulWidget {
   @override

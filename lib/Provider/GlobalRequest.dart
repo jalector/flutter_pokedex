@@ -1,7 +1,7 @@
-import 'package:flutter_pokedex/Model/HttpAnswer.dart';
 import 'package:http/http.dart' as http;
 
-export 'package:flutter_pokedex/Model/HttpAnswer.dart';
+import '../Model/HttpAnswer.dart';
+export '../Model/HttpAnswer.dart';
 
 class GlobalRequest {
   static final GlobalRequest _instance = GlobalRequest._();
@@ -13,13 +13,15 @@ class GlobalRequest {
 
   static final String sprites = "https://db.pokemongohub.net/images/ingame/";
   static final String video = "https://db.pokemongohub.net/videos/";
+  static final String gif =
+      "https://img.pokemondb.net/sprites/black-white/anim/normal/";
+  static final String pixel =
+      "https://img.pokemondb.net/sprites/sun-moon/icon/";
 
   Map<String, String> _headers;
   String token;
 
-  factory GlobalRequest() {
-    return _instance;
-  }
+  factory GlobalRequest() => _instance;
 
   GlobalRequest._() {
     this._headers = {"Content-Type": "application/json"};

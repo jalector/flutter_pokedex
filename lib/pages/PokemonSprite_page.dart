@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-import 'package:flutter_pokedex/Model/Sprite_model.dart';
-import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+import '../Model/Pokemon_model.dart';
+import '../Model/Sprite_model.dart';
+import '../Provider/GlobalRequest.dart';
+import '../Widget/PokemonImage.dart';
 
 class PokemonSpritePage extends StatelessWidget {
   const PokemonSpritePage({Key key}) : super(key: key);

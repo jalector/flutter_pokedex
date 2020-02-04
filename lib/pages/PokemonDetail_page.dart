@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/Sprite_model.dart';
 
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
-import 'package:flutter_pokedex/Util.dart';
-import 'package:flutter_pokedex/Widget/CustomLoader.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
-import 'package:flutter_pokedex/Widget/PokemonVideo.dart';
+import '../Provider/PokedexProvider.dart';
+import '../Model/Sprite_model.dart';
+import '../Model/Pokemon_model.dart';
+import '../Provider/GlobalRequest.dart';
+import '../Util.dart';
+import '../Widget/CustomLoader.dart';
+import '../Widget/PokemonImage.dart';
+import '../Widget/PokemonVideo.dart';
+import '../Model/HttpAnswer.dart';
 
 import "dart:io" show Platform;
 
@@ -240,7 +241,6 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _image(Pokemon pokemon) {
-    String imageURL = Pokemon.getURLImage(pokemon.id, pokemon.form);
     Orientation orientation = MediaQuery.of(context).orientation;
     return AspectRatio(
       aspectRatio: (orientation == Orientation.portrait) ? 1 : 2 / 3,
@@ -249,12 +249,12 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           Navigator.pushNamed(
             context,
             "pokemonImage",
-            arguments: imageURL,
+            arguments: pokemon.fullImage,
           );
         },
         child: Hero(
           tag: "image",
-          child: PokemonImage(imageURL),
+          child: PokemonImage(pokemon.fullImage),
         ),
       ),
     );
@@ -262,9 +262,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   Widget _video(Pokemon pokemon) {
     if (this._videoCtrl == null) {
-      this._videoCtrl = VideoPlayerController.network(
-        Pokemon.getURLVideo(pokemon.name, pokemon.form),
-      );
+      this._videoCtrl = VideoPlayerController.network(pokemon.video);
 
       return FutureBuilder(
         future: _videoCtrl.initialize(),
@@ -362,7 +360,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             backgroundColor: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(3),
-              child: Image.network(Pokemon.getUrlBadgetype(type)),
+              child: Image.network(Pokemon.badgeType(type)),
             ),
             radius: 10,
           ),
@@ -474,7 +472,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         children: <Widget>[
           Image(
             image: NetworkImage(
-              Pokemon.getUrlBadgetype(type.type),
+              Pokemon.badgeType(type.type),
             ),
             fit: BoxFit.contain,
           ),
@@ -527,7 +525,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
               child: Opacity(
                 opacity: 0.5,
                 child: Image.network(
-                  Pokemon.getUrlBadgetype(pokemon.type1),
+                  Pokemon.badgeType(pokemon.type1),
                 ),
               ),
             ),
@@ -553,9 +551,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
                     maxHeight: 200,
                     maxWidth: 200,
                   ),
-                  child: PokemonImage(
-                    Pokemon.getURLImage(pokemon.id, pokemon.form),
-                  ),
+                  child: PokemonImage(pokemon.fullImage),
                 ),
               ),
             ),
@@ -722,7 +718,10 @@ class PokemonCounterPage extends StatelessWidget {
               var poke = pokes[index];
               return ListTile(
                 leading: Image.network(
-                  Pokemon.getURLImage(poke.id, null),
+                  "https://img.pokemondb.net/sprites/black-white/anim/normal/${poke.name.toLowerCase()}.gif",
+                ),
+                trailing: Image.network(
+                  "https://img.pokemondb.net/sprites/sun-moon/icon/${poke.name.toLowerCase()}.png",
                 ),
                 title: Text(poke.name),
               );

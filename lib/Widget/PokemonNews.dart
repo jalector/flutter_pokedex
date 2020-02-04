@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/New_model.dart';
+import '../Model/New_model.dart';
 
 class PokemonNews extends StatefulWidget {
   final List<New> items;

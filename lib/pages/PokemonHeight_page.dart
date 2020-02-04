@@ -175,7 +175,7 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
                   overflow: Overflow.visible,
                   children: <Widget>[
                     Image.network(
-                      Pokemon.getURLImage(poke.id, poke.form),
+                      poke.fullImage,
                       fit: BoxFit.cover,
                     ),
                     Positioned(

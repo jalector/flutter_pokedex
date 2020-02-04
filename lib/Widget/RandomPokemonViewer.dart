@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
-import 'package:flutter_pokedex/Widget/CustomLoader.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+import '../Model/Pokemon_model.dart';
+import '../Provider/PokedexProvider.dart';
+import '../Widget/CustomLoader.dart';
+import '../Widget/PokemonImage.dart';
 
 class RandomPokemonViewer extends StatefulWidget {
   final PokedexProvider provider;
@@ -82,6 +82,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
 
   Widget _pokemonCard(BuildContext context, Pokemon pokemon, int index) {
     ThemeData theme = Theme.of(context);
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed("pokemonDetail", arguments: pokemon);
@@ -123,9 +124,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(15),
-                    child: PokemonImage(
-                      Pokemon.getURLImage(pokemon.id, null),
-                    ),
+                    child: PokemonImage(pokemon.fullImage),
                   ),
                   Container(
                     margin: EdgeInsets.all(15),

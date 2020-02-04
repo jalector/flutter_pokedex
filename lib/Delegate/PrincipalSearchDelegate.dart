@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
-import 'package:flutter_pokedex/Widget/CustomLoader.dart';
-import 'package:flutter_pokedex/Widget/PokemonImage.dart';
+
+import '../Provider/PokedexProvider.dart';
+import '../Widget/CustomLoader.dart';
+import '../Widget/PokemonImage.dart';
 
 class PrincipalSearchDelegate extends SearchDelegate {
   @override
@@ -198,9 +199,7 @@ class PrincipalSearchDelegate extends SearchDelegate {
                 child: Container(
                   width: cardSize,
                   constraints: BoxConstraints(maxWidth: 170),
-                  child: PokemonImage(
-                    Pokemon.getURLImage(pokemon.id, pokemon.form, full: false),
-                  ),
+                  child: PokemonImage(pokemon.image),
                 ),
               ),
             ],

@@ -1,15 +1,14 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Model/Generation_model.dart';
-import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-import 'package:flutter_pokedex/Provider/PokedexProvider.dart';
-import 'package:flutter_pokedex/Provider/ThemeChanger.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'dart:io' show Platform;
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Model/Generation_model.dart';
+import '../Model/Pokemon_model.dart';
+import '../Provider/PokedexProvider.dart';
+import '../Provider/ThemeChanger.dart';
 import 'PokemonImage.dart';
 
 class HomeDrawer extends StatefulWidget {
@@ -59,11 +58,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       bottom: 5,
                       top: 5,
                       child: PokemonImage(
-                        Pokemon.getURLImage(
-                          Random().nextInt(800) + 1,
-                          null,
-                          full: false,
-                        ),
+                        Pokemon.randomPokemonImage(),
                         obscureColor: theme.primaryColor,
                         fullWidth: false,
                       ),

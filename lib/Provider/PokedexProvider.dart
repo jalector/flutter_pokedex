@@ -4,31 +4,20 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_pokedex/Bloc/Pokedex_bloc.dart';
-import 'package:flutter_pokedex/Model/New_model.dart';
-import 'package:flutter_pokedex/Model/Sprite_model.dart';
 
-import 'package:flutter_pokedex/Provider/GlobalRequest.dart';
-import 'package:flutter_pokedex/Model/Pokemon_model.dart';
-export 'package:flutter_pokedex/Model/Pokemon_model.dart';
+import '../Bloc/Pokedex_bloc.dart';
+import '../Model/New_model.dart';
+import '../Model/Sprite_model.dart';
+import '../Provider/GlobalRequest.dart';
+import '../Model/Pokemon_model.dart';
+export '../Model/Pokemon_model.dart';
 
 class PokedexProvider extends InheritedWidget {
-  static PokedexProvider _instance;
   final PokedexBloc bloc = PokedexBloc();
 
   final GlobalRequest _globalRequest = GlobalRequest();
 
-  factory PokedexProvider({Key key, Widget child}) {
-    if (PokedexProvider._instance == null) {
-      _instance = PokedexProvider._(
-        key: key,
-        child: child,
-      );
-    }
-    return _instance;
-  }
-
-  PokedexProvider._({
+  PokedexProvider({
     Key key,
     Widget child,
   }) : super(key: key, child: child);
