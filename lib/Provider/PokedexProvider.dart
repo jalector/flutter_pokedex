@@ -128,32 +128,36 @@ class PokedexProvider extends InheritedWidget {
     Future<HttpAnswer<Pokemon>> fullPokemon = getPokemon(pokemon);
 
     var list = bloc.pokemonHeigh;
-
     list.add(pokemon..completePokemon(fullPokemon));
     bloc.addPokemonListHeight(list);
   }
 
   /// Filter mode controller
-
-  ///Futures, jus a snapshot for information
-
   Future<HttpAnswer<Pokemon>> getPokemon(Pokemon pokemon) async {
     var response = await this._globalRequest.get<Pokemon>(
         GlobalRequest.pokemonHub, "api/pokemon/${pokemon.id}",
         params: {"form": "${pokemon.form}"});
 
-    var spriteResponse = await this._globalRequest.get<List<PokemonSprite>>(
-        GlobalRequest.pokemonHub, "api/pokemon/${pokemon.id}/sprites");
-
     if (response.ok) {
       response.object = Pokemon.fromJsonDetail(
         json.decode(response.answer.body),
       );
+    } else {
+      throw response.reasonPhrase;
+    }
 
-      if (spriteResponse.ok) {
-        response.object.sprites =
-            PokemonSprite.fromJsonCollection(spriteResponse.answer.body);
-      }
+    return response;
+  }
+
+  Future<HttpAnswer<List<PokemonSprite>>> fetchPokemonSprite(
+      int pokemonId) async {
+    var response = await this._globalRequest.get<List<PokemonSprite>>(
+          GlobalRequest.pokemonHub,
+          "api/pokemon/$pokemonId/sprites",
+        );
+
+    if (response.ok) {
+      response.object = PokemonSprite.fromJsonCollection(response.answer.body);
     } else {
       throw response.reasonPhrase;
     }
@@ -223,5 +227,29 @@ class PokedexProvider extends InheritedWidget {
     }
 
     return request;
+  }
+
+  void loadPokemon(Pokemon poke) async {
+    HttpAnswer<Pokemon> response = await getPokemon(poke);
+
+    if (response.ok) {
+      bloc.addPokemonDetail(response.object);
+      loadPokemonBlocSprites();
+    } else {
+      bloc.addPokemonDetailError(response.reasonPhrase);
+    }
+  }
+
+  void loadPokemonBlocSprites() async {
+    Pokemon pokemon = bloc.pokemonDetail;
+    HttpAnswer<List<PokemonSprite>> response =
+        await fetchPokemonSprite(pokemon.id);
+
+    if (response.ok) {
+      pokemon.sprites = response.object;
+      bloc.addPokemonDetail(pokemon);
+    } else {
+      bloc.addPokemonDetailError(response.reasonPhrase);
+    }
   }
 }

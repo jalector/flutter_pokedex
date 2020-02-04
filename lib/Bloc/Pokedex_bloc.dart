@@ -27,6 +27,7 @@ class PokedexBloc {
   final _loadingPokemonsController = BehaviorSubject<bool>();
   final _filterPokemonController = BehaviorSubject<Map<String, bool>>();
   final _filterModeController = BehaviorSubject<int>();
+  final _pokemonDetailController = BehaviorSubject<Pokemon>();
 
   /// Pokedex Controller
   List<Pokemon> get pokedex => _pokedexController.value;
@@ -57,6 +58,14 @@ class PokedexBloc {
 
   Function(Pokemon) get removePokemonHeight => (Pokemon pokemon) =>
       _pokemonHeightController.sink.add(pokemonHeigh..remove(pokemon));
+
+  /// Pokemon Detail Controller
+  Pokemon get pokemonDetail => _pokemonDetailController.value;
+  Stream<Pokemon> get pokemonDetailStream => _pokemonDetailController.stream;
+  Function(Pokemon) get addPokemonDetail => _pokemonDetailController.sink.add;
+  Function(String) get addPokemonDetailError =>
+      _pokemonDetailController.sink.addError;
+  Function() get clearPokemonDetail => () => addPokemonDetail(null);
 
   /// Search Pokemon Controller
   Stream<String> get searchedPokemonStream => _searchedPokemonController.stream;
@@ -89,6 +98,7 @@ class PokedexBloc {
     _filterPokemonController.close();
     _filterModeController.close();
     _pokemonHeightController.close();
+    _pokemonDetailController.close();
   }
 
   void _handlePokedexData(List<Pokemon> pokedex, sink) {

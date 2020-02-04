@@ -5,9 +5,13 @@ import '../Provider/GlobalRequest.dart';
 import '../Provider/PokedexProvider.dart';
 import '../Widget/BottomSheetFilter.dart';
 import '../Widget/CustomLoader.dart';
-import '../Widget/PokemonImage.dart';
+import '../Widget/PokemonCard.dart';
 
 class PokedexPage extends StatefulWidget {
+  final String title;
+
+  PokedexPage(this.title);
+
   @override
   _PokedexPageState createState() => _PokedexPageState();
 }
@@ -138,7 +142,6 @@ class _PokedexPageState extends State<PokedexPage> {
   }
 
   Widget _pokedex(BuildContext context, PokedexProvider provider) {
-    String title = ModalRoute.of(context).settings.arguments;
     Size size = MediaQuery.of(context).size;
 
     return CustomScrollView(
@@ -149,28 +152,31 @@ class _PokedexPageState extends State<PokedexPage> {
           pinned: false,
           elevation: 5,
           centerTitle: false,
-          title: Text(title, style: Theme.of(context).textTheme.display1),
+          title:
+              Text(widget.title, style: Theme.of(context).textTheme.display1),
         ),
-        SliverPadding(
-          padding: EdgeInsets.all(5),
-          sliver: StreamBuilder<List<Pokemon>>(
-            stream: provider.bloc.pokedexStream,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              Widget builder;
-              List<Pokemon> pokedex = snapshot.data;
-              if (snapshot.hasData) {
-                builder = SliverGrid.extent(
+        StreamBuilder<List<Pokemon>>(
+          stream: provider.bloc.pokedexStream,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            Widget builder;
+            List<Pokemon> pokedex = snapshot.data;
+
+            if (snapshot.hasData) {
+              builder = SliverPadding(
+                padding: const EdgeInsets.all(5),
+                sliver: SliverGrid.extent(
                   maxCrossAxisExtent: this._calculateCardWidth(size),
-                  mainAxisSpacing: 5,
                   crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
                   children: pokedex
-                      .map<Widget>((Pokemon pokemon) =>
-                          this._pokemonCard(context, pokemon))
+                      .map<Widget>((Pokemon pokemon) => PokemonCard(pokemon))
                       .toList(),
-                );
-              } else if (snapshot.hasError) {
-                builder = SliverList(
-                  delegate: SliverChildListDelegate([
+                ),
+              );
+            } else if (snapshot.hasError) {
+              builder = SliverList(
+                delegate: SliverChildListDelegate(
+                  [
                     Row(
                       children: <Widget>[
                         Expanded(
@@ -189,62 +195,20 @@ class _PokedexPageState extends State<PokedexPage> {
                           ),
                         )
                       ],
-                    )
-                  ]),
-                );
-              } else {
-                builder = SliverList(
-                  delegate: SliverChildListDelegate(
-                      [Center(heightFactor: 2, child: CustomLoader())]),
-                );
-              }
-
-              return builder;
-            },
-          ),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              builder = SliverList(
+                delegate: SliverChildListDelegate(
+                    [Center(heightFactor: 2, child: CustomLoader())]),
+              );
+            }
+            return builder;
+          },
         ),
       ],
-    );
-  }
-
-  Widget _pokemonCard(BuildContext context, Pokemon pokemon) {
-    ThemeData theme = Theme.of(context);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(5),
-      child: Material(
-        color: theme.primaryColor,
-        child: InkWell(
-          onTap: () =>
-              Navigator.pushNamed(context, "pokemonDetail", arguments: pokemon),
-          child: Container(
-            margin: EdgeInsets.all(5),
-            child: Stack(
-              children: <Widget>[
-                // Container(
-                //   padding: EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                //   decoration: BoxDecoration(
-                //     color: Theme.of(context).primaryColorDark,
-                //     borderRadius: BorderRadius.circular(5),
-                //   ),
-                //   child: Text("#${pokemon.id}", style: theme.textTheme.caption),
-                // ),
-                Positioned(
-                  bottom: 0,
-                  left: 20,
-                  child: Opacity(
-                    opacity: 0.2,
-                    child: Text(
-                      pokemon.name,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                  ),
-                ),
-                PokemonImage(pokemon.image),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

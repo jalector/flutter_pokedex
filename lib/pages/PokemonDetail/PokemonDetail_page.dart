@@ -1,73 +1,18 @@
 import 'package:flutter/material.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:video_player/video_player.dart';
 
-import '../Provider/PokedexProvider.dart';
-import '../Model/Sprite_model.dart';
-import '../Model/Pokemon_model.dart';
-import '../Provider/GlobalRequest.dart';
-import '../Util.dart';
-import '../Widget/CustomLoader.dart';
-import '../Widget/PokemonImage.dart';
-import '../Widget/PokemonVideo.dart';
-import '../Model/HttpAnswer.dart';
+import '../../Provider/PokedexProvider.dart';
+import '../../Model/Sprite_model.dart';
+import '../../Model/Pokemon_model.dart';
+import '../../Provider/GlobalRequest.dart';
+import '../../Util.dart';
+import '../../Widget/CustomLoader.dart';
+import '../../Widget/PokemonImage.dart';
+import '../../Widget/PokemonVideo.dart';
+import '../../Model/HttpAnswer.dart';
 
 import "dart:io" show Platform;
-
-class PokemonDetailTabPage extends StatefulWidget {
-  const PokemonDetailTabPage({Key key}) : super(key: key);
-
-  @override
-  _PokemonDetailTabPageState createState() => _PokemonDetailTabPageState();
-}
-
-class _PokemonDetailTabPageState extends State<PokemonDetailTabPage> {
-  @override
-  Widget build(BuildContext context) {
-    Pokemon pokemon = ModalRoute.of(context).settings.arguments;
-
-    return DefaultTabController(
-      length: 3,
-      initialIndex: 1,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Text(
-                "${pokemon.name}",
-                style: Theme.of(context).textTheme.title,
-              ),
-              Spacer(),
-              Text("#${pokemon.id}", style: Theme.of(context).textTheme.title),
-            ],
-          ),
-          centerTitle: false,
-        ),
-        bottomNavigationBar: BottomAppBar(
-          color: Colors.transparent,
-          elevation: 0,
-          child: TabBar(
-            indicatorSize: TabBarIndicatorSize.label,
-            tabs: <Widget>[
-              Tab(icon: Icon(FontAwesomeIcons.shieldAlt)),
-              Tab(icon: Icon(FontAwesomeIcons.userAlt)),
-              Tab(icon: Icon(FontAwesomeIcons.exclamationTriangle)),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            PokemonCounterPage(pokemon),
-            PokemonDetailPage(pokemon),
-            Icon(Icons.directions_bike),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 //// Pokemon Detail Page
 
@@ -90,19 +35,17 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    Pokemon pokemon = widget.pokemon;
     PokedexProvider provider = PokedexProvider.of(context);
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-          child: FutureBuilder<HttpAnswer<Pokemon>>(
-            future: provider.getPokemon(pokemon),
-            builder: (BuildContext context,
-                AsyncSnapshot<HttpAnswer<Pokemon>> snapshot) {
+          child: StreamBuilder(
+            stream: provider.bloc.pokemonDetailStream,
+            builder: (BuildContext context, AsyncSnapshot<Pokemon> snapshot) {
               if (snapshot.hasData) {
-                return _pokemonDetail(context, snapshot.data.object);
+                return _pokemonDetail(context, snapshot.data);
               } else if (snapshot.hasError) {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -600,7 +543,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _sprites(BuildContext context, Pokemon pokemon) {
-    if (pokemon.sprites.length == 0) {
+    if (pokemon.sprites == null && pokemon.sprites.length > 0) {
       return _noInfoMessage(
         Text("No sprites available"),
       );
