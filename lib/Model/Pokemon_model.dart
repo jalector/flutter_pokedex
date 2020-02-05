@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../Provider/GlobalRequest.dart';
 import '../Util.dart';
 
+import 'MoveSet.dart';
 import 'Sprite_model.dart';
 
 class Pokemon {
@@ -41,6 +42,8 @@ class Pokemon {
   double male;
   double female;
   int genderless;
+  List<MoveSet> moveSet;
+
   List<Form> forms = [];
   List<Description> descriptions = [];
   List<TypeChart> typeChart = [];
@@ -281,7 +284,7 @@ class Pokemon {
   String get pixel => "${GlobalRequest.pixel}${name.toLowerCase()}.png";
 
   static String badgeType(String type) =>
-      "https://db.pokemongohub.net/images/badges/thumb/Badge_Type_${Util.capitalize(type)}_01.png";
+      "assets/badges_type/${Util.capitalize(type)}.png";
 
   static String randomPokemonImage({bool full = true}) {
     String n = standartID(Random().nextInt(800) + 1).toString();

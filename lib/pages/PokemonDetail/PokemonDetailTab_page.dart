@@ -1,8 +1,11 @@
+import 'package:Pokedex/Pages/PokemonDetail/PokemonMoveSet_page.dart';
+import 'package:Pokedex/Widget/CustomLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../Model/Pokemon_model.dart';
 import '../../Provider/PokedexProvider.dart';
+import 'PokemonCounter_page.dart';
 import 'PokemonDetail_page.dart';
 
 class PokemonDetailTabPage extends StatefulWidget {
@@ -17,49 +20,71 @@ class _PokemonDetailTabPageState extends State<PokemonDetailTabPage> {
   Widget build(BuildContext context) {
     Pokemon pokemon = ModalRoute.of(context).settings.arguments;
     PokedexProvider provider = PokedexProvider.of(context);
+
     return WillPopScope(
       onWillPop: () async {
         provider.bloc.clearPokemonDetail();
         return true;
       },
-      child: DefaultTabController(
-        length: 3,
-        initialIndex: 1,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  "${pokemon.name}",
-                  style: Theme.of(context).textTheme.title,
+      child: StreamBuilder(
+        stream: provider.bloc.pokemonDetailStream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return _tabPage(context, snapshot.data);
+          } else if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Container(
+                  child: Text(snapshot.error.toString()),
                 ),
-                Spacer(),
-                Text("#${pokemon.id}",
-                    style: Theme.of(context).textTheme.title),
-              ],
-            ),
-            centerTitle: false,
-          ),
-          bottomNavigationBar: BottomAppBar(
-            color: Colors.transparent,
-            elevation: 0,
-            child: TabBar(
-              indicatorSize: TabBarIndicatorSize.label,
-              tabs: <Widget>[
-                Tab(icon: Icon(FontAwesomeIcons.shieldAlt)),
-                Tab(icon: Icon(FontAwesomeIcons.userAlt)),
-                Tab(icon: Icon(FontAwesomeIcons.exclamationTriangle)),
-              ],
-            ),
-          ),
-          body: TabBarView(
-            children: [
-              PokemonCounterPage(pokemon),
-              PokemonDetailPage(pokemon),
-              Icon(Icons.directions_bike),
+              ),
+            );
+          }
+          return Scaffold(
+            body: CustomLoader(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _tabPage(BuildContext context, Pokemon pokemon) {
+    return DefaultTabController(
+      length: 3,
+      initialIndex: 1,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                "${pokemon.name}",
+                style: Theme.of(context).textTheme.title,
+              ),
+              Spacer(),
+              Text("#${pokemon.id}", style: Theme.of(context).textTheme.title),
             ],
           ),
+          centerTitle: false,
+        ),
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.transparent,
+          elevation: 0,
+          child: TabBar(
+            indicatorSize: TabBarIndicatorSize.label,
+            tabs: <Widget>[
+              Tab(icon: Icon(FontAwesomeIcons.shieldAlt)),
+              Tab(icon: Icon(FontAwesomeIcons.userAlt)),
+              Tab(icon: Icon(FontAwesomeIcons.exclamationTriangle)),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            PokemonCounterPage(pokemon),
+            PokemonDetailPage(pokemon),
+            PokemonMoveSet(pokemon),
+          ],
         ),
       ),
     );

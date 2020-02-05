@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:Pokedex/Model/MoveSet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -229,12 +230,26 @@ class PokedexProvider extends InheritedWidget {
     return request;
   }
 
+  Future<HttpAnswer<List<MoveSet>>> fetchPokemonMoveSet(int id) async {
+    var request = await _globalRequest.get<List<MoveSet>>(
+        GlobalRequest.pokemonHub, "api/movesets/with-pokemon/$id");
+
+    if (request.ok) {
+      var data = json.decode(request.answer.body);
+      request.object = List<MoveSet>.from(data.map((x) => MoveSet.fromMap(x)));
+    } else {
+      throw request.reasonPhrase;
+    }
+    return request;
+  }
+
   void loadPokemon(Pokemon poke) async {
     HttpAnswer<Pokemon> response = await getPokemon(poke);
 
     if (response.ok) {
       bloc.addPokemonDetail(response.object);
       loadPokemonBlocSprites();
+      loadPokemonMoveSet();
     } else {
       bloc.addPokemonDetailError(response.reasonPhrase);
     }
@@ -242,14 +257,23 @@ class PokedexProvider extends InheritedWidget {
 
   void loadPokemonBlocSprites() async {
     Pokemon pokemon = bloc.pokemonDetail;
-    HttpAnswer<List<PokemonSprite>> response =
-        await fetchPokemonSprite(pokemon.id);
+    fetchPokemonSprite(pokemon.id).then((HttpAnswer response) {
+      if (response.ok) {
+        pokemon.sprites = response.object;
+        bloc.addPokemonDetail(pokemon);
+      } else {
+        bloc.addPokemonDetailError(response.reasonPhrase);
+      }
+    });
+  }
 
-    if (response.ok) {
-      pokemon.sprites = response.object;
-      bloc.addPokemonDetail(pokemon);
-    } else {
-      bloc.addPokemonDetailError(response.reasonPhrase);
-    }
+  void loadPokemonMoveSet() async {
+    Pokemon pokemon = bloc.pokemonDetail;
+    fetchPokemonMoveSet(pokemon.id).then((HttpAnswer response) {
+      if (response.ok) {
+        pokemon.moveSet = response.object;
+        bloc.addPokemonDetail(pokemon);
+      }
+    });
   }
 }

@@ -35,40 +35,17 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    PokedexProvider provider = PokedexProvider.of(context);
-
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-          child: StreamBuilder(
-            stream: provider.bloc.pokemonDetailStream,
-            builder: (BuildContext context, AsyncSnapshot<Pokemon> snapshot) {
-              if (snapshot.hasData) {
-                return _pokemonDetail(context, snapshot.data);
-              } else if (snapshot.hasError) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(snapshot.error.toString()),
-                    )
-                  ],
-                );
-              } else {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CustomLoader(),
-                    )
-                  ],
-                );
-              }
-            },
-          ),
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+        child: OrientationBuilder(
+          builder: (BuildContext context, Orientation orientation) {
+            if (orientation == Orientation.landscape) {
+              return this._pokemonDetailLandscape(context);
+            } else {
+              return this._pokemonDetailPortrait(context);
+            }
+          },
         ),
       ),
     );
@@ -116,44 +93,32 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     );
   }
 
-  Widget _pokemonDetail(BuildContext context, Pokemon pokemon) {
-    return OrientationBuilder(
-      builder: (BuildContext context, Orientation orientation) {
-        if (orientation == Orientation.landscape) {
-          return this._pokemonDetailLandscape(context, pokemon);
-        } else {
-          return this._pokemonDetailPortrait(context, pokemon);
-        }
-      },
-    );
-  }
-
-  Widget _pokemonDetailPortrait(BuildContext context, Pokemon pokemon) {
+  Widget _pokemonDetailPortrait(BuildContext context) {
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: Column(
         children: <Widget>[
-          this._generationBanner(context, pokemon),
-          this._pokemonPreview(pokemon),
-          this._pokemonTypeBanners(pokemon),
-          this._description(pokemon),
-          this._adjacentPokemon(context, pokemon),
-          this._stats(context, pokemon),
-          this._statisticsChart(context, pokemon),
-          this._family(context, pokemon),
-          this._sprites(context, pokemon),
+          this._generationBanner(context, widget.pokemon),
+          this._pokemonPreview(widget.pokemon),
+          this._pokemonTypeBanners(widget.pokemon),
+          this._description(widget.pokemon),
+          this._adjacentPokemon(context, widget.pokemon),
+          this._stats(context, widget.pokemon),
+          this._statisticsChart(context, widget.pokemon),
+          this._family(context, widget.pokemon),
+          this._sprites(context, widget.pokemon),
         ],
       ),
     );
   }
 
-  Widget _pokemonDetailLandscape(BuildContext context, Pokemon pokemon) {
+  Widget _pokemonDetailLandscape(BuildContext context) {
     return Row(
       children: <Widget>[
         Column(
           children: <Widget>[
-            Expanded(child: this._pokemonPreview(pokemon)),
-            this._generationBanner(context, pokemon),
+            Expanded(child: this._pokemonPreview(widget.pokemon)),
+            this._generationBanner(context, widget.pokemon),
           ],
         ),
         Flexible(
@@ -167,13 +132,13 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
               physics: BouncingScrollPhysics(),
               child: Column(
                 children: <Widget>[
-                  this._pokemonTypeBanners(pokemon),
-                  this._description(pokemon),
-                  this._adjacentPokemon(context, pokemon),
-                  this._stats(context, pokemon),
-                  this._statisticsChart(context, pokemon),
-                  this._family(context, pokemon),
-                  this._sprites(context, pokemon),
+                  this._pokemonTypeBanners(widget.pokemon),
+                  this._description(widget.pokemon),
+                  this._adjacentPokemon(context, widget.pokemon),
+                  this._stats(context, widget.pokemon),
+                  this._statisticsChart(context, widget.pokemon),
+                  this._family(context, widget.pokemon),
+                  this._sprites(context, widget.pokemon),
                 ],
               ),
             ),
@@ -195,10 +160,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             arguments: pokemon.fullImage,
           );
         },
-        child: Hero(
-          tag: "image",
-          child: PokemonImage(pokemon.fullImage),
-        ),
+        child: Hero(tag: "image", child: PokemonImage(pokemon.fullImage)),
       ),
     );
   }
@@ -303,7 +265,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             backgroundColor: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(3),
-              child: Image.network(Pokemon.badgeType(type)),
+              child: Image.asset(Pokemon.badgeType(type)),
             ),
             radius: 10,
           ),
@@ -414,9 +376,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       child: Column(
         children: <Widget>[
           Image(
-            image: NetworkImage(
-              Pokemon.badgeType(type.type),
-            ),
+            image: AssetImage(Pokemon.badgeType(type.type)),
             fit: BoxFit.contain,
           ),
           SizedBox(height: 5),
@@ -467,9 +427,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
               width: 50,
               child: Opacity(
                 opacity: 0.5,
-                child: Image.network(
-                  Pokemon.badgeType(pokemon.type1),
-                ),
+                child: Image.asset(Pokemon.badgeType(pokemon.type1)),
               ),
             ),
             Text(
@@ -639,43 +597,3 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 }
 
 /// Pokemon counter page
-
-class PokemonCounterPage extends StatelessWidget {
-  final Pokemon pokemon;
-  const PokemonCounterPage(this.pokemon);
-
-  @override
-  Widget build(BuildContext context) {
-    var provider = PokedexProvider.of(context);
-    return FutureBuilder<HttpAnswer<List<Pokemon>>>(
-      future: provider.getPokemonCounters(pokemon.id),
-      builder: (BuildContext context,
-          AsyncSnapshot<HttpAnswer<List<Pokemon>>> snapshot) {
-        Widget widget = CustomLoader();
-
-        if (snapshot.hasData) {
-          var pokes = snapshot.data.object;
-          widget = ListView.builder(
-            itemCount: pokes.length,
-            itemBuilder: (BuildContext context, int index) {
-              var poke = pokes[index];
-              return ListTile(
-                leading: Image.network(
-                  "https://img.pokemondb.net/sprites/black-white/anim/normal/${poke.name.toLowerCase()}.gif",
-                ),
-                trailing: Image.network(
-                  "https://img.pokemondb.net/sprites/sun-moon/icon/${poke.name.toLowerCase()}.png",
-                ),
-                title: Text(poke.name),
-              );
-            },
-          );
-        } else if (snapshot.hasError) {
-          widget = Text(snapshot.error.toString());
-        }
-
-        return widget;
-      },
-    );
-  }
-}

@@ -50,16 +50,10 @@ class PokemonCard extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Image.network(
-                  Pokemon.badgeType(pokemon.type1),
-                  width: 15,
-                ),
+                Image.asset(Pokemon.badgeType(pokemon.type1), width: 15),
                 SizedBox(height: 5),
                 (pokemon.type2 != null && pokemon.type2.isNotEmpty)
-                    ? Image.network(
-                        Pokemon.badgeType(pokemon.type2),
-                        width: 15,
-                      )
+                    ? Image.asset(Pokemon.badgeType(pokemon.type2), width: 15)
                     : Container(width: 10),
               ],
             ),
