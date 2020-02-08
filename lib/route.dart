@@ -1,3 +1,4 @@
+import 'package:Pokedex/Pages/Moves_page.dart';
 import 'package:flutter/material.dart';
 
 import './Provider/PokedexProvider.dart';
@@ -55,6 +56,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case "pokemonSprite":
       route = MaterialPageRoute(
         builder: (BuildContext context) => PokemonSpritePage(),
+        settings: settings,
+      );
+      break;
+    case "pokemonMoves":
+      route = MaterialPageRoute(
+        builder: (BuildContext context) {
+          PokedexProvider.of(context).fetchAllCategoryMoves("charge");
+          return MovesPage();
+        },
         settings: settings,
       );
       break;

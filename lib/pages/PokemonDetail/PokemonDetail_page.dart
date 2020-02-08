@@ -328,9 +328,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     List<TypeChart> resistances = [];
 
     pokemon.typeChart.forEach((TypeChart type) {
-      if (type.status == Status.ADV) {
+      if (type.status == "adv") {
         resistances.add(type);
-      } else if (type.status == Status.DIS) {
+      } else if (type.status == "dis") {
         weaknesses.add(type);
       }
     });
@@ -359,6 +359,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         ),
       ),
     );
+
     list.addAll(resistances.map((w) => this._typeInfoChart(w)).toList());
 
     return list;
@@ -375,10 +376,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       ),
       child: Column(
         children: <Widget>[
-          Image(
-            image: AssetImage(Pokemon.badgeType(type.type)),
-            fit: BoxFit.contain,
-          ),
+          Image.asset(Pokemon.badgeType(type.type)),
           SizedBox(height: 5),
           Text(effect.toStringAsPrecision(4) + "%"),
           Text("damage"),
@@ -484,7 +482,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           vertical: 2,
         ),
         decoration: BoxDecoration(
-          color: Colors.white12,
+          color: Colors.black38,
           borderRadius: BorderRadius.circular(5),
         ),
         child: Column(

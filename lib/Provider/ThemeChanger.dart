@@ -15,7 +15,6 @@ class ThemeChanger with ChangeNotifier {
   int getActiveMode() => this._themeNumber;
 
   void setTheme(int themeData) {
-    print("newThemeData $themeData");
     switch (themeData) {
       case 0:
         this._themeData = ThemeData.dark().copyWith(

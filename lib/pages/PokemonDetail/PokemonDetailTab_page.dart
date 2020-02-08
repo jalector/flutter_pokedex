@@ -18,12 +18,12 @@ class PokemonDetailTabPage extends StatefulWidget {
 class _PokemonDetailTabPageState extends State<PokemonDetailTabPage> {
   @override
   Widget build(BuildContext context) {
-    Pokemon pokemon = ModalRoute.of(context).settings.arguments;
     PokedexProvider provider = PokedexProvider.of(context);
 
     return WillPopScope(
       onWillPop: () async {
         provider.bloc.clearPokemonDetail();
+        provider.movesBloc.movesClearList();
         return true;
       },
       child: StreamBuilder(
@@ -68,7 +68,6 @@ class _PokemonDetailTabPageState extends State<PokemonDetailTabPage> {
           centerTitle: false,
         ),
         bottomNavigationBar: BottomAppBar(
-          color: Colors.transparent,
           elevation: 0,
           child: TabBar(
             indicatorSize: TabBarIndicatorSize.label,

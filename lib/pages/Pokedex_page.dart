@@ -7,6 +7,8 @@ import '../Widget/BottomSheetFilter.dart';
 import '../Widget/CustomLoader.dart';
 import '../Widget/PokemonCard.dart';
 
+import '../Util.dart';
+
 class PokedexPage extends StatefulWidget {
   final String title;
 
@@ -126,21 +128,6 @@ class _PokedexPageState extends State<PokedexPage> {
     );
   }
 
-  double _calculateCardWidth(Size size) {
-    double cardWidth;
-
-    if (size.width > 1500) {
-      cardWidth = size.width * 0.1;
-    } else if (size.width > 1200) {
-      cardWidth = size.width * 0.15;
-    } else if (size.width >= 750) {
-      cardWidth = size.width * 0.175;
-    } else {
-      cardWidth = size.width * 0.35;
-    }
-    return cardWidth;
-  }
-
   Widget _pokedex(BuildContext context, PokedexProvider provider) {
     Size size = MediaQuery.of(context).size;
 
@@ -165,11 +152,15 @@ class _PokedexPageState extends State<PokedexPage> {
               builder = SliverPadding(
                 padding: const EdgeInsets.all(5),
                 sliver: SliverGrid.extent(
-                  maxCrossAxisExtent: this._calculateCardWidth(size),
+                  maxCrossAxisExtent: Util.calculateCardWidth(size),
                   crossAxisSpacing: 5,
                   mainAxisSpacing: 5,
                   children: pokedex
-                      .map<Widget>((Pokemon pokemon) => PokemonCard(pokemon))
+                      .map<Widget>((Pokemon pokemon) => PokemonCard(
+                            pokemon,
+                            showBigNumber: true,
+                            showBadgeType: true,
+                          ))
                       .toList(),
                 ),
               );

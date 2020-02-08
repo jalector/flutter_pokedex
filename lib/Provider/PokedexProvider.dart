@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:Pokedex/Bloc/Moves_bloc.dart';
+import 'package:Pokedex/Model/Move.dart';
 import 'package:Pokedex/Model/MoveSet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,8 @@ import '../Model/Pokemon_model.dart';
 export '../Model/Pokemon_model.dart';
 
 class PokedexProvider extends InheritedWidget {
-  final PokedexBloc bloc = PokedexBloc();
+  final bloc = PokedexBloc();
+  final movesBloc = MovesBloc();
 
   final GlobalRequest _globalRequest = GlobalRequest();
 
@@ -220,8 +223,6 @@ class PokedexProvider extends InheritedWidget {
 
     if (request.ok) {
       var data = json.decode(request.answer.body);
-
-      print(data.runtimeType);
       request.object = Pokemon.fromJsonCounterCollection(data);
     } else {
       throw request.reasonPhrase;
@@ -243,12 +244,23 @@ class PokedexProvider extends InheritedWidget {
     return request;
   }
 
+  void fetchAllCategoryMoves(String category) async {
+    var request = await _globalRequest.get(
+        GlobalRequest.pokemonHub, "api/moves/with-filter/$category/with-stats");
+
+    if (request.ok) {
+      var data = json.decode(request.answer.body);
+      movesBloc.movesAddList(List<Move>.from(data.map((x) => Move.fromMap(x))));
+    }
+  }
+
   void loadPokemon(Pokemon poke) async {
     HttpAnswer<Pokemon> response = await getPokemon(poke);
 
     if (response.ok) {
       bloc.addPokemonDetail(response.object);
       loadPokemonBlocSprites();
+      loadPokemonCounters();
       loadPokemonMoveSet();
     } else {
       bloc.addPokemonDetailError(response.reasonPhrase);
@@ -275,5 +287,21 @@ class PokedexProvider extends InheritedWidget {
         bloc.addPokemonDetail(pokemon);
       }
     });
+  }
+
+  void loadPokemonCounters() async {
+    Pokemon pokemon = bloc.pokemonDetail;
+    getPokemonCounters(pokemon.id).then((HttpAnswer response) {
+      if (response.ok) {
+        pokemon.counters = response.object;
+        bloc.addPokemonDetail(pokemon);
+      }
+    });
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<PokedexBloc>('bloc', bloc));
   }
 }

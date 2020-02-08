@@ -170,7 +170,6 @@ class HeightSearchDelegate extends SearchDelegate {
               onWillAccept: (poke) =>
                   bloc.pokemonHeigh.where((p) => p == poke).length == 0,
               onAccept: (Pokemon pokemon) {
-                print("Pokemon acepted: $pokemon");
                 provider.addPokemonHeight(pokemon, bloc.pokemonHeigh.length);
               },
               builder: (BuildContext context, acepted, denied) {

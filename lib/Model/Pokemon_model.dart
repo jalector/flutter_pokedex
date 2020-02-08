@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../Provider/GlobalRequest.dart';
-import '../Util.dart';
 
+import 'Move.dart';
 import 'MoveSet.dart';
 import 'Sprite_model.dart';
 
@@ -43,6 +43,9 @@ class Pokemon {
   double female;
   int genderless;
   List<MoveSet> moveSet;
+
+  Move chargedCounterMove;
+  Move fastCounterMove;
 
   List<Form> forms = [];
   List<Description> descriptions = [];
@@ -113,6 +116,8 @@ class Pokemon {
     this.weatherInfluences,
     this.cPs,
     this.maxcp,
+    this.fastCounterMove,
+    this.chargedCounterMove,
   });
 
   factory Pokemon.fromJson(Map<String, dynamic> json) => Pokemon(
@@ -192,7 +197,15 @@ class Pokemon {
 
   static List<Pokemon> fromJsonCounterCollection(List<dynamic> json) {
     return json
-        .map<Pokemon>((element) => Pokemon(id: element[0], name: element[1]))
+        .map<Pokemon>((element) => Pokemon(
+              id: element[0],
+              name: element[1],
+              form: element[2],
+              fastCounterMove:
+                  Move(id: element[3], name: element[4], type: element[5]),
+              chargedCounterMove:
+                  Move(id: element[6], name: element[7], type: element[8]),
+            ))
         .toList();
   }
 
@@ -283,8 +296,7 @@ class Pokemon {
   String get gif => "${GlobalRequest.gif}${name.toLowerCase()}.gif";
   String get pixel => "${GlobalRequest.pixel}${name.toLowerCase()}.png";
 
-  static String badgeType(String type) =>
-      "assets/badges_type/${Util.capitalize(type)}.png";
+  static String badgeType(String type) => "assets/badges_type/$type.png";
 
   static String randomPokemonImage({bool full = true}) {
     String n = standartID(Random().nextInt(800) + 1).toString();
@@ -376,8 +388,8 @@ class Form {
 
 class TypeChart {
   String type;
-  Status status;
-  StatusModifier statusModifier;
+  String status;
+  String statusModifier;
   double effectiveness;
 
   TypeChart({
@@ -389,39 +401,8 @@ class TypeChart {
 
   factory TypeChart.fromJson(Map<String, dynamic> json) => TypeChart(
         type: json["type"],
-        status: statusValues.map[json["status"]],
-        statusModifier: statusModifierValues.map[json["statusModifier"]],
+        status: json["status"],
+        statusModifier: json["statusModifier"],
         effectiveness: json["effectiveness"].toDouble(),
       );
-
-  Map<String, dynamic> toJson() => {
-        "type": type,
-        "status": statusValues.reverse[status],
-        "statusModifier": statusModifierValues.reverse[statusModifier],
-        "effectiveness": effectiveness,
-      };
-}
-
-enum Status { NORMAL, ADV, DIS }
-
-final statusValues =
-    EnumValues({"adv": Status.ADV, "dis": Status.DIS, "normal": Status.NORMAL});
-
-enum StatusModifier { EFF_1_X, EFF_2_X }
-
-final statusModifierValues = EnumValues(
-    {"eff-1x": StatusModifier.EFF_1_X, "eff-2x": StatusModifier.EFF_2_X});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
-    }
-    return reverseMap;
-  }
 }

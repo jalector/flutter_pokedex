@@ -73,23 +73,26 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                margin: EdgeInsets.symmetric(vertical: 5),
-                width: size.width,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.black45,
-                ),
-                child: RaisedButton(
-                  child: Text(
-                    "Pokémon size",
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "Pokémon size",
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("pokemonHeight");
+                    },
                   ),
-                  color: Colors.transparent,
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("pokemonHeight");
-                  },
-                ),
+                  FlatButton(
+                    child: Text(
+                      "Pokémon moves",
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed("pokemonMoves");
+                    },
+                  ),
+                ],
               ),
               this._bannerDivider(context, "Region"),
               this._generation(context, Generation(1, "Kanto")),

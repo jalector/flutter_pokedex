@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'PokemonImage.dart';
 import '../Model/Pokemon_model.dart';
 
 class PokemonCard extends StatelessWidget {
@@ -43,21 +42,11 @@ class PokemonCard extends StatelessWidget {
           badgets(context),
           name(context),
           number(context),
-          PokemonImage(
-            pokemon.fullImage,
+          FadeInImage.assetNetwork(
+            placeholder: "assets/load_pokeball.gif",
+            image: (useFullImage) ? pokemon.fullImage : pokemon.image,
           ),
-          Positioned(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Image.asset(Pokemon.badgeType(pokemon.type1), width: 15),
-                SizedBox(height: 5),
-                (pokemon.type2 != null && pokemon.type2.isNotEmpty)
-                    ? Image.asset(Pokemon.badgeType(pokemon.type2), width: 15)
-                    : Container(width: 10),
-              ],
-            ),
-          ),
+          _badgesType(context)
         ],
       ),
     );
@@ -73,6 +62,27 @@ class PokemonCard extends StatelessWidget {
       );
     }
     return ClipRRect(borderRadius: BorderRadius.circular(5), child: widget);
+  }
+
+  Widget _badgesType(BuildContext context) {
+    if (showBadgeType) {
+      return Positioned(
+        right: 3,
+        top: 3,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Image.asset(Pokemon.badgeType(pokemon.type1), width: 15),
+            SizedBox(height: 5),
+            (pokemon.type2 != null && pokemon.type2.isNotEmpty)
+                ? Image.asset(Pokemon.badgeType(pokemon.type2), width: 15)
+                : Container(width: 10),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget name(BuildContext context) {
