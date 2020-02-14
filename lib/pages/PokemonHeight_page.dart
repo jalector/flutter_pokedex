@@ -81,7 +81,7 @@ class _PokemonHeightPageState extends State<PokemonHeightPage> {
                         Center(
                           child: Text(
                             "Add more pokemons",
-                            style: theme.textTheme.title,
+                            style: theme.textTheme.headline6,
                           ),
                         )
                       ],

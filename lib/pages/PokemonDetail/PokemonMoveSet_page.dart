@@ -35,7 +35,7 @@ class _PokemonMoveSetState extends State<PokemonMoveSet> {
               padding: const EdgeInsets.all(10),
               child: Text(
                 'Move set',
-                style: theme.textTheme.title,
+                style: theme.textTheme.headline6,
               ),
             ),
             _moveSetTable(context),
@@ -43,7 +43,7 @@ class _PokemonMoveSetState extends State<PokemonMoveSet> {
               padding: const EdgeInsets.all(10),
               child: Text(
                 'Moves',
-                style: theme.textTheme.title,
+                style: theme.textTheme.headline6,
               ),
             ),
             _movesTable(),

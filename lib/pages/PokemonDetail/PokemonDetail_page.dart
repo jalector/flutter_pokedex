@@ -70,7 +70,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           ),
           child: Text(
             title,
-            style: Theme.of(context).textTheme.title,
+            style: Theme.of(context).textTheme.headline6,
           ),
         ),
         Container(
@@ -212,7 +212,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       ),
       child: Text(
         "Generation #${pokemon.generation}",
-        style: Theme.of(context).textTheme.title,
+        style: Theme.of(context).textTheme.headline6,
         textAlign: TextAlign.center,
       ),
     );
@@ -430,7 +430,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             ),
             Text(
               "#${pokemon.id}",
-              style: Theme.of(context).textTheme.title,
+              style: Theme.of(context).textTheme.headline6,
             ),
             Material(
               color: Colors.white10,
@@ -489,7 +489,8 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           children: <Widget>[
             Text(
               concept,
-              style: Theme.of(context).textTheme.title.copyWith(fontSize: 20),
+              style:
+                  Theme.of(context).textTheme.headline6.copyWith(fontSize: 20),
             ),
             Text(info),
           ],
@@ -499,7 +500,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _sprites(BuildContext context, Pokemon pokemon) {
-    if (pokemon.sprites == null && pokemon.sprites.length > 0) {
+    if (pokemon.sprites == null || pokemon.sprites.isEmpty) {
       return _noInfoMessage(
         Text("No sprites available"),
       );

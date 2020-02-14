@@ -130,7 +130,7 @@ class _PageViewGenerationState extends State<PageViewGeneration>
                     ),
                     child: Text(
                       generation.title,
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
                 ),

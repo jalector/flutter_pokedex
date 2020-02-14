@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need to save pokemon images</string>
 </dict>
 </plist>

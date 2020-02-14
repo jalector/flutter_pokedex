@@ -29,7 +29,7 @@ class CustomLoader extends StatelessWidget {
             Text(
               "Loading",
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
             ),
           ],
         ),

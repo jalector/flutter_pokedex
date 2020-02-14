@@ -19,14 +19,14 @@ class ThemeChanger with ChangeNotifier {
       case 0:
         this._themeData = ThemeData.dark().copyWith(
           textTheme: TextTheme(
-            title: TextStyle(fontFamily: "Roboto"),
+            headline6: TextStyle(fontFamily: "Roboto"),
           ),
         );
         break;
       case 1:
         this._themeData = ThemeData.light().copyWith(
           textTheme: TextTheme(
-            title: TextStyle(fontFamily: "Roboto"),
+            headline6: TextStyle(fontFamily: "Roboto"),
           ),
         );
         break;
@@ -58,23 +58,23 @@ class ThemeChanger with ChangeNotifier {
       appBarTheme: AppBarTheme(
         color: _primary,
         textTheme: TextTheme(
-          display1: TextStyle(
+          headline4: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-          display2: TextStyle(
+          headline3: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-          display3: TextStyle(
+          headline2: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-          display4: TextStyle(
+          headline1: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-          title: TextStyle(
+          headline6: TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -95,47 +95,39 @@ class ThemeChanger with ChangeNotifier {
         brightness: Brightness.light,
       ),
       textTheme: TextTheme(
-        display1: TextStyle(
+        headline1: TextStyle(
           fontFamily: 'Avocado',
-          fontSize: 72,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        display2: TextStyle(
+        headline2: TextStyle(
           fontFamily: 'Avocado',
-          fontSize: 60,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        display3: TextStyle(
+        headline3: TextStyle(
           fontFamily: 'Avocado',
-          fontSize: 50,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        display4: TextStyle(
+        headline4: TextStyle(
           fontFamily: 'Avocado',
-          fontSize: 50,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        title: TextStyle(
+        headline6: TextStyle(
           fontFamily: 'Avocado',
-          fontSize: 30,
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),
         caption: TextStyle(
           fontFamily: 'Avocado',
-          fontSize: 15,
         ),
         overline: TextStyle(
           fontFamily: 'Avocado',
-          fontSize: 15,
         ),
-        body1: TextStyle(
+        bodyText2: TextStyle(
           fontFamily: 'Avocado',
-          fontSize: 15,
         ),
       ),
     );

@@ -59,10 +59,11 @@ class _PokemonDetailTabPageState extends State<PokemonDetailTabPage> {
             children: <Widget>[
               Text(
                 "${pokemon.name}",
-                style: Theme.of(context).textTheme.title,
+                style: Theme.of(context).textTheme.headline6,
               ),
               Spacer(),
-              Text("#${pokemon.id}", style: Theme.of(context).textTheme.title),
+              Text("#${pokemon.id}",
+                  style: Theme.of(context).textTheme.headline6),
             ],
           ),
           centerTitle: false,

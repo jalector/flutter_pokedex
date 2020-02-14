@@ -13,6 +13,7 @@ import '../Model/New_model.dart';
 import '../Model/Sprite_model.dart';
 import '../Provider/GlobalRequest.dart';
 import '../Model/Pokemon_model.dart';
+
 export '../Model/Pokemon_model.dart';
 
 class PokedexProvider extends InheritedWidget {

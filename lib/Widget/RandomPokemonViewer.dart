@@ -68,7 +68,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
                 snapshot.error.toString(),
                 style: Theme.of(context)
                     .textTheme
-                    .title
+                    .headline6
                     .copyWith(color: Colors.red),
               ),
             ),
@@ -117,7 +117,7 @@ class _RandomPokemonViewerState extends State<RandomPokemonViewer> {
                     left: 10,
                     child: Text(
                       "${pokemon.name}",
-                      style: theme.textTheme.title.copyWith(
+                      style: theme.textTheme.headline6.copyWith(
                         color: Colors.white,
                       ),
                     ),

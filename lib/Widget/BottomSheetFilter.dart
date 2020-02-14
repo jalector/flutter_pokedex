@@ -45,7 +45,7 @@ class _BottomSheetFilterState extends State<BottomSheetFilter> {
               child: Text(
                 "Select the pokemon by type or name",
                 textAlign: TextAlign.center,
-                style: theme.textTheme.title,
+                style: theme.textTheme.headline6,
               ),
             ),
           ),

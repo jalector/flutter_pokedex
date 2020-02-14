@@ -1,5 +1,9 @@
 PODS:
   - Flutter (1.0.0)
+  - image_gallery_saver (0.0.1):
+    - Flutter
+  - "permission_handler (4.2.0+hotfix.3)":
+    - Flutter
   - shared_preferences (0.0.1):
     - Flutter
   - video_player (0.0.1):
@@ -7,12 +11,18 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  image_gallery_saver:
+    :path: ".symlinks/plugins/image_gallery_saver/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   video_player:
@@ -20,6 +30,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  image_gallery_saver: 73b3cd8ad9c950c739878af9c311744d1bf5405d
+  permission_handler: 40520ab8ad1bb78a282b832464e995ec87f77ec6
   shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
   video_player: 3964090a33353060ed7f58aa6427c7b4b208ec21
 

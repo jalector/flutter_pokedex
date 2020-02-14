@@ -1,8 +1,8 @@
 import 'package:Pokedex/Model/Move.dart';
 import 'package:flutter/material.dart';
 
-import '../../Model/Pokemon_model.dart';
 import '../../Provider/PokedexProvider.dart';
+
 import '../../Util.dart';
 
 class PokemonCounterPage extends StatelessWidget {
@@ -54,7 +54,7 @@ class PokemonCounterPage extends StatelessWidget {
                     child: Text(
                       "No pokemon counter available",
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.title,
+                      style: theme.textTheme.headline6,
                     ),
                   ),
                 )
