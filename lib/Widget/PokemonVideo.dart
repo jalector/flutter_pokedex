@@ -10,7 +10,6 @@ class PokemonVideo extends StatefulWidget {
 }
 
 class _PokemonVideoState extends State<PokemonVideo> {
-  bool _isPlay = true;
 
   @override
   void initState() {
@@ -38,7 +37,6 @@ class _PokemonVideoState extends State<PokemonVideo> {
                   child: VideoPlayer(widget.controller),
                 ),
               ),
-              Positioned(bottom: 5, right: 5, child: _playButton(context))
             ],
           ),
         ),
@@ -46,30 +44,5 @@ class _PokemonVideoState extends State<PokemonVideo> {
     );
   }
 
-  _playButton(BuildContext context) {
-    IconData icon = _isPlay ? Icons.pause : Icons.play_arrow;
 
-    return GestureDetector(
-      onTap: () {
-        if (_isPlay) {
-          widget.controller.pause();
-        } else {
-          widget.controller.seekTo(Duration(seconds: 0));
-          widget.controller.play();
-        }
-        setState(() => _isPlay = !_isPlay);
-      },
-      child: Container(
-        padding: EdgeInsets.all(0),
-        margin: EdgeInsets.all(0),
-        height: 50,
-        width: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Theme.of(context).primaryColor.withOpacity(0.4),
-        ),
-        child: Icon(icon),
-      ),
-    );
-  }
 }

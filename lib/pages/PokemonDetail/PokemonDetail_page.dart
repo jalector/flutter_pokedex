@@ -193,9 +193,11 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: GestureDetector(
-        onTap: () {
-          Navigator.pushNamed(context, "pokemonVideo", arguments: _videoCtrl);
-        },
+        onTap: () => Navigator.pushNamed(
+          context,
+          "pokemonVideo",
+          arguments: _videoCtrl,
+        ),
         child: PokemonVideo(this._videoCtrl),
       ),
     );

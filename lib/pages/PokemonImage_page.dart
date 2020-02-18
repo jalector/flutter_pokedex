@@ -1,11 +1,10 @@
-//import 'dart:io' as io;
+import 'dart:io' as io;
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 
-import 'package:flare_dart/math/mat2d.dart';
 import 'package:flare_flutter/flare.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flare_flutter/flare_controller.dart';
+import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -23,18 +22,10 @@ class PokemonImagePage extends StatefulWidget {
 }
 
 class _PokemonImagePageState extends State<PokemonImagePage> {
-  SuccessController _flareController;
+  FlareControls _flareController = SuccessFlareController();
   var _imagenKey = GlobalKey();
   var _scaffoldKey = GlobalKey<ScaffoldState>();
   bool storingImage = false;
-
-  void update() => setState(() {});
-
-  @override
-  void initState() {
-    super.initState();
-    _flareController = SuccessController("success", update, 0);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +38,15 @@ class _PokemonImagePageState extends State<PokemonImagePage> {
         backgroundColor: Theme.of(context).primaryColorDark,
       ),
       backgroundColor: Theme.of(context).primaryColorDark,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.file_download),
-        onPressed: () async {
-          if ((await _savePokemonImage()) != null) _flareController.playOnce();
-        },
-      ),
+      floatingActionButton: io.Platform.isAndroid
+          ? FloatingActionButton(
+              child: Icon(Icons.file_download),
+              onPressed: () async {
+                if ((await _savePokemonImage()) != null)
+                  _flareController.play("success");
+              },
+            )
+          : null,
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
@@ -124,44 +118,10 @@ class _PokemonImagePageState extends State<PokemonImagePage> {
   }
 }
 
-class SuccessController extends FlareController {
-  final Function _update;
-  final String _animationName;
-  final double _mix;
-  ActorAnimation _actor;
-  double _duration = 0, _loopCount = 0, _loopAmount;
-
-  SuccessController(this._animationName, this._update,
-      [this._mix = 0.5, this._loopAmount = 1]);
-
-  void playOnce() {
-    _loopAmount = 1;
-    _loopCount = 0;
-    _update();
-  }
-
+class SuccessFlareController extends FlareControls {
   @override
   void initialize(FlutterActorArtboard artboard) {
-    _actor = artboard.getAnimation(_animationName);
+    super.initialize(artboard);
+    play("idle");
   }
-
-  @override
-  bool advance(FlutterActorArtboard artBoard, double elapsed) {
-    if (_loopCount >= _loopAmount) {
-      _actor.apply(0, artBoard, 1);
-    } else {
-      _duration += elapsed;
-
-      if (_duration >= _actor.duration) {
-        _loopCount++;
-        _duration %= _actor.duration;
-      }
-      _actor.apply(_duration, artBoard, _mix);
-    }
-
-    return true;
-  }
-
-  @override
-  void setViewTransform(Mat2D viewTransform) {}
 }
