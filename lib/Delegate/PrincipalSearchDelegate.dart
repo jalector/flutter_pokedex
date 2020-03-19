@@ -74,7 +74,7 @@ class PrincipalSearchDelegate extends SearchDelegate {
               Center(
                 child: Text(
                   snapshot.error,
-                  style: theme.textTheme.headline6,
+                  style: theme.textTheme.title,
                 ),
               ),
             ],
@@ -104,7 +104,7 @@ class PrincipalSearchDelegate extends SearchDelegate {
               Center(
                 child: Text(
                   snapshot.error,
-                  style: theme.textTheme.headline6,
+                  style: theme.textTheme.title,
                 ),
               )
             ],
@@ -178,7 +178,7 @@ class PrincipalSearchDelegate extends SearchDelegate {
                         children: <Widget>[
                           Text(
                             pokemon.name,
-                            style: theme.textTheme.headline6,
+                            style: theme.textTheme.title,
                           ),
                           Row(
                             children: <Widget>[

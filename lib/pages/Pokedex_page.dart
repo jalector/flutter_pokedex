@@ -140,7 +140,7 @@ class _PokedexPageState extends State<PokedexPage> {
           elevation: 5,
           centerTitle: false,
           title:
-              Text(widget.title, style: Theme.of(context).textTheme.headline4),
+              Text(widget.title, style: Theme.of(context).textTheme.display1),
         ),
         StreamBuilder<List<Pokemon>>(
           stream: provider.bloc.pokedexStream,
@@ -181,7 +181,7 @@ class _PokedexPageState extends State<PokedexPage> {
                             child: Text(
                               snapshot.error.toString(),
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context).textTheme.title,
                             ),
                           ),
                         )

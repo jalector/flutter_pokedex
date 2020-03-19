@@ -122,7 +122,7 @@ class _PokemonNewsState extends State<PokemonNews> {
                         child: Text(
                           noticia.title,
                           softWrap: true,
-                          style: style.textTheme.headline4,
+                          style: style.textTheme.display4,
                         ),
                       ),
                       Positioned(
@@ -130,7 +130,7 @@ class _PokemonNewsState extends State<PokemonNews> {
                         left: 20,
                         child: Text(
                           noticia.tags,
-                          style: style.textTheme.bodyText2,
+                          style: style.textTheme.body1,
                         ),
                       ),
                       Positioned(
@@ -138,7 +138,7 @@ class _PokemonNewsState extends State<PokemonNews> {
                         right: 20,
                         child: Text(
                           noticia.date,
-                          style: style.textTheme.headline6,
+                          style: style.textTheme.title,
                         ),
                       ),
                     ],

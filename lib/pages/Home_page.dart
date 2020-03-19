@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Pokedex",
-          style: style.textTheme.headline6,
+          style: style.textTheme.title,
         ),
         actions: <Widget>[
           IconButton(
@@ -41,19 +41,19 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 20),
               Text(
                 "Region",
-                style: style.textTheme.headline6,
+                style: style.textTheme.title,
               ),
               PageViewGeneration(),
               SizedBox(height: 20),
               Text(
                 "Find new pokemon",
-                style: style.textTheme.headline6,
+                style: style.textTheme.title,
               ),
               RandomPokemonViewer(provider),
               SizedBox(height: 20),
               Text(
                 "Fusions",
-                style: style.textTheme.headline6,
+                style: style.textTheme.title,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),

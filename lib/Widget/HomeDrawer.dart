@@ -67,7 +67,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       widthFactor: 1.2,
                       child: Text(
                         "Pokedex",
-                        style: theme.textTheme.headline2,
+                        style: theme.textTheme.display2,
                       ),
                     ),
                   ],
@@ -206,7 +206,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       ),
       child: Text(
         title,
-        style: style.textTheme.headline6,
+        style: style.textTheme.title,
       ),
     );
   }
@@ -238,8 +238,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         ),
         child: Text(
           generation.title,
-          style:
-              theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.title.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
     );

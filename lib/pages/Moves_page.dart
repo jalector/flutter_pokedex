@@ -21,7 +21,7 @@ class _MovesPageState extends State<MovesPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Moves", style: Theme.of(context).textTheme.headline4),
+          title: Text("Moves", style: Theme.of(context).textTheme.display4),
           centerTitle: false,
         ),
         body: Padding(
@@ -38,7 +38,7 @@ class _MovesPageState extends State<MovesPage> {
                     children: <Widget>[
                       Text(
                         '$categorySelected moves',
-                        style: theme.textTheme.headline6,
+                        style: theme.textTheme.title,
                       ),
                       _categorySelector(context),
                     ],

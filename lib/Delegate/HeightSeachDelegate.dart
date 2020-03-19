@@ -76,7 +76,7 @@ class HeightSearchDelegate extends SearchDelegate {
               Center(
                 child: Text(
                   snapshot.error.toString(),
-                  style: theme.textTheme.headline6,
+                  style: theme.textTheme.title,
                 ),
               )
             ],
@@ -114,7 +114,7 @@ class HeightSearchDelegate extends SearchDelegate {
                   Center(
                     child: Text(
                       snapshot.error,
-                      style: theme.textTheme.headline6,
+                      style: theme.textTheme.title,
                     ),
                   )
                 ],
@@ -280,7 +280,7 @@ class HeightSearchDelegate extends SearchDelegate {
                   child: Text(
                     pokemon.name,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.headline6,
+                    style: theme.textTheme.title,
                   ),
                 ),
               ),

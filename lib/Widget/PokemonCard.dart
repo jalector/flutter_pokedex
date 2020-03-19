@@ -96,7 +96,7 @@ class PokemonCard extends StatelessWidget {
               opacity: 0.2,
               child: Text(
                 pokemon.name,
-                style: theme.textTheme.headline6,
+                style: theme.textTheme.title,
               ),
             ),
           )

@@ -19,14 +19,14 @@ class ThemeChanger with ChangeNotifier {
       case 0:
         this._themeData = ThemeData.dark().copyWith(
           textTheme: TextTheme(
-            headline6: TextStyle(fontFamily: "Roboto"),
+            title: TextStyle(fontFamily: "Roboto"),
           ),
         );
         break;
       case 1:
         this._themeData = ThemeData.light().copyWith(
           textTheme: TextTheme(
-            headline6: TextStyle(fontFamily: "Roboto"),
+            title: TextStyle(fontFamily: "Roboto"),
           ),
         );
         break;
@@ -58,23 +58,23 @@ class ThemeChanger with ChangeNotifier {
       appBarTheme: AppBarTheme(
         color: _primary,
         textTheme: TextTheme(
-          headline4: TextStyle(
+          display4: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-          headline3: TextStyle(
+          display3: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-          headline2: TextStyle(
+          display2: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-          headline1: TextStyle(
+          display1: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
-          headline6: TextStyle(
+          title: TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -95,27 +95,27 @@ class ThemeChanger with ChangeNotifier {
         brightness: Brightness.light,
       ),
       textTheme: TextTheme(
-        headline1: TextStyle(
+        display1: TextStyle(
           fontFamily: 'Avocado',
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        headline2: TextStyle(
+        display2: TextStyle(
           fontFamily: 'Avocado',
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        headline3: TextStyle(
+        display3: TextStyle(
           fontFamily: 'Avocado',
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        headline4: TextStyle(
+        display4: TextStyle(
           fontFamily: 'Avocado',
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        headline6: TextStyle(
+        title: TextStyle(
           fontFamily: 'Avocado',
           color: Colors.white,
           fontWeight: FontWeight.bold,
@@ -126,7 +126,7 @@ class ThemeChanger with ChangeNotifier {
         overline: TextStyle(
           fontFamily: 'Avocado',
         ),
-        bodyText2: TextStyle(
+        body1: TextStyle(
           fontFamily: 'Avocado',
         ),
       ),

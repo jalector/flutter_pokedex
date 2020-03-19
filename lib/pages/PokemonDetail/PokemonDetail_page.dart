@@ -29,7 +29,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   @override
   void dispose() {
-    this._videoCtrl?.dispose();
+    _videoCtrl?.dispose();
     super.dispose();
   }
 
@@ -41,9 +41,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         child: OrientationBuilder(
           builder: (BuildContext context, Orientation orientation) {
             if (orientation == Orientation.landscape) {
-              return this._pokemonDetailLandscape(context);
+              return _pokemonDetailLandscape(context);
             } else {
-              return this._pokemonDetailPortrait(context);
+              return _pokemonDetailPortrait(context);
             }
           },
         ),
@@ -70,7 +70,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           ),
           child: Text(
             title,
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.title,
           ),
         ),
         Container(
@@ -98,15 +98,15 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       physics: BouncingScrollPhysics(),
       child: Column(
         children: <Widget>[
-          this._generationBanner(context, widget.pokemon),
-          this._pokemonPreview(widget.pokemon),
-          this._pokemonTypeBanners(widget.pokemon),
-          this._description(widget.pokemon),
-          this._adjacentPokemon(context, widget.pokemon),
-          this._stats(context, widget.pokemon),
-          this._statisticsChart(context, widget.pokemon),
-          this._family(context, widget.pokemon),
-          this._sprites(context, widget.pokemon),
+          _generationBanner(context, widget.pokemon),
+          _pokemonPreview(widget.pokemon),
+          _pokemonTypeBanners(widget.pokemon),
+          _description(widget.pokemon),
+          _adjacentPokemon(context, widget.pokemon),
+          _stats(context, widget.pokemon),
+          _statisticsChart(context, widget.pokemon),
+          _family(context, widget.pokemon),
+          _sprites(context, widget.pokemon),
         ],
       ),
     );
@@ -117,8 +117,8 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       children: <Widget>[
         Column(
           children: <Widget>[
-            Expanded(child: this._pokemonPreview(widget.pokemon)),
-            this._generationBanner(context, widget.pokemon),
+            Expanded(child: _pokemonPreview(widget.pokemon)),
+            _generationBanner(context, widget.pokemon),
           ],
         ),
         Flexible(
@@ -132,13 +132,13 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
               physics: BouncingScrollPhysics(),
               child: Column(
                 children: <Widget>[
-                  this._pokemonTypeBanners(widget.pokemon),
-                  this._description(widget.pokemon),
-                  this._adjacentPokemon(context, widget.pokemon),
-                  this._stats(context, widget.pokemon),
-                  this._statisticsChart(context, widget.pokemon),
-                  this._family(context, widget.pokemon),
-                  this._sprites(context, widget.pokemon),
+                  _pokemonTypeBanners(widget.pokemon),
+                  _description(widget.pokemon),
+                  _adjacentPokemon(context, widget.pokemon),
+                  _stats(context, widget.pokemon),
+                  _statisticsChart(context, widget.pokemon),
+                  _family(context, widget.pokemon),
+                  _sprites(context, widget.pokemon),
                 ],
               ),
             ),
@@ -166,14 +166,14 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _video(Pokemon pokemon) {
-    if (this._videoCtrl == null) {
-      this._videoCtrl = VideoPlayerController.network(pokemon.video);
+    if (_videoCtrl == null || _videoCtrl.dataSource != pokemon.video) {
+      _videoCtrl = VideoPlayerController.network(pokemon.video);
 
       return FutureBuilder(
         future: _videoCtrl.initialize(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return this._createVideoUI(context);
+            return _createVideoUI(context);
           } else {
             return Center(
               child: Padding(
@@ -185,7 +185,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         },
       );
     } else {
-      return this._createVideoUI(context);
+      return _createVideoUI(context);
     }
   }
 
@@ -198,7 +198,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           "pokemonVideo",
           arguments: _videoCtrl,
         ),
-        child: PokemonVideo(this._videoCtrl),
+        child: PokemonVideo(_videoCtrl),
       ),
     );
   }
@@ -214,7 +214,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       ),
       child: Text(
         "Generation #${pokemon.generation}",
-        style: Theme.of(context).textTheme.headline6,
+        style: Theme.of(context).textTheme.title,
         textAlign: TextAlign.center,
       ),
     );
@@ -242,9 +242,9 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   Widget _pokemonTypeBanners(Pokemon pokemon) {
     return Row(
       children: <Widget>[
-        this._pokemonType(pokemon.type1),
+        _pokemonType(pokemon.type1),
         (pokemon.type2 != null && pokemon.type2.isNotEmpty)
-            ? this._pokemonType(pokemon.type2)
+            ? _pokemonType(pokemon.type2)
             : Container(),
       ],
     );
@@ -317,10 +317,10 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
   }
 
   Widget _statisticsChart(BuildContext context, Pokemon pokemon) {
-    return this._container(
+    return _container(
       context: context,
       title: "${pokemon.name} in chart",
-      children: this._orderPokemonChart(pokemon),
+      children: _orderPokemonChart(pokemon),
     );
   }
 
@@ -348,7 +348,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
         ),
       ),
     );
-    list.addAll(weaknesses.map((w) => this._typeInfoChart(w)).toList());
+    list.addAll(weaknesses.map((w) => _typeInfoChart(w)).toList());
     list.add(
       RotatedBox(
         quarterTurns: -1,
@@ -362,7 +362,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       ),
     );
 
-    list.addAll(resistances.map((w) => this._typeInfoChart(w)).toList());
+    list.addAll(resistances.map((w) => _typeInfoChart(w)).toList());
 
     return list;
   }
@@ -389,8 +389,8 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
 
   Widget _pokemonPreview(Pokemon pokemon) {
     return (pokemon.generation >= 5 || pokemon.form == "Alola")
-        ? this._image(pokemon)
-        : (Platform.isAndroid) ? this._video(pokemon) : this._image(pokemon);
+        ? _image(pokemon)
+        : (Platform.isAndroid) ? _video(pokemon) : _image(pokemon);
   }
 
   Widget _family(BuildContext context, Pokemon pokemon) {
@@ -400,15 +400,12 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       );
     }
 
-    return this._container(
+    return _container(
       context: context,
       title: "Family",
       children: List.generate(
         pokemon.family.length,
-        (int i) => this._pokemonEvolution(
-          context,
-          pokemon.family[i],
-        ),
+        (int i) => _pokemonEvolution(context, pokemon.family[i]),
       ),
     );
   }
@@ -432,13 +429,14 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
             ),
             Text(
               "#${pokemon.id}",
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.title,
             ),
             Material(
               color: Colors.white10,
               child: InkWell(
                 splashColor: Colors.white12,
-                onTap: () {
+                onTap: () async {
+                  _videoCtrl = VideoPlayerController.network(pokemon.video);
                   Navigator.pushReplacementNamed(
                     context,
                     "pokemonDetail",
@@ -467,10 +465,10 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       padding: EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          this._stat("Max CP", pokemon.maxcp.toString()),
-          this._stat("Attack", pokemon.atk.toString()),
-          this._stat("Defence", pokemon.def.toString()),
-          this._stat("Stamina", pokemon.sta.toString()),
+          _stat("Max CP", pokemon.maxcp.toString()),
+          _stat("Attack", pokemon.atk.toString()),
+          _stat("Defence", pokemon.def.toString()),
+          _stat("Stamina", pokemon.sta.toString()),
         ],
       ),
     );
@@ -491,8 +489,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           children: <Widget>[
             Text(
               concept,
-              style:
-                  Theme.of(context).textTheme.headline6.copyWith(fontSize: 20),
+              style: Theme.of(context).textTheme.title.copyWith(fontSize: 20),
             ),
             Text(info),
           ],
@@ -525,11 +522,11 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
       );
 
       pokemonSprite.sprites.forEach((Sprite sprite) {
-        imageSprite.add(this._spriteUI(context, pokemon, sprite));
+        imageSprite.add(_spriteUI(context, pokemon, sprite));
       });
     });
 
-    return this._container(
+    return _container(
       context: context,
       title: "Sprites",
       children: imageSprite,

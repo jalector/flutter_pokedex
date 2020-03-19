@@ -35,7 +35,7 @@ class _PokemonMoveSetState extends State<PokemonMoveSet> {
               padding: const EdgeInsets.all(10),
               child: Text(
                 'Move set',
-                style: theme.textTheme.headline6,
+                style: theme.textTheme.title,
               ),
             ),
             _moveSetTable(context),
@@ -43,7 +43,7 @@ class _PokemonMoveSetState extends State<PokemonMoveSet> {
               padding: const EdgeInsets.all(10),
               child: Text(
                 'Moves',
-                style: theme.textTheme.headline6,
+                style: theme.textTheme.title,
               ),
             ),
             _movesTable(),
@@ -63,11 +63,17 @@ class _PokemonMoveSetState extends State<PokemonMoveSet> {
         horizontalMargin: 10,
         columns: [
           DataColumn(
-            label: Text('Quick Move'),
+            label: Text(
+              'Quick Move',
+              overflow: TextOverflow.ellipsis,
+            ),
             onSort: _sortMoveSetTable,
           ),
           DataColumn(
-            label: Text('Charged Move'),
+            label: Text(
+              'Charged Move',
+              overflow: TextOverflow.ellipsis,
+            ),
             onSort: _sortMoveSetTable,
           ),
           DataColumn(
@@ -212,7 +218,10 @@ class _PokemonMoveSetState extends State<PokemonMoveSet> {
             onSort: _sortMovesTable,
           ),
           DataColumn(
-            label: Text("Type"),
+            label: Text(
+              "Type",
+              overflow: TextOverflow.ellipsis,
+            ),
             onSort: _sortMovesTable,
           ),
           DataColumn(
@@ -291,12 +300,14 @@ class _PokemonMoveSetState extends State<PokemonMoveSet> {
       DataCell(
         Row(
           children: <Widget>[
-            Image.asset(
-              "assets/badges_type/${move.type}.png",
-              scale: 1.8,
+            Flexible(
+              child: Image.asset(
+                "assets/badges_type/${move.type}.png",
+                scale: 1.8,
+              ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5),
+            SizedBox(width: 5),
+            Flexible(
               child: Text(Util.capitalize(move.type)),
             )
           ],

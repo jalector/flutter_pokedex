@@ -30,5 +30,23 @@
 	<string>NSApplication</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need to save pokemon images</string>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+
+			<key>CFBundleURLName</key>
+			<string>pokedex.com</string>
+
+			<key>CFBundleURLSchemes</key>
+			<array>			
+				<string>http</string>
+			</array>
+		</dict>
+	</array>
+
+
 </dict>
 </plist>
